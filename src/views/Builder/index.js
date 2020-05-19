@@ -1,19 +1,16 @@
-import Loader from './Loader.vue';
+import View from './View.vue';
 import Loading from './Loading.vue';
 import Error from './Error.vue';
 
 const TESTER = new Promise( resolve => {
-  setTimeout(() => {
-    console.log('loading!');
-    resolve( Loader );
-  }, 3000 );
+  setTimeout(() => resolve( View ), 3000 );
 });
 
-const LoadingView = () => ({
+const Builder = () => ({
   //component: import('./Loader.vue'),
   component: TESTER,
   loading: Loading,
   error: Error
 });
 
-export default LoadingView;
+export default Builder;
