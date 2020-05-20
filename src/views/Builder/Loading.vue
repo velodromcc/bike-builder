@@ -6,10 +6,27 @@
       <v-sheet width="240" height="240" color="#f4f4f4"></v-sheet>
 
     </v-row>
-      <div id="info-container" class="pa-6">
-        <h2 v-if="title" class="headline mb-4">{{ title }}</h2>
-        <div v-if="text" class="body-2" v-html="text"></div>
+    <div id="info-container" class="pa-6">
+
+      <h2 v-if="title" class="headline mb-4">{{ title }}</h2>
+      <div v-if="text" class="body-2" v-html="text"></div>
+
+      <div v-if="value != null" class="progress">
+
+        <v-progress-linear
+          ref="progress"
+          :value="value"
+          color="primary"
+          background-color="light"
+          />
+
+        <div class="body-2 mt-2">
+          <span class="float-left">{{ loadText }}</span>
+          <span class="float-right">{{ value }}%</span>
+        </div>
       </div>
+
+    </div>
   </div>
 </template>
 

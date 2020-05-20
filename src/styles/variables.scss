@@ -7,28 +7,28 @@ $headings: (
   'h1': (
     'size': 1.875rem,
     'weight': 400,
-    'line-height': $line-height-root,
+    'line-height': 1,
     'letter-spacing': normal,
     'font-family': $heading-font-family
   ),
   'h2': (
     'size': 1.875rem,
     'weight': 300,
-    'line-height': $line-height-root,
+    'line-height': 1,
     'letter-spacing': normal,
     'font-family': $heading-font-family
   ),
   'h3': (
     'size': 1.25rem,
     'weight': 400,
-    'line-height': $line-height-root,
+    'line-height': 1.2,
     'letter-spacing': normal,
     'font-family': $heading-font-family
   ),
   'h4': (
     'size': 1.25rem,
     'weight': 300,
-    'line-height': $line-height-root,
+    'line-height': 1.2,
     'letter-spacing': normal,
     'font-family': $heading-font-family
   ),

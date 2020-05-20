@@ -3,7 +3,7 @@ import Loading from './Loading.vue';
 import Error from './Error.vue';
 
 const TESTER = new Promise( resolve => {
-  setTimeout(() => resolve( View ), 3000 );
+  setTimeout(() => resolve( View ), 0 );
 });
 
 const Builder = () => ({
