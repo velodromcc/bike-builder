@@ -105,9 +105,9 @@
     color: var(--v-light-darken4);
   }
 
-  @media only screen and ( max-width: 600px ) {
+  /*@media only screen and ( max-width: 600px ) {
     html {
       font-size: 24px !important;
     }
-  }
+  }*/
 </style>
