@@ -7,7 +7,7 @@
 <script>
 
   //import Builder from '@/views/Builder';
-  import Builder from '@/views/Builder/View.vue';
+  import Builder from '@/views/Builder/Body/index.vue';
 
   export default {
     components: {
@@ -52,7 +52,7 @@
     top: 0; left: 0;
   }
   .autoscroll {
-    overflow: auto !important;
+    overflow: auto;
   }
   .outline {
 

@@ -1,9 +1,9 @@
-import View from './View.vue';
+import Body from './Body/index.vue';
 import Loading from './Loading.vue';
 import Error from './Error.vue';
 
 const TESTER = new Promise( resolve => {
-  setTimeout(() => resolve( View ), 0 );
+  setTimeout(() => resolve( Body ), 0 );
 });
 
 const Builder = () => ({

@@ -25,8 +25,103 @@ export default new Vuex.Store({
               { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
               { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' }
             ]
-          }
+          },
+          {
+            name: 'Wilier CENTO10NDR',
+            image: '102293-wiliercento10ndr-render-01d.png',
+            colors: [
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' }
+            ]
+          },
+          {
+            name: 'Wilier CENTO10NDR',
+            image: '102293-wiliercento10ndr-render-01d.png',
+            colors: [
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' }
+            ]
+          },
+          {
+            name: 'Wilier CENTO10NDR',
+            image: '102293-wiliercento10ndr-render-01d.png',
+            colors: [
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' }
+            ]
+          },
+          {
+            name: 'Wilier CENTO10NDR',
+            image: '102293-wiliercento10ndr-render-01d.png',
+            colors: [
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' }
+            ]
+          },
+          {
+            name: 'Wilier CENTO10NDR',
+            image: '102293-wiliercento10ndr-render-01d.png',
+            colors: [
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' },
+              { name: 'Black bar tape', codes: [ '#2d85ac', '#e84131' ], image: '102293-wiliercento10ndr-render-01d.png' }
+            ]
+          },
         ]
+      },
+      {
+        title: 'Bars/Stem',
+        type: 'bars-stem',
+        items: []
+      },
+      {
+        title: 'Groupsets',
+        type: 'groupsets',
+        items: []
+      },
+      {
+        title: 'Wheels',
+        type: 'wheels',
+        items: []
+      },
+      {
+        title: 'Tyres',
+        type: 'tyres',
+        items: []
+      },
+      {
+        title: 'Seatposts',
+        type: 'seatposts',
+        items: []
+      },
+      {
+        title: 'Saddles',
+        type: 'saddles',
+        items: []
+      },
+      {
+        title: 'Bike Fit',
+        type: 'bike-fit',
+        items: []
       }
     ]
   },
