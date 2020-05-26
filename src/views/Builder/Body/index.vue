@@ -19,7 +19,7 @@
           :items="crumbs"
           :height="30"
           class="breadcrumbs body-1 outline-bottom light--border"
-          @input="$store.commit( 'set', { index: $event })"
+          @input="onChangeIndex"
         />
 
         <div class="builder-info grow rel">
@@ -33,6 +33,7 @@
               :colors="current.colors"
               has-description
               @input="selectedColor = $event"
+              @description="showDescription = true"
             />
 
             <div class="builder-bike">
@@ -43,14 +44,18 @@
           </div>
         </div>
 
-        <Footer class="shrink"/>
+        <Footer
+          class="shrink"
+          @reset="reset"
+          @details="details"
+        />
 
       </v-row>
       <v-row class="nav-builder flex-column flex-nowrap" no-gutters>
         <v-sheet tag="nav" class="d-flex justify-space-between align-center shrink"
         color="primary" height="70" tile>
 
-          <Btn class="ml-2" color="white" :disabled="!index" @click="prev" icon>
+          <Btn class="ml-2" color="white" :disabled="isDisabled( index - 1 )" @click="prev" icon>
             <v-icon v-text="'$prev'"/>
           </Btn>
 
@@ -58,7 +63,7 @@
             {{ step.title }} {{ $vuetify.breakpoint.mdAndUp ? '' : '(' + [ index + 1, data.length ].join(' of ') + ')' }}
           </span>
 
-          <Btn class="mr-2" color="white" :disabled="index === data.length - 1" @click="next" icon>
+          <Btn class="mr-2" color="white" :disabled="isDisabled( index + 1 )" @click="next" icon>
             <v-icon v-text="'$next'"/>
           </Btn>
 
@@ -73,13 +78,44 @@
           <BikeItems
             class="layer"
             v-model="selected"
-            :type="step.type"
+            :type="step.id"
             :items="step.items"
           />
 
         </div>
       </v-row>
     </v-row>
+
+    <!-- DESCRIPTION -->
+
+    <v-dialog v-model="showDescription" max-width="1024">
+      <v-card class="light" min-height="560">
+
+        <Btn class="btn-close" color="primary" @click="showDescription = false" x-small fab>
+          <v-icon v-text="'$close'"/>
+        </Btn>
+
+        <v-row v-if="current" class="pr-7 ma-0" style="min-height:560px">
+          <v-col class="pa-5" cols="12" md="6">
+
+            <v-img
+              :src="image( current )"
+              height="100%"
+              contain
+            />
+
+          </v-col>
+          <v-col class="pa-5" cols="12" md="6">
+
+            <h3 class="display-4 primary--text">{{ current.name }}</h3>
+            <span class="caption">{{ step.title }}</span>
+            <div v-html="current.description"/>
+
+          </v-col>
+        </v-row>
+      </v-card>
+    </v-dialog>
+
   </main>
 </template>
 
@@ -103,6 +139,8 @@
       return {
         selected: -1,
         selectedColor: 0,
+        showDescription: false,
+        index: 0,
         composition: [],
         title: 'Bike Builder',
         text: '<p>' + [
@@ -121,36 +159,63 @@
     },
     watch: {
       selected( value ) {
-        const { composition, index } = this;
-        composition[index] = composition[index] || { value, color: 0 };
-        composition[index].value = value;
+
+        const { composition, step } = this;
+        var index = composition.findIndex( a => a.id === step.id );
+        if ( ! composition[index] ) index = composition.length;
+
+        composition.splice( index, 1, {
+          ...step,
+          value,
+          item: step.items[ value ],
+          color: 0
+        });
+
         this.selectedColor = 0;
       },
       selectedColor( color ) {
-        const { composition, index } = this;
-        if ( composition[index] ) {
-          composition[index].color = color;
-        }
+        const { composition, step } = this;
+        var index = composition.findIndex( a => a.id === step.id );
+        if ( composition[index] ) composition[index].color = color;
       },
-      index( index ) {
-        const { composition } = this;
+      index() {
+        const { composition, step } = this;
+        const index = composition.findIndex( a => a.id === step.id );
         if ( composition[index] ) {
           this.selected = composition[index].value;
           this.selectedColor = composition[index].color || 0;
+        } else {
+          this.selected = null;
+          this.selectedColor = 0;
         }
       }
     },
     computed: {
-      ...mapState([ 'loading', 'data', 'index' ]),
-      crumbs() {
-        return this.data.map( a => a.title );
+      ...mapState([ 'loading', 'data' ]),
+      steps() {
+
+        var steps = this.data.slice()
+          .sort(( a, b ) => a.priority - b.priority )
+          .map(( a, index ) => ({ ...a, index }));
+
+        this.composition.forEach( a => {
+          if ( a.item && a.item.accept )
+            steps = steps.filter( step => step.id === a.id || a.item.accept.indexOf( step.id ) !== -1 );
+        });
+
+        return steps.concat([{
+          title: 'Bike Fit',
+          items: []
+        }]);
       },
       step() {
-        return this.data[ this.index ] || {
+        return this.steps[ this.index ] || {
           title: '?',
-          type: '?',
           items: []
         };
+      },
+      crumbs() {
+        return this.steps.map( a => a.title );
       },
       items() {
         return this.step.items;
@@ -180,13 +245,35 @@
         // Esperamos a que finalice la animación del loader
         setTimeout(() => this.$store.commit( 'set', { loading: false }), 500 );
       },
+      image( item ) {
+        return require(`@/assets/items/${ this.step.id }/${ item.image }`);
+      },
+      isDisabled( index ) {
+        if ( index < 0 ) return true;
+        if ( index >= this.steps.length ) return true;
+        if ( index !== 0 ) {
+          const step = this.steps[ index - 1 ];
+          const comp = step ? this.composition.find( a => a.id === step.id ) : null;
+          if ( ! comp || ! comp.item ) return true;
+        }
+        return false;
+      },
+      onChangeIndex( index ) {
+        if ( ! this.isDisabled( index )) this.index = index;
+      },
+      reset() {
+        this.composition = [];
+        this.selected = null;
+        this.index = 0;
+      },
       prev() {
-        const index = Math.max( this.index - 1, 0 );
-        this.$store.commit( 'set', { index });
+        this.index = Math.max( this.index - 1, 0 );
       },
       next() {
-        const index = Math.min( this.index + 1, this.data.length - 1 );
-        this.$store.commit( 'set', { index });
+        this.index = Math.min( this.index + 1, this.steps.length - 1 );
+      },
+      details() {
+
       }
     }
   }
@@ -216,6 +303,12 @@
     position: absolute;
     width: 100%;
     bottom: 0;
+  }
+
+  .btn-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
   }
 
   /* MEDIA */

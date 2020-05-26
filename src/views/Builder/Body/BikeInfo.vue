@@ -11,16 +11,14 @@
         Colour <span v-if="current" class="body-1 primary--text">{{ current.name || 'Unkwnown' }}</span>
       </p>
       <v-item-group :value="color" @change="$emit( 'input', $event )">
-        <v-item v-for="( item, i ) in colors" :key="i" v-slot:default="{ active, toggle }">
-
-            <Color
-              tag="a"
-              href="#"
-              :value="item.codes"
-              :selected="active"
-              @click="toggle"
-            />
-
+        <v-item v-for="( color, i ) in colors" :key="i" v-slot:default="{ active, toggle }">
+          <Color
+            tag="a"
+            href="#"
+            :value="[ color.a, color.b ]"
+            :selected="active"
+            @click="toggle"
+          />
         </v-item>
       </v-item-group>
     </div>

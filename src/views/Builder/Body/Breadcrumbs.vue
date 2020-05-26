@@ -1,14 +1,12 @@
 <template>
   <v-sheet v-bind="$attrs" :height="height">
-    <v-item-group :value="value" class="d-flex fill-height flex-nowrap" mandatory @change="$emit( 'input', $event )">
-      <v-item v-for="(item,i) in items" :key="i" v-slot="{ toggle }">
-        <a class="crumb" :class="color(i)"  @click="toggle">
-          {{ item }}
-          <span class="arrow" :style="dimension"/>
-          <span class="arrow-line" :style="dimension"/>
-        </a>
-      </v-item>
-    </v-item-group>
+    <div class="d-flex fill-height flex-nowrap">
+      <a class="crumb" v-for="(item,i) in items" :key="i" :class="color(i)" @click="toggle(i)">
+        {{ item }}
+        <span class="arrow" :style="dimension"/>
+        <span class="arrow-line" :style="dimension"/>
+      </a>
+    </div>
   </v-sheet>
 </template>
 
@@ -35,6 +33,9 @@
         if ( index === this.value ) return 'primary white--text';
         else if ( index < this.value ) return 'secondary white--text';
         else return 'light';
+      },
+      toggle( index ) {
+        this.$emit( 'input', index );
       }
     }
   }

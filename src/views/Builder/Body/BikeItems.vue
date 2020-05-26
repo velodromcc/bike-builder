@@ -22,10 +22,10 @@
               <p class="mb-0">{{ item.name }}</p>
               <p class="mb-0">
                 <Color
-                  v-for="( color, i ) in item.info.colors"
-                  class="mb-0"
+                  v-for="( color, i ) in item.colors"
                   :key="i"
-                  :value="color.codes"
+                  :value="[ color.a, color.b ]"
+                  class="mb-0"
                   small
                 />
                 <span v-if="item.info.more">
