@@ -27,13 +27,10 @@
 
             <BikeInfo
               v-if="current"
-              :type="step.title"
-              :title="current.name"
+              :item="current"
               :color="selectedColor"
-              :colors="current.colors"
-              has-description
               @input="selectedColor = $event"
-              @description="showDescription = true"
+              @description="showDescription(current)"
             />
 
             <div class="builder-bike">
@@ -45,9 +42,11 @@
         </div>
 
         <Footer
+          ref="footer"
           class="shrink"
+          :items="composition"
           @reset="reset"
-          @details="details"
+          @description="showDescription"
         />
 
       </v-row>
@@ -68,11 +67,11 @@
           </Btn>
 
         </v-sheet>
-        <v-sheet class="step-counter d-flex justify-center align-center shrink outline-bottom light--border" height="30" tile>
+        <v-row class="step-counter shrink outline-bottom light--border ma-0" justify="center" align="center">
 
           <span class="body-1">Step {{ index + 1 }} of {{ data.length }}</span>
 
-        </v-sheet>
+        </v-row>
         <div class="grow rel">
 
           <BikeItems
@@ -88,28 +87,28 @@
 
     <!-- DESCRIPTION -->
 
-    <v-dialog v-model="showDescription" max-width="1024">
-      <v-card class="light" min-height="560">
+    <v-dialog v-model="description.show" max-width="1024">
+      <v-card v-if="description.item" min-height="560">
 
-        <Btn class="btn-close" color="primary" @click="showDescription = false" x-small fab>
+        <Btn class="btn-close" color="primary" @click="description.show = false" x-small fab>
           <v-icon v-text="'$close'"/>
         </Btn>
 
-        <v-row v-if="current" class="pr-7 ma-0" style="min-height:560px">
-          <v-col class="pa-5" cols="12" md="6">
+        <v-row class="pr-7 ma-0" style="min-height:560px">
+          <v-col class="pa-10" cols="12" md="6">
 
             <v-img
-              :src="image( current )"
+              :src="require(`@/assets/items/${ description.item.type }/${ description.item.image }`)"
               height="100%"
               contain
             />
 
           </v-col>
-          <v-col class="pa-5" cols="12" md="6">
+          <v-col class="pa-10" cols="12" md="6">
 
-            <h3 class="display-4 primary--text">{{ current.name }}</h3>
-            <span class="caption">{{ step.title }}</span>
-            <div v-html="current.description"/>
+            <h3 class="display-4 primary--text">{{ description.item.name }}</h3>
+            <span class="caption">{{ description.item.step }}</span>
+            <div v-html="description.item.description"/>
 
           </v-col>
         </v-row>
@@ -139,7 +138,10 @@
       return {
         selected: -1,
         selectedColor: 0,
-        showDescription: false,
+        description: {
+          show: false,
+          item: null
+        },
         index: 0,
         composition: [],
         title: 'Bike Builder',
@@ -196,7 +198,10 @@
 
         var steps = this.data.slice()
           .sort(( a, b ) => a.priority - b.priority )
-          .map(( a, index ) => ({ ...a, index }));
+          .map(( a, index ) => {
+            a.items.forEach( item => item.step = a.title );
+            return { ...a, index };
+          });
 
         this.composition.forEach( a => {
           if ( a.item && a.item.accept )
@@ -245,9 +250,6 @@
         // Esperamos a que finalice la animación del loader
         setTimeout(() => this.$store.commit( 'set', { loading: false }), 500 );
       },
-      image( item ) {
-        return require(`@/assets/items/${ this.step.id }/${ item.image }`);
-      },
       isDisabled( index ) {
         if ( index < 0 ) return true;
         if ( index >= this.steps.length ) return true;
@@ -272,8 +274,10 @@
       next() {
         this.index = Math.min( this.index + 1, this.steps.length - 1 );
       },
-      details() {
-
+      showDescription( item ) {
+        this.$refs.footer.close();
+        this.description.item = item;
+        this.description.show = true;
       }
     }
   }
@@ -282,29 +286,26 @@
 <style lang="scss">
 
   .builder {
-
     position: absolute;
     top: 0;  bottom: 0;
     left: 0; right: 0;
     flex-wrap: nowrap;
-
-    .nav-builder {
-
-      position: relative;
-      background-color: white;
-      flex: 0 0 400px;
-      border-left: 1px solid var(--v-light-base);
-      z-index: 1;
-
-      & > nav .step-counter { display: none; }
-    }
+  }
+  .nav-builder {
+    position: relative;
+    background-color: white;
+    flex: 0 0 400px;
+    border-left: 1px solid var(--v-light-base);
+    z-index: 1;
+  }
+  .step-counter {
+    height: 30px;
   }
   .builder-bike {
     position: absolute;
     width: 100%;
     bottom: 0;
   }
-
   .btn-close {
     position: absolute;
     top: 10px;
@@ -315,22 +316,19 @@
 
   @media ( max-width: 966px ) {
     .builder {
-
       flex-direction: column;
+    }
+    .breadcrumbs, .step-counter {
+      display: none !important;
+    }
+    .nav-builder {
 
-      .breadcrumbs, .step-counter {
-        display: none;
-      }
-      .nav-builder {
+      flex: 0 0 250px;
+      border-left: 0;
+      border-top: 1px solid var(--v-light-base);
 
-        flex: 0 0 250px;
-        border-left: 0;
-        border-top: 1px solid var(--v-light-base);
-
-        & > nav { order: 1; }
-        & > nav .step-counter { display: block; }
-        & > div { order: 0; }
-      }
+      & > nav { order: 1; }
+      & > div { order: 0; }
     }
   }
 </style>

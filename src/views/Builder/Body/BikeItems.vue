@@ -22,7 +22,7 @@
               <p class="mb-0">{{ item.name }}</p>
               <p class="mb-0">
                 <Color
-                  v-for="( color, i ) in item.colors"
+                  v-for="( color, i ) in item.info.colors"
                   :key="i"
                   :value="[ color.a, color.b ]"
                   class="mb-0"
@@ -108,6 +108,9 @@
       top: 10px;
       right: 10px;
     }
+    .bike-item-info {
+      height: 44px;
+    }
     &.selected {
       background-color: var(--v-light-base);
       border-left: 5px solid var(--v-primary-base);
@@ -130,6 +133,7 @@
       height: 100%;
       border-bottom: 0;
       border-right: 1px solid var(--v-light-base);
+      vertical-align: top;
     }
   }
 </style>
