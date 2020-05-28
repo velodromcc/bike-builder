@@ -49,7 +49,6 @@
     components: { Color },
     props: {
       value: null,
-      type: String,
       items: {
         type: Array,
         default: () => []
@@ -58,7 +57,7 @@
     computed: {
       list() {
         return this.items.map( item => {
-          const image = require( '@/assets/items/' + [ this.type, item.image ].filter( _ => _ ).join('/'));
+          const image = require(`@/assets/items/${item.type}/${item.image}`);
           return {
             ...item,
             src: image,

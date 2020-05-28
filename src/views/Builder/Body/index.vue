@@ -35,7 +35,7 @@
 
             <div class="builder-bike">
 
-              <!-- BIKE -->
+              <Bike :items="composition"/>
 
             </div>
           </div>
@@ -78,7 +78,7 @@
             class="layer"
             v-model="selected"
             :type="step.id"
-            :items="step.items"
+            :items="items"
           />
 
         </div>
@@ -128,27 +128,28 @@
   import Breadcrumbs from './Breadcrumbs';
   import BikeItems from './BikeItems';
   import BikeInfo from './BikeInfo';
+  import Bike from './Bike';
 
   export default {
-    components: { Header, Footer, Breadcrumbs, BikeItems, BikeInfo, Btn },
+    components: { Header, Footer, Breadcrumbs, BikeItems, BikeInfo, Bike, Btn },
     mounted() {
       this.fetch();
     },
     data() {
       return {
+        index: 0,
         selected: -1,
         selectedColor: 0,
-        description: {
-          show: false,
-          item: null
-        },
-        index: 0,
-        composition: [],
+        selection: [],
         title: 'Bike Builder',
         text: '<p>' + [
           'Use this interactive configurator to design your dream bike; swap components, change colours, the choice is yours.',
           'Get in touch once you\'ve completed your build and we\'ll talk you through the options, including a <a href="#">Full Bike Fit</a>'
         ].join('</p><p>') + '</p>',
+        description: {
+          show: false,
+          item: null
+        },
         load: {
           value: 0,
           text: '',
@@ -162,11 +163,11 @@
     watch: {
       selected( value ) {
 
-        const { composition, step } = this;
-        var index = composition.findIndex( a => a.id === step.id );
-        if ( ! composition[index] ) index = composition.length;
+        const { selection, step } = this;
+        var index = selection.findIndex( a => a.id === step.id );
+        if ( ! selection[index] ) index = selection.length;
 
-        composition.splice( index, 1, {
+        selection.splice( index, 1, {
           ...step,
           value,
           item: step.items[ value ],
@@ -176,16 +177,16 @@
         this.selectedColor = 0;
       },
       selectedColor( color ) {
-        const { composition, step } = this;
-        var index = composition.findIndex( a => a.id === step.id );
-        if ( composition[index] ) composition[index].color = color;
+        const { selection, step } = this;
+        var index = selection.findIndex( a => a.id === step.id );
+        if ( selection[index] ) selection[index].color = color;
       },
       index() {
-        const { composition, step } = this;
-        const index = composition.findIndex( a => a.id === step.id );
-        if ( composition[index] ) {
-          this.selected = composition[index].value;
-          this.selectedColor = composition[index].color || 0;
+        const { selection, step } = this;
+        const index = selection.findIndex( a => a.id === step.id );
+        if ( selection[index] ) {
+          this.selected = selection[index].value;
+          this.selectedColor = selection[index].color || 0;
         } else {
           this.selected = null;
           this.selectedColor = 0;
@@ -194,6 +195,18 @@
     },
     computed: {
       ...mapState([ 'loading', 'data' ]),
+      accept() {
+        const { selection } = this;
+        return selection[0] && selection[0].item
+          ? [ selection[0].item.type ].concat( selection[0].item.accept )
+          : null;
+      },
+      composition() {
+        var { selection, accept } = this;
+        selection = selection.filter( a => a.item );
+        if ( accept ) selection = selection.filter( a => accept.indexOf( a.item.type ) !== -1 );
+        return selection;
+      },
       steps() {
 
         var steps = this.data.slice()
@@ -203,10 +216,9 @@
             return { ...a, index };
           });
 
-        this.composition.forEach( a => {
-          if ( a.item && a.item.accept )
-            steps = steps.filter( step => step.id === a.id || a.item.accept.indexOf( step.id ) !== -1 );
-        });
+        const { accept } = this;
+        if ( accept )
+          steps = steps.filter( step => accept.indexOf( step.id ) !== -1 );
 
         return steps.concat([{
           title: 'Bike Fit',
@@ -255,7 +267,7 @@
         if ( index >= this.steps.length ) return true;
         if ( index !== 0 ) {
           const step = this.steps[ index - 1 ];
-          const comp = step ? this.composition.find( a => a.id === step.id ) : null;
+          const comp = step ? this.selection.find( a => a.id === step.id ) : null;
           if ( ! comp || ! comp.item ) return true;
         }
         return false;
@@ -264,7 +276,7 @@
         if ( ! this.isDisabled( index )) this.index = index;
       },
       reset() {
-        this.composition = [];
+        this.selection = [];
         this.selected = null;
         this.index = 0;
       },
@@ -304,6 +316,7 @@
   .builder-bike {
     position: absolute;
     width: 100%;
+    padding-top: 100px;
     bottom: 0;
   }
   .btn-close {

@@ -3,8 +3,19 @@ const Framesets = [
     type: 'frameset',
     name: 'OPEN MIN.D',
     image: '114087-open-mind-bike-builder.png',
-    accept: [ 'bars-stem', 'groupsets', 'wheels', 'tyres', 'saddles' ],
+    accept: [ 'bars', 'groupsets', 'wheels', 'tyres', 'saddles' ],
     colors: [],
+    priority: 10,
+    base: true,
+    anchors: {
+      ['bar']:      [{ x: 530,  y:  59 },{ x:  551, y:  51 }],
+      ['groupset']: [{ x: 293,  y: 434 },{ x:  278, y: 434 }],
+      ['wheel-1']:  [{ x: 681,  y: 387 },{ x:  491, y: 387 }],
+      ['wheel-2']:  [{ x:  22,  y: 389 },{ x: -168, y: 389 }],
+      ['tyres-1']:  [{ x:  22,  y: 389 },{ x: -179, y: 389 }],
+      ['tyres-2']:  [{ x:  22,  y: 389 },{ x: -180, y: 389 }],
+      ['saddle']:   [{ x:  157, y:  26 },{ x:  157, y:  16 }],
+    }
   },
   {
     type: 'frameset',
@@ -18,6 +29,17 @@ const Framesets = [
       { name: 'BLACK/BLACK MATT AND GLOSSY', a: '#272624', b: '#4d4d4d' },
       { name: 'BLACK/WHITE MATT AND GLOSSY', a: '#272624', b: '#f4f4f4' }
     ],
+    priority: 10,
+    base: true,
+    anchors: {
+      ['bar']:      [{ x: 530,  y:  59 },{ x:  551, y:  51 }],
+      ['groupset']: [{ x: 293,  y: 434 },{ x:  278, y: 434 }],
+      ['wheel-1']:  [{ x: 681,  y: 387 },{ x:  491, y: 387 }],
+      ['wheel-2']:  [{ x:  22,  y: 389 },{ x: -168, y: 389 }],
+      ['tyres-1']:  [{ x:  22,  y: 389 },{ x: -179, y: 389 }],
+      ['tyres-2']:  [{ x:  22,  y: 389 },{ x: -180, y: 389 }],
+      ['saddle']:   [{ x:  157, y:  26 },{ x:  157, y:  16 }],
+    }
   },
   {
     type: 'frameset',
@@ -31,6 +53,17 @@ const Framesets = [
       { name: 'PEARL BLUE/GLOSSY',   a: '#184ed0', b: '#ffffff' },
       { name: 'BLACK/RED MATT',      a: '#000000', b: '#d01e1e' }
     ],
+    priority: 10,
+    base: true,
+    anchors: {
+      ['bar']:      [{ x: 530,  y:  59 },{ x:  551, y:  51 }],
+      ['groupset']: [{ x: 293,  y: 434 },{ x:  278, y: 434 }],
+      ['wheel-1']:  [{ x: 681,  y: 387 },{ x:  491, y: 387 }],
+      ['wheel-2']:  [{ x:  22,  y: 389 },{ x: -168, y: 389 }],
+      ['tyres-1']:  [{ x:  22,  y: 389 },{ x: -179, y: 389 }],
+      ['tyres-2']:  [{ x:  22,  y: 389 },{ x: -180, y: 389 }],
+      ['saddle']:   [{ x:  157, y:  26 },{ x:  157, y:  16 }],
+    }
   },
   {
     type: 'frameset',
@@ -42,27 +75,60 @@ const Framesets = [
       { name: 'BLACK/WHITE MATT',    a: '#202020', b: '#ffffff' },
       { name: 'ADMIRAL BLUE/GLOSSY', a: '#0835a1', b: '#ffffff' },
     ],
+    priority: 10,
+    base: true,
+    anchors: {
+      ['bar']:      [{ x: 530,  y:  59 },{ x:  551, y:  51 }],
+      ['groupset']: [{ x: 293,  y: 434 },{ x:  278, y: 434 }],
+      ['wheel-1']:  [{ x: 681,  y: 387 },{ x:  491, y: 387 }],
+      ['wheel-2']:  [{ x:  22,  y: 389 },{ x: -168, y: 389 }],
+      ['tyres-1']:  [{ x:  22,  y: 389 },{ x: -179, y: 389 }],
+      ['tyres-2']:  [{ x:  22,  y: 389 },{ x: -180, y: 389 }],
+      ['saddle']:   [{ x:  157, y:  26 },{ x:  157, y:  16 }],
+    }
   },
   {
     type: 'frameset',
     name: 'WILIER JENA',
     image: '102385-wilier-jena-blue-red-matt-no-bars.png',
-    accept: [ 'bars-stem', 'groupsets', 'wheels', 'tyres', 'saddles' ],
+    accept: [ 'bars', 'groupsets', 'wheels', 'tyres', 'saddles' ],
     colors: [
       { name: 'BLUE/RED MATT',     a: '#276e9d', b: '#bb2f2f' },
       { name: 'GREY/BLUE GLOSSY',  a: '#92928e', b: '#328ab2' },
       { name: 'BLACK/SILVER MATT', a: '#000000', b: '#eeeeee' },
     ],
+    priority: 10,
+    base: true,
+    anchors: {
+      ['bar']:      [{ x: 530,  y:  59 },{ x:  551, y:  51 }],
+      ['groupset']: [{ x: 293,  y: 434 },{ x:  278, y: 434 }],
+      ['wheel-1']:  [{ x: 681,  y: 387 },{ x:  491, y: 387 }],
+      ['wheel-2']:  [{ x:  22,  y: 389 },{ x: -168, y: 389 }],
+      ['tyres-1']:  [{ x:  22,  y: 389 },{ x: -179, y: 389 }],
+      ['tyres-2']:  [{ x:  22,  y: 389 },{ x: -180, y: 389 }],
+      ['saddle']:   [{ x:  157, y:  26 },{ x:  157, y:  16 }],
+    }
   },
   {
     type: 'frameset',
     name: 'OPEN U.P.',
     image: '73140-open-up-blue-3.png',
-    accept: [ 'bars-stem', 'groupsets', 'wheels', 'tyres', 'seatposts', 'saddles' ],
+    accept: [ 'bars', 'groupsets', 'wheels', 'tyres', 'seatposts', 'saddles' ],
     colors: [
       { name: 'BLUE',  a: '#44a6e1', b: '#44a6e1' },
       { name: 'GREEN', a: '#71ca4d', b: '#71ca4d' },
     ],
+    priority: 10,
+    base: true,
+    anchors: {
+      ['bar']:      [{ x: 530,  y:  59 },{ x:  551, y:  51 }],
+      ['groupset']: [{ x: 293,  y: 434 },{ x:  278, y: 434 }],
+      ['wheel-1']:  [{ x: 681,  y: 387 },{ x:  491, y: 387 }],
+      ['wheel-2']:  [{ x:  22,  y: 389 },{ x: -168, y: 389 }],
+      ['tyres-1']:  [{ x:  22,  y: 389 },{ x: -179, y: 389 }],
+      ['tyres-2']:  [{ x:  22,  y: 389 },{ x: -180, y: 389 }],
+      ['saddle']:   [{ x:  157, y:  26 },{ x:  157, y:  16 }],
+    }
   }
 ];
 
