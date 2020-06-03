@@ -39,13 +39,13 @@
                   <v-img
                     class="align-end"
                     height="200px"
-                    :src="require(`@/assets/items/${ item.type }/${ item.image }`)"
+                    :src="require(`@/assets/items/${ item.items[ item.color || 0 ].image }`)"
                     contain
                   />
                 </div>
 
                 <div class="px-4 mb-2">
-                  <p class="caption mb-0">{{ item.step }}</p>
+                  <p class="caption mb-0">{{ item.step.title }}</p>
                   <p class="headline mb-0">{{ item.name }}</p>
                 </div>
 

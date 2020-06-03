@@ -14,43 +14,57 @@ export default new Vuex.Store({
         id: 'frameset',
         title: 'Frameset',
         items: items.frameset,
-        priority: 0
+        order: 0,
+        index: 0,
+        scale: 1
       },
       {
         id: 'bars',
         title: 'Bars/Stem',
         items: items.bars,
-        priority: 1
+        order: 1,
+        index: 0,
+        scale: 1
       },
       {
         id: 'groupsets',
         title: 'Groupsets',
         items: items.groupsets,
-        priority: 2
+        order: 2,
+        index: 0,
+        scale: 1
       },
       {
         id: 'wheels',
         title: 'Wheels',
         items: items.wheels,
-        priority: 3
+        order: 3,
+        index: 0,
+        scale: 1
       },
       {
         id: 'tyres',
         title: 'Tyres',
         items: items.tyres,
-        priority: 4
+        order: 4,
+        index: 0,
+        scale: 1
       },
       {
         id: 'seatposts',
         title: 'Seatposts',
         items: items.seatposts,
-        priority: 5
+        order: 5,
+        index: 0,
+        scale: 1
       },
       {
         id: 'saddles',
         title: 'Saddles',
         items: items.saddles,
-        priority: 6
+        order: 6,
+        index: 0,
+        scale: 1
       }
     ]
   },

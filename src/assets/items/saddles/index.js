@@ -1,27 +1,39 @@
 const Saddles = [
   {
     type: 'saddles',
+    anchor: 'saddle',
     name: 'BONTRAGER MONTROSE PRO',
-    image: '73349-bontrager-montrose-pro-saddle.png',
-    colors: [],
-    anchor: 'saddle',
-    origin: [{ x: 280, y: 148 },{ x: 280, y: 108 }]
+    origin: { x: 280, y: 148 },
+    items: [
+      {
+        image: 'saddles/73349-bontrager-montrose-pro-saddle.png',
+        color: null
+      }
+    ]
   },
   {
     type: 'saddles',
+    anchor: 'saddle',
+    origin: { x: 280, y: 148 },
     name: 'FIZIK ARIONE R1 OPEN',
-    image: '66463-arione-r1-open-regular-black.png',
-    colors: [],
-    anchor: 'saddle',
-    origin: [{ x: 280, y: 148 },{ x: 280, y: 108 }]
+    items: [
+      {
+        image: 'saddles/66463-arione-r1-open-regular-black.png',
+        color: null
+      }
+    ]
   },
   {
     type: 'saddles',
-    name: 'FIZIK ALIANTE R1 OPEN',
-    image: '72972-fizik-aliante-r1-open.png',
-    colors: [],
     anchor: 'saddle',
-    origin: [{ x: 280, y: 148 },{ x: 280, y: 108 }]
+    name: 'FIZIK ALIANTE R1 OPEN',
+    origin: { x: 280, y: 148 },
+    items: [
+      {
+        image: 'saddles/72972-fizik-aliante-r1-open.png',
+        color: null
+      }
+    ]
   }
 ];
 

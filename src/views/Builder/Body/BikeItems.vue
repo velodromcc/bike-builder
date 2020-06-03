@@ -24,7 +24,7 @@
                 <Color
                   v-for="( color, i ) in item.info.colors"
                   :key="i"
-                  :value="[ color.a, color.b ]"
+                  :value="color.value"
                   class="mb-0"
                   small
                 />
@@ -56,15 +56,18 @@
     },
     computed: {
       list() {
-        return this.items.map( item => {
-          const image = require(`@/assets/items/${item.type}/${item.image}`);
+        return this.items.map( a => {
+
+          const image  = require(`@/assets/items/${ a.items[0].image }`);
+          const colors = a.items.map( b => b.color ).filter( _ => _ );
+
           return {
-            ...item,
+            ...a,
             src: image,
             lazySrc: image,
             info: {
-              colors: item.colors.slice( 0, 3 ),
-              more: item.colors.length > 3 ? item.colors.length - 3 : 0
+              colors: colors.slice( 0, 3 ),
+              more: colors.length > 3 ? colors.length - 3 : 0
             }
           };
         });

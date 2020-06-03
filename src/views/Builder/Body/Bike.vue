@@ -25,20 +25,25 @@
       }
     },
     computed: {
+      composition() {
+        return this.items.map( a => {
+          if ( ! a.item ) return;
+          var item = { ...a.item, ...a.item.items[ a.color || 0 ] };
+          if ( ! item.parts ) return item;
+          return item.parts.map( part => ({ ...item, ...part }));
+        })
+        .flat()
+        .filter( a => a )
+      },
       images() {
 
-        const buffer  = this.buffer.slice();
-        const index   = buffer.findIndex( a => a.base );
         const anchors = {};
-        const base    = this.calcDimension(
-          index !== -1 ? buffer.splice( index, 1 ) : null, 0, anchors
-        );
+        const buffer  = this.buffer.slice().sort(( a, b ) => a.step.order - b.step.order );
+        const base    = this.calcDimension( buffer.splice( 0, 1 )[0], anchors );
 
-        return [ base ].concat(
-            buffer.map( item => this.calcDimension( item, base, anchors ))
-          )
+        return [ base ].concat( buffer.map( a => this.calcDimension( a, anchors, base )))
           .filter( a => a )
-          .sort(( a, b ) => a.index - b.index )
+          .sort(( a, b ) => a.step.index - b.step.index );
       }
     },
     watch: {
@@ -70,86 +75,50 @@
       },
       loadImages() {
         this.buffer = [];
-        this.items.forEach( a => this.loadImage( a.item ));
+        this.composition.forEach( this.loadImage );
       },
       loadImage( item ) {
 
-        // Get all image to Draw
+        if ( ! item.image ) return;
 
-        var items = this.items || [];
-        if ( item.anchor ) {
+        const image = new Image();
+        image.src = require(`@/assets/items/${ item.image }`);
+        item = { ...item, image };
 
-          items.unshifth({
-            anchor:  item.anchor,
-            origin:  item.origin || [],
-            image:   item.image
-          });
-
-        } else if ( this.base ) {
-
-          items.unshifth({
-            base: true,
-            image: item.image
-          });
+        if ( image.complete && image.naturalHeight !== 0 ) this.buffer.push( item );
+        else {
+          image.addEventListener( 'load', () => this.buffer.push( item ));
         }
-
-        // Load image
-
-        items.forEach( a => {
-
-          var image = new Image();
-          image.src = require(`@/assets/items/${ item.type }/${ a.image }`);
-          a.image   = image;
-          a.index   = a.index == null ? item.priority : a.index;
-          a.anchors = a.anchors || item.anchors;
-
-          if ( image.complete && image.naturalHeight !== 0 ) {
-
-            this.buffer.push( a );
-
-          } else {
-
-            image.addEventListener( 'load', () => this.buffer.push( a ));
-
-          }
-        });
       },
-      calcDimension( item, base, anchors ) {
+      calcDimension( item, anchors, base ) {
 
         if ( ! item ) return;
 
         // Merge anchors
         Object.assign( anchors, item.anchors );
-        const { anchor, origin, image } = item;
 
-        if ( base && anchors[anchor] ) {
+        const { image } = item;
+        const { scale } = item.step;
+        const origin = item.origin || { x: ( item.width || 0 ) / 2, y: ( item.height || 0 ) / 2 };
+        const anchor = anchors[ item.anchor ];
 
-          var a = anchors[anchor][0] || { x: 0, y: 0 },
-              b = anchors[anchor][1] || { x: 0, y: 0 },
-              A = origin[0] || { x: 0, y: 0 },
-              B = origin[1] || { x: 0, y: 0 },
-              d = Math.sqrt( Math.pow( b.x - a.x, 2 ) + Math.pow( b.y - a.y, 2 )),
-              D = Math.sqrt( Math.pow( B.x - A.x, 2 ) + Math.pow( B.y - A.y, 2 )),
-              scale = D / d;
-
+        if ( base && anchor ) {
           return {
             ...item,
-            x: a.x - ( A.x * scale ),
-            y: a.y - ( A.y * scale ),
-            width: image.width * scale,
-            height: image.height * scale
-          }
-
-        } else if ( item.base ) {
-
-          return {
-            ...item,
-            x: ( this.width - image.width ) / 2,
-            y: ( this.height - image.height ) / 2,
-            width: image.width,
-            height: image.height
-          }
+            x: base.x + ( anchor.x * base.step.scale ) - ( origin.x * scale ),
+            y: base.y + ( anchor.y * base.step.scale ) - ( origin.y * scale ),
+            width: item.width * scale,
+            height: item.height * scale
+          };
         }
+
+        return {
+          ...item,
+          x: this.width / 2 - ( origin.x * scale ),
+          y: this.height / 2 - ( origin.y * scale ),
+          width: image.width * scale,
+          height: image.height * scale
+        };
       }
     },
     mounted() {
@@ -161,8 +130,7 @@
 
 <style>
   .bike-canvas {
-    height: 100%;
-    width: auto;
+    width: 100%;
     margin: 0 auto;
   }
 </style>

@@ -2,7 +2,7 @@
   <div>
 
     <div class="item-info px-4 mb-2">
-      <p class="caption mb-0">{{ item.step }}</p>
+      <p class="caption mb-0">{{ item.step.title }}</p>
       <p class="headline mb-0">{{ item.name }}</p>
     </div>
 
@@ -14,7 +14,7 @@
         <v-item v-for="( color, i ) in colors" :key="i" v-slot:default="{ active, toggle }">
           <Color
             tag="a" href="#"
-            :value="[ color.a, color.b ]"
+            :value="color.value"
             :selected="active"
             @click="toggle"
           />
@@ -46,7 +46,9 @@
     },
     computed: {
       colors() {
-        return this.item ? this.item.colors || [] : [];
+        return ( this.item.items || [] )
+          .map( a => a.color )
+          .filter( a => a );
       },
       currentColor() {
         return this.colors[ this.color ];

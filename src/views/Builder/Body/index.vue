@@ -77,7 +77,6 @@
           <BikeItems
             class="layer"
             v-model="selected"
-            :type="step.id"
             :items="items"
           />
 
@@ -132,6 +131,13 @@
 
   export default {
     components: { Header, Footer, Breadcrumbs, BikeItems, BikeInfo, Bike, Btn },
+    created() {
+      this.data.forEach( step => {
+        step.items.forEach( item => {
+          item.step = step;
+        });
+      });
+    },
     mounted() {
       this.fetch();
     },
@@ -209,14 +215,10 @@
       },
       steps() {
 
-        var steps = this.data.slice()
-          .sort(( a, b ) => a.priority - b.priority )
-          .map(( a, index ) => {
-            a.items.forEach( item => item.step = a.title );
-            return { ...a, index };
-          });
-
         const { accept } = this;
+        var steps = this.data.slice()
+          .sort(( a, b ) => a.order - b.order );
+
         if ( accept )
           steps = steps.filter( step => accept.indexOf( step.id ) !== -1 );
 
@@ -318,6 +320,7 @@
     width: 100%;
     padding-top: 100px;
     bottom: 0;
+    z-index: -1;
   }
   .btn-close {
     position: absolute;

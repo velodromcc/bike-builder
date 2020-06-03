@@ -1,17 +1,17 @@
 <template>
   <component :is="tag" v-bind="$attrs" v-on="$listeners" class="b-color outline light--border" :class="{ selected, small }">
-    <span v-for="( color, e ) in colors" :key="e" :style="`border-color: ${ color }`"/>
+    <span :style="`border-color: ${ color[0] }`"/>
+    <span :style="`border-color: ${ color[1] || color[0] }`"/>
   </component>
 </template>
 
 <script>
 
+  import { toArray } from '@/utils';
+
   export default {
     props: {
-      value: {
-        type: Array,
-        default: () => []
-      },
+      value: [ String, Array ],
       tag: {
         type: String,
         default: 'span'
@@ -20,8 +20,8 @@
       selected: Boolean
     },
     computed: {
-      colors() {
-        return this.value.slice( 0, 2 );
+      color() {
+        return toArray( this.value );
       }
     }
   }
