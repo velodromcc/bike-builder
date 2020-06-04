@@ -3,7 +3,7 @@ const Framesets = [
     type: 'frameset',
     name: 'OPEN MIN.D',
     accept: [ 'bars', 'groupsets', 'wheels', 'tyres', 'saddles' ],
-    width: 640,
+    width: 697,
     height: 460,
     items: [
       {
@@ -16,7 +16,7 @@ const Framesets = [
       ['groupset']: { x: 293,  y: 434 },
       ['wheel-1']:  { x: 681,  y: 387 },
       ['wheel-2']:  { x:  22,  y: 389 },
-      ['tyres-1']:  { x:  22,  y: 389 },
+      ['tyres-1']:  { x: 681,  y: 387 },
       ['tyres-2']:  { x:  22,  y: 389 },
       ['saddle']:   { x:  157, y:  26 },
     }
@@ -25,7 +25,7 @@ const Framesets = [
     type: 'frameset',
     name: 'WILIER CENTO10NDR',
     accept: [ 'groupsets', 'wheels', 'tyres', 'saddles' ],
-    width: 640,
+    width: 669,
     height: 460,
     items: [
       {
@@ -54,7 +54,7 @@ const Framesets = [
       ['groupset']: { x: 293,  y: 434 },
       ['wheel-1']:  { x: 681,  y: 387 },
       ['wheel-2']:  { x:  22,  y: 389 },
-      ['tyres-1']:  { x:  22,  y: 389 },
+      ['tyres-1']:  { x: 681,  y: 387 },
       ['tyres-2']:  { x:  22,  y: 389 },
       ['saddle']:   { x:  157, y:  26 },
     }
@@ -63,7 +63,7 @@ const Framesets = [
     type: 'frameset',
     name: 'WILIER CENTO10PRO',
     accept: [ 'groupsets', 'wheels', 'tyres', 'saddles' ],
-    width: 640,
+    width: 642,
     height: 460,
     items: [
       {
@@ -92,7 +92,7 @@ const Framesets = [
       ['groupset']: { x: 293,  y: 434 },
       ['wheel-1']:  { x: 681,  y: 387 },
       ['wheel-2']:  { x:  22,  y: 389 },
-      ['tyres-1']:  { x:  22,  y: 389 },
+      ['tyres-1']:  { x: 681,  y: 387 },
       ['tyres-2']:  { x:  22,  y: 389 },
       ['saddle']:   { x:  157, y:  26 },
     }
@@ -101,7 +101,7 @@ const Framesets = [
     type: 'frameset',
     name: 'WILIER 0 SLR',
     accept: [ 'groupsets', 'wheels', 'tyres', 'saddles' ],
-    width: 640,
+    width: 687,
     height: 460,
     items: [
       {
@@ -122,7 +122,7 @@ const Framesets = [
       ['groupset']: { x: 293,  y: 434 },
       ['wheel-1']:  { x: 681,  y: 387 },
       ['wheel-2']:  { x:  22,  y: 389 },
-      ['tyres-1']:  { x:  22,  y: 389 },
+      ['tyres-1']:  { x: 681,  y: 387 },
       ['tyres-2']:  { x:  22,  y: 389 },
       ['saddle']:   { x:  157, y:  26 },
     }
@@ -131,7 +131,7 @@ const Framesets = [
     type: 'frameset',
     name: 'WILIER JENA',
     accept: [ 'bars', 'groupsets', 'wheels', 'tyres', 'saddles' ],
-    width: 640,
+    width: 657,
     height: 460,
     items: [
       {
@@ -152,7 +152,7 @@ const Framesets = [
       ['groupset']: { x: 293,  y: 434 },
       ['wheel-1']:  { x: 681,  y: 387 },
       ['wheel-2']:  { x:  22,  y: 389 },
-      ['tyres-1']:  { x:  22,  y: 389 },
+      ['tyres-1']:  { x: 681,  y: 387 },
       ['tyres-2']:  { x:  22,  y: 389 },
       ['saddle']:   { x:  157, y:  26 },
     }
@@ -161,8 +161,8 @@ const Framesets = [
     type: 'frameset',
     name: 'OPEN U.P.',
     accept: [ 'bars', 'groupsets', 'wheels', 'tyres', 'seatposts', 'saddles' ],
-    width: 640,
-    height: 460,
+    width: 700,
+    height: 396,
     items: [
       {
         image: 'frameset/73140-open-up-blue-3.png',
@@ -178,7 +178,7 @@ const Framesets = [
       ['groupset']: { x: 293,  y: 434 },
       ['wheel-1']:  { x: 681,  y: 387 },
       ['wheel-2']:  { x:  22,  y: 389 },
-      ['tyres-1']:  { x:  22,  y: 389 },
+      ['tyres-1']:  { x: 681,  y: 387 },
       ['tyres-2']:  { x:  22,  y: 389 },
       ['saddle']:   { x:  157, y:  26 },
     }

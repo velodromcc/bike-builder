@@ -37,13 +37,41 @@
       },
       images() {
 
-        const anchors = {};
-        const buffer  = this.buffer.slice().sort(( a, b ) => a.step.order - b.step.order );
-        const base    = this.calcDimension( buffer.splice( 0, 1 )[0], anchors );
+        const items = [];
 
-        return [ base ].concat( buffer.map( a => this.calcDimension( a, anchors, base )))
-          .filter( a => a )
-          .sort(( a, b ) => a.step.index - b.step.index );
+        this.buffer
+          .slice()
+          .sort(( a, b ) => a.step.order - b.step.order )
+          .forEach( item => {
+
+            if ( ! item ) return;
+
+            item.width   = item.width  || 0;
+            item.height  = item.height || 0;
+            const origin = item.origin || { x: item.width / 2, y: item.height / 2 };
+            const base   = items.find( a => ( a.anchors || {} )[ item.anchor ]);
+            const anchor = base ? base.anchors[ item.anchor ] : null;
+
+            if ( base && anchor ) {
+              return items.unshift({
+                ...item,
+                x: base.x + ( anchor.x * base.step.scale ) - ( origin.x * item.step.scale ),
+                y: base.y + ( anchor.y * base.step.scale ) - ( origin.y * item.step.scale ),
+                width: item.width * item.step.scale,
+                height: item.height * item.step.scale
+              });
+            }
+
+            items.unshift({
+              ...item,
+              x: this.width / 2 - ( origin.x * item.step.scale ),
+              y: this.height / 2 - ( origin.y * item.step.scale ),
+              width: item.width * item.step.scale,
+              height: item.height * item.step.scale
+            });
+          });
+
+        return items.sort(( a, b ) => a.step.index - b.step.index );
       }
     },
     watch: {
@@ -89,36 +117,6 @@
         else {
           image.addEventListener( 'load', () => this.buffer.push( item ));
         }
-      },
-      calcDimension( item, anchors, base ) {
-
-        if ( ! item ) return;
-
-        // Merge anchors
-        Object.assign( anchors, item.anchors );
-
-        const { image } = item;
-        const { scale } = item.step;
-        const origin = item.origin || { x: ( item.width || 0 ) / 2, y: ( item.height || 0 ) / 2 };
-        const anchor = anchors[ item.anchor ];
-
-        if ( base && anchor ) {
-          return {
-            ...item,
-            x: base.x + ( anchor.x * base.step.scale ) - ( origin.x * scale ),
-            y: base.y + ( anchor.y * base.step.scale ) - ( origin.y * scale ),
-            width: item.width * scale,
-            height: item.height * scale
-          };
-        }
-
-        return {
-          ...item,
-          x: this.width / 2 - ( origin.x * scale ),
-          y: this.height / 2 - ( origin.y * scale ),
-          width: image.width * scale,
-          height: image.height * scale
-        };
       }
     },
     mounted() {
@@ -130,7 +128,7 @@
 
 <style>
   .bike-canvas {
-    width: 100%;
-    margin: 0 auto;
+    max-width: 100%;
+    max-height: 420px;
   }
 </style>

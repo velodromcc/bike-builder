@@ -1,6 +1,11 @@
 <template>
   <div ref="container" v-resize="onResize" class="bike-items autoscroll">
-    <v-item-group class="fill-height" :value="value" @change="$emit( 'input', $event )">
+    <v-item-group
+      class="fill-height"
+      :value="value"
+      :mandatory="value != null"
+      @change="$emit( 'input', $event )"
+    >
       <v-item v-for="( item, i ) in list" v-slot="{ active, toggle }" :key="i">
         <a class="bike-item body-1 pt-3" href="#" :class="{ selected: active }" @click="toggle">
 
@@ -75,7 +80,7 @@
     },
     data() {
       return {
-        imageHeight: null
+        imageHeight: 140
       }
     },
     methods: {
@@ -87,7 +92,7 @@
             this.imageHeight = container.clientHeight - info.clientHeight;
           }
         } else {
-          this.imageHeight = null;
+          this.imageHeight = 140;
         }
       }
     }

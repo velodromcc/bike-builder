@@ -12,21 +12,22 @@
     <v-row class="builder" no-gutters>
       <v-row class="flex-column flex-nowrap grow" no-gutters>
 
-        <Header class="shrink"/>
+        <Header class="builder-header shrink"/>
 
         <Breadcrumbs
+          class="breadcrumbs body-1 outline-bottom light--border"
           :value="index"
           :items="crumbs"
           :height="30"
-          class="breadcrumbs body-1 outline-bottom light--border"
           @input="onChangeIndex"
         />
 
-        <div class="builder-info grow rel">
-          <div class="layer py-4">
+        <div class="grow rel">
+          <div class="layer autoscroll py-4">
 
             <BikeInfo
               v-if="current"
+              class="builder-info"
               :item="current"
               :color="selectedColor"
               @input="selectedColor = $event"
@@ -97,7 +98,7 @@
           <v-col class="pa-10" cols="12" md="6">
 
             <v-img
-              :src="require(`@/assets/items/${ description.item.type }/${ description.item.image }`)"
+              :src="require(`@/assets/items/${ description.image }`)"
               height="100%"
               contain
             />
@@ -106,7 +107,7 @@
           <v-col class="pa-10" cols="12" md="6">
 
             <h3 class="display-4 primary--text">{{ description.item.name }}</h3>
-            <span class="caption">{{ description.item.step }}</span>
+            <span class="caption">{{ description.item.step.title }}</span>
             <div v-html="description.item.description"/>
 
           </v-col>
@@ -144,7 +145,7 @@
     data() {
       return {
         index: 0,
-        selected: -1,
+        selected: null,
         selectedColor: 0,
         selection: [],
         title: 'Bike Builder',
@@ -154,7 +155,8 @@
         ].join('</p><p>') + '</p>',
         description: {
           show: false,
-          item: null
+          item: null,
+          image: null
         },
         load: {
           value: 0,
@@ -290,8 +292,9 @@
       },
       showDescription( item ) {
         this.$refs.footer.close();
-        this.description.item = item;
-        this.description.show = true;
+        this.description.item  = item;
+        this.description.image = item.items[0].image;
+        this.description.show  = true;
       }
     }
   }
@@ -315,12 +318,21 @@
   .step-counter {
     height: 30px;
   }
+  .builder-header, .breadcrumbs {
+    position: relative;
+    z-index: 2;
+  }
+  .builder-info {
+    position: relative;
+    z-index: 1;
+  }
   .builder-bike {
     position: absolute;
     width: 100%;
     padding-top: 100px;
     bottom: 0;
-    z-index: -1;
+    z-index: 0;
+    text-align: center;
   }
   .btn-close {
     position: absolute;
@@ -336,6 +348,10 @@
     }
     .breadcrumbs, .step-counter {
       display: none !important;
+    }
+    .builder-bike {
+      position: static;
+      padding-top: 0;
     }
     .nav-builder {
 

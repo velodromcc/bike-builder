@@ -2,6 +2,8 @@ const Wheels = [
   {
     type: 'wheels',
     name: 'ZIPP 303S',
+    width: 460,
+    height: 460,
     items: [
       {
         image: 'wheels/112110-zipp-303s-front.png',
@@ -24,6 +26,8 @@ const Wheels = [
   {
     type: 'wheels',
     name: 'ROVAL TERRA CLX',
+    width: 460,
+    height: 460,
     items: [
       {
         image: 'wheels/95998-roval-terra-clx-front.png',
@@ -46,6 +50,8 @@ const Wheels = [
   {
     type: 'wheels',
     name: 'ROVAL TERRA CLX EVO',
+    width: 460,
+    height: 460,
     items: [
       {
         image: 'wheels/96002-roval-clx-evo-ft.png',

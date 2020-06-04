@@ -2,6 +2,8 @@ const Groupsets = [
   {
     type: 'groupsets',
     name: 'SRAM FORCE ETAP AXS WIDE',
+    width: 500,
+    height: 308,
     items: [
       {
         image: 'groupsets/113404-sram-force-43-30-wide-crankset.png',
@@ -30,6 +32,8 @@ const Groupsets = [
   {
     type: 'groupsets',
     name: 'SRAM RED ETAP AXS (2X)',
+    width: 600,
+    height: 410,
     items: [
       {
         image: 'groupsets/76245-fc-red-d1-50-37t-dub-side-m.png',
@@ -47,6 +51,8 @@ const Groupsets = [
   {
     type: 'groupsets',
     name: 'SRAM RED ETAP AXS (1X)',
+    width: 600,
+    height: 378,
     items: [
       {
         image: 'groupsets/76309-fc-red-1-d1-42t-dub-side-m.png',

@@ -2,6 +2,8 @@ const Tyres = [
   {
     type: 'tyres',
     name: 'CONTINENTAL GP 5000 TL',
+    width: 459,
+    height: 460,
     items: [
       {
         image: 'tyres/71337-conti-gp5000.png',
@@ -24,6 +26,8 @@ const Tyres = [
   {
     type: 'tyres',
     name: 'CONTINENTAL GRAND PRIX 4 SEASON',
+    width: 460,
+    height: 460,
     items: [
       {
         image: 'tyres/74560-conti-gp-4-season.png',
@@ -46,6 +50,8 @@ const Tyres = [
   {
     type: 'tyres',
     name: 'SCHWALBE PRO ONE',
+    width: 460,
+    height: 460,
     items: [
       {
         image: 'tyres/66267-tyre-2.png',

@@ -15,7 +15,7 @@ export default new Vuex.Store({
         title: 'Frameset',
         items: items.frameset,
         order: 0,
-        index: 0,
+        index: 5,
         scale: 1
       },
       {
@@ -23,23 +23,23 @@ export default new Vuex.Store({
         title: 'Bars/Stem',
         items: items.bars,
         order: 1,
-        index: 0,
-        scale: 1
+        index: 6,
+        scale: .35
       },
       {
         id: 'groupsets',
         title: 'Groupsets',
         items: items.groupsets,
         order: 2,
-        index: 0,
-        scale: 1
+        index: 7,
+        scale: .4
       },
       {
         id: 'wheels',
         title: 'Wheels',
         items: items.wheels,
         order: 3,
-        index: 0,
+        index: 3,
         scale: 1
       },
       {
@@ -47,7 +47,7 @@ export default new Vuex.Store({
         title: 'Tyres',
         items: items.tyres,
         order: 4,
-        index: 0,
+        index: 4,
         scale: 1
       },
       {
@@ -55,7 +55,7 @@ export default new Vuex.Store({
         title: 'Seatposts',
         items: items.seatposts,
         order: 5,
-        index: 0,
+        index: 2,
         scale: 1
       },
       {
@@ -63,8 +63,8 @@ export default new Vuex.Store({
         title: 'Saddles',
         items: items.saddles,
         order: 6,
-        index: 0,
-        scale: 1
+        index: 6,
+        scale: .3
       }
     ]
   },
