@@ -6,8 +6,7 @@
 
 <script>
 
-  //import Builder from '@/views/Builder';
-  import Builder from '@/views/Builder/Body/index.vue';
+  import Builder from '@/views/Builder';
 
   export default {
     components: {

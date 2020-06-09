@@ -1,15 +1,9 @@
 <template>
   <main class="fill-height rel">
 
-    <!--<Loading
-      v-if="loading"
-      :value="load.value"
-      :load-text="load.text"
-      :title="title"
-      :text="text"
-      />-->
+    <Loading v-if="loading" :value="loaded" />
 
-    <v-row class="builder" no-gutters>
+    <v-row v-else class="builder" no-gutters>
       <v-row class="flex-column flex-nowrap grow" no-gutters>
 
         <Header class="builder-header shrink"/>
@@ -60,7 +54,7 @@
           </Btn>
 
           <span class="title white--text">
-            {{ step.title }} {{ $vuetify.breakpoint.mdAndUp ? '' : '(' + [ index + 1, data.length ].join(' of ') + ')' }}
+            {{ step.title }} {{ $vuetify.breakpoint.mdAndUp ? '' : '( ' + [ index + 1, steps.length ].join(' of ') + ' )' }}
           </span>
 
           <Btn class="mr-2" color="white" :disabled="isDisabled( index + 1 )" @click="next" icon>
@@ -70,14 +64,14 @@
         </v-sheet>
         <v-row class="step-counter shrink outline-bottom light--border ma-0" justify="center" align="center">
 
-          <span class="body-1">Step {{ index + 1 }} of {{ data.length }}</span>
+          <span class="body-1">Step {{ index + 1 }} of {{ steps.length }}</span>
 
         </v-row>
         <div class="grow rel">
 
           <BikeItems
             class="layer"
-            v-model="selected"
+            v-model="selectedItem"
             :items="items"
           />
 
@@ -98,7 +92,7 @@
           <v-col class="pa-10" cols="12" md="6">
 
             <v-img
-              :src="require(`@/assets/items/${ description.image }`)"
+              :src="description.image"
               height="100%"
               contain
             />
@@ -121,157 +115,164 @@
 <script>
 
   import { mapState } from 'vuex';
-  //import Loading from '../Loading';
-  import { Btn } from '@/components';
+  import { CONSTANTS, itemImage } from '@/utils';
+
+  // COMPONENTS
+
+  import Loading from '../Loading';
   import Header from './Header';
   import Footer from './Footer';
   import Breadcrumbs from './Breadcrumbs';
   import BikeItems from './BikeItems';
   import BikeInfo from './BikeInfo';
   import Bike from './Bike';
+  import { Btn } from '@/components';
+
+  // Constants
+
+  const ITEMS_LIST = Object.keys( CONSTANTS ).map( key => ({
+    id: key,
+    ...CONSTANTS[key]
+  }));
 
   export default {
-    components: { Header, Footer, Breadcrumbs, BikeItems, BikeInfo, Bike, Btn },
-    created() {
-      this.data.forEach( step => {
-        step.items.forEach( item => {
-          item.step = step;
-        });
-      });
+    components: {
+      Loading,
+      Header,
+      Footer,
+      Breadcrumbs,
+      BikeItems,
+      BikeInfo,
+      Bike,
+      Btn
     },
     mounted() {
       this.fetch();
     },
     data() {
       return {
+        loaded: 0,
         index: 0,
-        selected: null,
+        selectedItem: null,
         selectedColor: 0,
         selection: [],
-        title: 'Bike Builder',
-        text: '<p>' + [
-          'Use this interactive configurator to design your dream bike; swap components, change colours, the choice is yours.',
-          'Get in touch once you\'ve completed your build and we\'ll talk you through the options, including a <a href="#">Full Bike Fit</a>'
-        ].join('</p><p>') + '</p>',
         description: {
           show: false,
           item: null,
           image: null
-        },
-        load: {
-          value: 0,
-          text: '',
-          steps: [
-            { handler: () => this.$store.dispatch('loadInfo'), text: 'Loading...', size: 20 },
-            { handler: () => this.$store.dispatch('loadData'), text: 'Loading interface...', size: 80 }
-          ]
         }
       }
     },
     watch: {
-      selected( value ) {
-
-        const { selection, step } = this;
-        var index = selection.findIndex( a => a.id === step.id );
-        if ( ! selection[index] ) index = selection.length;
-
-        selection.splice( index, 1, {
-          ...step,
-          value,
-          item: step.items[ value ],
-          color: 0
-        });
-
-        this.selectedColor = 0;
+      selectedItem( value ) {
+        const { selection, index, step } = this;
+        if ( value != null ) {
+          this.selectedColor = 0;
+          selection.splice( index, 1, {
+            props: step,
+            selected: value,
+            item: this.current,
+            color: 0
+          });
+        }
       },
       selectedColor( color ) {
-        const { selection, step } = this;
-        var index = selection.findIndex( a => a.id === step.id );
+        const { selection, index } = this;
         if ( selection[index] ) selection[index].color = color;
       },
-      index() {
-        const { selection, step } = this;
-        const index = selection.findIndex( a => a.id === step.id );
+      index( index ) {
+        const { selection } = this;
         if ( selection[index] ) {
-          this.selected = selection[index].value;
+          this.selectedItem  = selection[index].selected;
           this.selectedColor = selection[index].color || 0;
         } else {
-          this.selected = null;
+          this.selectedItem  = null;
           this.selectedColor = 0;
         }
       }
     },
     computed: {
-      ...mapState([ 'loading', 'data' ]),
-      accept() {
-        const { selection } = this;
-        return selection[0] && selection[0].item
-          ? [ selection[0].item.type ].concat( selection[0].item.accept )
-          : null;
-      },
-      composition() {
-        var { selection, accept } = this;
-        selection = selection.filter( a => a.item );
-        if ( accept ) selection = selection.filter( a => accept.indexOf( a.item.type ) !== -1 );
-        return selection;
-      },
+      ...mapState([
+        'loading',
+        'framesets',
+        'bars',
+        'groupsets',
+        'wheels',
+        'tyres',
+        'seatposts',
+        'saddles'
+      ]),
       steps() {
 
-        const { accept } = this;
-        var steps = this.data.slice()
-          .sort(( a, b ) => a.order - b.order );
+        const { selection } = this;
+        const frameset = selection[0] ? selection[0].item : null;
+        const steps = ITEMS_LIST.slice();
 
-        if ( accept )
-          steps = steps.filter( step => accept.indexOf( step.id ) !== -1 );
+        if ( frameset ) {
+          if ( ! frameset.saddleEnabled ) steps.splice( 6, 1 );
+          if ( ! frameset.seatpostEnabled ) steps.splice( 5, 1 );
+          if ( ! frameset.wheelEnabled ) steps.splice( 3, 1 );
+          if ( ! frameset.groupsetEnabled ) steps.splice( 2, 1 );
+        }
 
-        return steps.concat([{
-          title: 'Bike Fit',
-          items: []
-        }]);
+        return steps.concat([{ title: 'Bike Fit' }]);
       },
       step() {
-        return this.steps[ this.index ] || {
-          title: '?',
-          items: []
-        };
+        return this.steps[ this.index ] || { title: '?' };
       },
       crumbs() {
         return this.steps.map( a => a.title );
       },
       items() {
-        return this.step.items;
+        return this[ this.step.id ] || [];
       },
       current() {
-        return this.items[ this.selected ];
+        const item = this.items[ this.selectedItem ];
+        if ( item ) {
+          item.type = this.step.id;
+          item.step = this.step;
+        }
+        return item;
+      },
+      composition() {
+        const steps = this.steps.map( a => a.id );
+        const { selection } = this;
+        return selection.filter( a => a.item && steps.indexOf( a.item.type ) !== -1 );
       }
     },
     methods: {
-      fetch( index, total, loaded ) {
+      image: itemImage,
+      fetch() {
+        this.$store.dispatch( 'getData', event => {
 
-        index  = index  || 0;
-        loaded = loaded || 0;
-        total  = total  || this.load.steps.reduce(( sum, a ) => sum + a.size, 0 );
+          const total = event.lengthComputable
+            ? event.total
+            : parseInt( event.target.getResponseHeader('content-length')
+              || event.target.getResponseHeader('x-decompressed-content-length') || 0 );
 
-        const step = this.load.steps[index];
-        this.load.value = ( loaded / total ) * 100;
-        this.load.text  = step ? step.text : 'Complete';
+          if ( total ) {
+            this.loaded = Math.round(( event.loaded * 100 ) / total );
+          }
 
-        if ( step ) {
-          return Promise
-            .resolve( step.handler())
-            .then(() => this.fetch( index + 1, total, loaded + step.size ))
-            .catch( console.warn )
-        }
-
-        // Esperamos a que finalice la animación del loader
-        setTimeout(() => this.$store.commit( 'set', { loading: false }), 500 );
+          console.log( 'DownloadProgress', this.loaded, total );
+        })
+        .then( res => {
+          console.log( res.data.object );
+          if ( res.data.error ) console.error( res.data );
+          else setTimeout(() => {
+            this.$store.commit( 'set', {
+              loading: false,
+              ...res.data.object
+            })
+          }, 1000 );
+        });
       },
       isDisabled( index ) {
         if ( index < 0 ) return true;
         if ( index >= this.steps.length ) return true;
         if ( index !== 0 ) {
           const step = this.steps[ index - 1 ];
-          const comp = step ? this.selection.find( a => a.id === step.id ) : null;
+          const comp = step ? this.selection.find( a => a.props.id === step.id ) : null;
           if ( ! comp || ! comp.item ) return true;
         }
         return false;
@@ -281,7 +282,7 @@
       },
       reset() {
         this.selection = [];
-        this.selected = null;
+        this.selectedItem = null;
         this.index = 0;
       },
       prev() {
@@ -293,7 +294,7 @@
       showDescription( item ) {
         this.$refs.footer.close();
         this.description.item  = item;
-        this.description.image = item.items[0].image;
+        this.description.image = this.image( item );
         this.description.show  = true;
       }
     }

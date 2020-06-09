@@ -8,13 +8,13 @@
 
     <div v-if="colors.length" class="item-info outline-left light--border px-4">
       <p class="caption mb-1">
-        Colour <span v-if="currentColor" class="body-1 primary--text">{{ currentColor.name || 'Unkwnown' }}</span>
+        Colour <span v-if="current" class="body-1 primary--text">{{ current.colorName || 'Unkwnown' }}</span>
       </p>
       <v-item-group :value="color" @change="$emit( 'input', $event )">
         <v-item v-for="( color, i ) in colors" :key="i" v-slot:default="{ active, toggle }">
           <Color
             tag="a" href="#"
-            :value="color.value"
+            :value="color.color"
             :selected="active"
             @click="toggle"
           />
@@ -46,11 +46,11 @@
     },
     computed: {
       colors() {
-        return ( this.item.items || [] )
+        return ( this.item.colors || [] )
           .map( a => a.color )
-          .filter( a => a );
+          .sort(( a, b ) => a.priority - b.priority );
       },
-      currentColor() {
+      current() {
         return this.colors[ this.color ];
       }
     }

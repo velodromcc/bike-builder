@@ -1,14 +1,8 @@
-import Body from './Body/index.vue';
 import Loading from './Loading.vue';
 import Error from './Error.vue';
 
-const TESTER = new Promise( resolve => {
-  setTimeout(() => resolve( Body ), 0 );
-});
-
 const Builder = () => ({
-  //component: import('./Loader.vue'),
-  component: TESTER,
+  component: import('./Body/index.vue'),
   loading: Loading,
   error: Error
 });

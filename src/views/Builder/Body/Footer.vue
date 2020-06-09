@@ -32,36 +32,36 @@
         <div class="grow rel">
           <v-row class="layer autoscroll pa-2 ma-0">
 
-            <v-col v-for="( item, i ) in composition" :key="i" cols="6" sm="4" md="3">
+            <v-col v-for="( comp, i ) in items" :key="i" cols="6" sm="4" md="3">
               <v-card>
 
                 <div class="pa-4">
                   <v-img
                     class="align-end"
                     height="200px"
-                    :src="require(`@/assets/items/${ item.items[ item.color || 0 ].image }`)"
+                    :src="image( comp.item, comp.color )"
                     contain
                   />
                 </div>
 
                 <div class="px-4 mb-2">
-                  <p class="caption mb-0">{{ item.step.title }}</p>
-                  <p class="headline mb-0">{{ item.name }}</p>
+                  <p class="caption mb-0">{{ comp.item.step.title }}</p>
+                  <p class="headline mb-0">{{ comp.item.name }}</p>
                 </div>
 
                 <v-card-text
-                  v-if="item.excerpt"
+                  v-if="comp.item.excerpt"
                   class="body-1"
-                  v-html="item.excerpt"
+                  v-html="comp.item.excerpt"
                 />
 
                 <v-card-actions>
 
-                  <Btn class="body-1" color="primary" tile dark @click="$emit( 'description', item )">
+                  <Btn class="body-1" color="primary" tile dark @click="$emit( 'description', comp.item )">
                     Descripción
                   </Btn>
 
-                  <Btn class="body-1" color="primary" tile outlined @click="$emit( 'buy', item )">
+                  <Btn class="body-1" color="primary" tile outlined @click="$emit( 'buy', comp.item )">
                     Buy online
                   </Btn>
 
@@ -89,7 +89,10 @@
 </template>
 
 <script>
+
   import { Btn } from '@/components';
+  import { itemImage } from '@/utils';
+
   export default {
     components: { Btn },
     props: {
@@ -104,17 +107,14 @@
       }
     },
     computed: {
-      composition() {
-        return this.items
-          .filter( a => a.item )
-          .map( a => a.item );
-      },
       price() {
-        return this.composition
-          .reduce(( sum, item ) => sum + ( item.price || 0 ), 0 );
+        return this.items
+          .map( a => a.item.colors[ a.color ])
+          .reduce(( sum, item ) => sum + ( item.price || item.color.price || 0 ), 0 );
       }
     },
     methods: {
+      image: itemImage,
       close() {
         this.showDetails = false;
       }

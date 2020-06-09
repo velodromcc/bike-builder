@@ -15,10 +15,10 @@
 
           <v-row class="fill-height flex-column flex-nowrap ma-0">
 
-            <v-img :src="item.src" :lazy-src="item.lazySrc" class="shrink mb-2" :height="imageHeight" contain>
+            <v-img :src="item.src" :lazy-src="item.src" class="shrink mb-2" :height="imageHeight" contain>
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular indeterminate color="light"/>
+                  <v-progress-circular indeterminate color="primary"/>
                 </v-row>
               </template>
             </v-img>
@@ -29,7 +29,7 @@
                 <Color
                   v-for="( color, i ) in item.info.colors"
                   :key="i"
-                  :value="color.value"
+                  :value="color.color"
                   class="mb-0"
                   small
                 />
@@ -49,6 +49,7 @@
 <script>
 
   import { Color } from '@/components';
+  import { itemImage } from '@/utils';
 
   export default {
     components: { Color },
@@ -61,15 +62,11 @@
     },
     computed: {
       list() {
-        return this.items.map( a => {
-
-          const image  = require(`@/assets/items/${ a.items[0].image }`);
-          const colors = a.items.map( b => b.color ).filter( _ => _ );
-
+        return this.items.map( item => {
+          const colors = item.colors.map( a => a.color );
           return {
-            ...a,
-            src: image,
-            lazySrc: image,
+            ...item,
+            src: itemImage( item ),
             info: {
               colors: colors.slice( 0, 3 ),
               more: colors.length > 3 ? colors.length - 3 : 0

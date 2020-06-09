@@ -3,6 +3,29 @@
 </template>
 
 <script>
+
+  import { CONSTANTS } from '@/utils';
+
+  const GRUOPSET_ANCHORS = {
+    groupsetsLeft: 'imageBack',
+    groupsetsMiddle: 'imageFront',
+    groupsetsRight: 'imageBar'
+  };
+
+  function loadImage( url ) {
+    return new Promise( resolve => {
+
+      const image = new Image();
+      image.src = url;
+
+      if ( image.complete && image.naturalHeight !== 0 ) {
+        resolve( image );
+      } else {
+        image.addEventListener( 'load', () => resolve( image ));
+      }
+    })
+  }
+
   export default {
     props: {
       width: {
@@ -24,61 +47,124 @@
         buffer: []
       }
     },
-    computed: {
-      composition() {
-        return this.items.map( a => {
-          if ( ! a.item ) return;
-          var item = { ...a.item, ...a.item.items[ a.color || 0 ] };
-          if ( ! item.parts ) return item;
-          return item.parts.map( part => ({ ...item, ...part }));
-        })
-        .flat()
-        .filter( a => a )
-      },
-      images() {
-
-        const items = [];
-
-        this.buffer
-          .slice()
-          .sort(( a, b ) => a.step.order - b.step.order )
-          .forEach( item => {
-
-            if ( ! item ) return;
-
-            item.width   = item.width  || 0;
-            item.height  = item.height || 0;
-            const origin = item.origin || { x: item.width / 2, y: item.height / 2 };
-            const base   = items.find( a => ( a.anchors || {} )[ item.anchor ]);
-            const anchor = base ? base.anchors[ item.anchor ] : null;
-
-            if ( base && anchor ) {
-              return items.unshift({
-                ...item,
-                x: base.x + ( anchor.x * base.step.scale ) - ( origin.x * item.step.scale ),
-                y: base.y + ( anchor.y * base.step.scale ) - ( origin.y * item.step.scale ),
-                width: item.width * item.step.scale,
-                height: item.height * item.step.scale
-              });
-            }
-
-            items.unshift({
-              ...item,
-              x: this.width / 2 - ( origin.x * item.step.scale ),
-              y: this.height / 2 - ( origin.y * item.step.scale ),
-              width: item.width * item.step.scale,
-              height: item.height * item.step.scale
-            });
-          });
-
-        return items.sort(( a, b ) => a.step.index - b.step.index );
-      }
+    mounted() {
+      this.getContext();
+      this.mountBike();
     },
     watch: {
-      width:  'refresh',
-      height: 'refresh',
-      items:  'loadImages',
-      images: 'draw'
+      width: 'mountBike',
+      height: 'mountBike',
+      composition: 'mountBike',
+      buffer: 'draw'
+    },
+    computed: {
+      composition() {
+
+        var frameset = this.items[0];
+        if ( ! frameset || ! frameset.item ) return null;
+
+        const anchors = {
+          bars: {
+            x: frameset.item.barX,
+            y: frameset.item.barY,
+          },
+          wheelsLeft: {
+            x: frameset.item.leftWheelX,
+            y: frameset.item.leftWheelY
+          },
+          wheelsRight: {
+            x: frameset.item.rightWheelX,
+            y: frameset.item.rightWheelY
+          },
+          tyresLeft: {
+            x: frameset.item.leftWheelX,
+            y: frameset.item.leftWheelY
+          },
+          tyresRigth: {
+            x: frameset.item.rightWheelX,
+            y: frameset.item.rightWheelY,
+          },
+          seatposts: {
+            x: frameset.item.seatpostX,
+            y: frameset.item.seatpostY
+          },
+          saddles: {
+            x: frameset.item.saddleX,
+            y: frameset.item.saddleY,
+          },
+          groupsetsLeft: {
+            x: frameset.item.leftWheelX,
+            y: frameset.item.leftWheelY
+          },
+          groupsetsMiddle: {
+            x: frameset.item.groupsetMiddleX,
+            y: frameset.item.groupsetMiddleY
+          },
+          groupsetsBar: {
+            x: frameset.item.groupsetBarX,
+            y: frameset.item.groupsetBarY
+          }
+        };
+
+        const items = this.items.map(( a, order, color ) => {
+
+          if ( ! a.item || ! ( color = a.item.colors[ a.color ])) return;
+
+          const props = {
+            anchor: a.item.type,
+            image: color.image,
+            scale: CONSTANTS[ a.item.type ].scale || 1,
+            index: CONSTANTS[ a.item.type ].zIndex,
+            origin: { x: a.item.originX, y: a.item.originY },
+            order
+          };
+
+          switch ( a.item.type ) {
+            case 'framesets':
+
+              frameset = props;
+
+              break;
+
+            case 'bars':
+
+              anchors.groupsetsBar = {
+                x: a.item.groupsetBarX,
+                y: a.item.groupsetBarY
+              };
+
+              break;
+
+            case 'groupsets':
+
+              return Object.keys( GRUOPSET_ANCHORS ).map( key => ({
+                ...props,
+                anchor: key,
+                image: color[ GRUOPSET_ANCHORS[key] ]
+              }));
+
+            case 'wheels':
+            case 'tyres':
+
+              return [ 'Left', 'Right' ].map( pos => ({
+                ...props,
+                anchor: a.item.type + pos
+              }));
+          }
+
+          return props;
+        })
+        .filter( a => a )
+        .flat();
+
+        // RESULT
+
+        return {
+          frameset,
+          anchors,
+          items
+        };
+      }
     },
     methods: {
       getContext() {
@@ -89,39 +175,68 @@
           this.context  = canvas.getContext('2d');
         }
       },
+      mountBike() {
+        this.buffer = [];
+        const { composition } = this;
+        if ( composition ) {
+
+          const { frameset } = composition;
+          const waiting = [];
+          frameset.loaded = false;
+
+          composition.items.forEach( item => {
+            loadImage( item.image ).then( image => {
+
+              const anchor = composition.anchors[ item.anchor ];
+              const origin = item.origin;
+              const width  = image.naturalWidth * item.scale;
+              const height = image.naturalHeight * item.scale;
+
+              if ( origin.x == null ) origin.x = width / 2;
+              if ( origin.y == null ) origin.y = height / 2;
+
+              if ( ! anchor ) { // is Frameset
+
+                this.buffer.push( Object.assign( frameset, {
+                  image,
+                  width,
+                  height,
+                  x: this.width / 2 - origin.x * item.scale,
+                  y: this.height / 2 - origin.y * item.scale,
+                  loaded: true
+                }));
+
+              } else {
+
+                waiting.push({ ...item, image, width, height, anchor, origin });
+
+              }
+
+              if ( frameset.loaded ) {
+
+                waiting.forEach( item => {
+                  item.x = frameset.x + item.anchor.x * frameset.scale - item.orign.x * item.scale;
+                  item.y = frameset.y + item.anchor.y * frameset.scale - item.orign.y * item.scale;
+                  this.buffer.push( item );
+                });
+
+                // Clear array
+                waiting.length = 0;
+              }
+            })
+          });
+        }
+      },
       clear() {
         const { context } = this;
         context.clearRect( 0, 0, this.width, this.height );
       },
       draw() {
         this.clear();
-        this.images.forEach( a => this.context.drawImage( a.image, a.x, a.y, a.width, a.height ));
-      },
-      refresh() {
-        this.getContext();
-        this.draw();
-      },
-      loadImages() {
-        this.buffer = [];
-        this.composition.forEach( this.loadImage );
-      },
-      loadImage( item ) {
-
-        if ( ! item.image ) return;
-
-        const image = new Image();
-        image.src = require(`@/assets/items/${ item.image }`);
-        item = { ...item, image };
-
-        if ( image.complete && image.naturalHeight !== 0 ) this.buffer.push( item );
-        else {
-          image.addEventListener( 'load', () => this.buffer.push( item ));
-        }
+        this.buffer.sort(( a, b ) => a.index - b.index ).forEach( item => {
+          this.context.drawImage( item.image, item.x, item.y, item.width, item.height );
+        });
       }
-    },
-    mounted() {
-      this.getContext();
-      this.loadImages();
     }
   }
 </script>
