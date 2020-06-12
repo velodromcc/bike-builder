@@ -213,6 +213,7 @@
           if ( ! frameset.seatpostEnabled ) steps.splice( 5, 1 );
           if ( ! frameset.wheelEnabled ) steps.splice( 3, 1 );
           if ( ! frameset.groupsetEnabled ) steps.splice( 2, 1 );
+          if ( ! frameset.barEnabled ) steps.splice( 1, 1 );
         }
 
         return steps.concat([{ title: 'Bike Fit' }]);

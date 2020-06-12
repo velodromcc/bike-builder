@@ -7,16 +7,16 @@
   import { CONSTANTS } from '@/utils';
 
   const GRUOPSET_ANCHORS = {
-    groupsetsLeft: 'imageBack',
+    //groupsetsLeft: 'imageBack',
     groupsetsMiddle: 'imageFront',
-    groupsetsRight: 'imageBar'
+    //groupsetsBar: 'imageBar'
   };
 
   function loadImage( url ) {
     return new Promise( resolve => {
 
       const image = new Image();
-      image.src = url;
+      image.src = 'http://bikebuilder.inmovens.com' + url;
 
       if ( image.complete && image.naturalHeight !== 0 ) {
         resolve( image );
@@ -65,44 +65,44 @@
 
         const anchors = {
           bars: {
-            x: frameset.item.barX,
-            y: frameset.item.barY,
+            x: frameset.item.barX || 0,
+            y: frameset.item.barY || 0,
           },
           wheelsLeft: {
-            x: frameset.item.leftWheelX,
-            y: frameset.item.leftWheelY
+            x: frameset.item.leftWheelX || 0,
+            y: frameset.item.leftWheelY || 0
           },
           wheelsRight: {
-            x: frameset.item.rightWheelX,
-            y: frameset.item.rightWheelY
+            x: frameset.item.rightWheelX || 0,
+            y: frameset.item.rightWheelY || 0
           },
           tyresLeft: {
-            x: frameset.item.leftWheelX,
-            y: frameset.item.leftWheelY
+            x: frameset.item.leftWheelX || 0,
+            y: frameset.item.leftWheelY || 0
           },
-          tyresRigth: {
-            x: frameset.item.rightWheelX,
-            y: frameset.item.rightWheelY,
+          tyresRight: {
+            x: frameset.item.rightWheelX || 0,
+            y: frameset.item.rightWheelY || 0,
           },
           seatposts: {
-            x: frameset.item.seatpostX,
-            y: frameset.item.seatpostY
+            x: frameset.item.seatpostX || 0,
+            y: frameset.item.seatpostY || 0
           },
           saddles: {
-            x: frameset.item.saddleX,
-            y: frameset.item.saddleY,
+            x: frameset.item.saddleX || 0,
+            y: frameset.item.saddleY || 0,
           },
           groupsetsLeft: {
-            x: frameset.item.leftWheelX,
-            y: frameset.item.leftWheelY
+            x: frameset.item.leftWheelX || 0,
+            y: frameset.item.leftWheelY || 0
           },
           groupsetsMiddle: {
-            x: frameset.item.groupsetMiddleX,
-            y: frameset.item.groupsetMiddleY
+            x: frameset.item.groupsetMiddleX || 0,
+            y: frameset.item.groupsetMiddleY || 0
           },
           groupsetsBar: {
-            x: frameset.item.groupsetBarX,
-            y: frameset.item.groupsetBarY
+            x: frameset.item.groupsetBarX || 0,
+            y: frameset.item.groupsetBarY || 0
           }
         };
 
@@ -112,7 +112,7 @@
 
           const props = {
             anchor: a.item.type,
-            image: color.image,
+            image: color.color.image,
             scale: CONSTANTS[ a.item.type ].scale || 1,
             index: CONSTANTS[ a.item.type ].zIndex,
             origin: { x: a.item.originX, y: a.item.originY },
@@ -129,8 +129,8 @@
             case 'bars':
 
               anchors.groupsetsBar = {
-                x: a.item.groupsetBarX,
-                y: a.item.groupsetBarY
+                x: a.item.groupsetBarX || 0,
+                y: a.item.groupsetBarY || 0
               };
 
               break;
@@ -140,7 +140,7 @@
               return Object.keys( GRUOPSET_ANCHORS ).map( key => ({
                 ...props,
                 anchor: key,
-                image: color[ GRUOPSET_ANCHORS[key] ]
+                image: color.color[ GRUOPSET_ANCHORS[key] ]
               }));
 
             case 'wheels':
@@ -178,6 +178,7 @@
       mountBike() {
         this.buffer = [];
         const { composition } = this;
+        //console.log( composition );
         if ( composition ) {
 
           const { frameset } = composition;
@@ -189,34 +190,41 @@
 
               const anchor = composition.anchors[ item.anchor ];
               const origin = item.origin;
-              const width  = image.naturalWidth * item.scale;
-              const height = image.naturalHeight * item.scale;
+              const width  = image.naturalWidth;
+              const height = image.naturalHeight;
 
               if ( origin.x == null ) origin.x = width / 2;
               if ( origin.y == null ) origin.y = height / 2;
 
-              if ( ! anchor ) { // is Frameset
+              if ( item.anchor === 'framesets' ) {
 
                 this.buffer.push( Object.assign( frameset, {
                   image,
-                  width,
-                  height,
+                  width: width * item.scale,
+                  height: height * item.scale,
                   x: this.width / 2 - origin.x * item.scale,
                   y: this.height / 2 - origin.y * item.scale,
                   loaded: true
                 }));
 
-              } else {
+              } else if ( anchor ) {
 
-                waiting.push({ ...item, image, width, height, anchor, origin });
+                waiting.push({
+                  ...item,
+                  width: width * item.scale,
+                  height: height * item.scale,
+                  image,
+                  anchor,
+                  origin 
+                });
 
               }
 
               if ( frameset.loaded ) {
 
                 waiting.forEach( item => {
-                  item.x = frameset.x + item.anchor.x * frameset.scale - item.orign.x * item.scale;
-                  item.y = frameset.y + item.anchor.y * frameset.scale - item.orign.y * item.scale;
+                  item.x = frameset.x + item.anchor.x * frameset.scale - item.origin.x * item.scale;
+                  item.y = frameset.y + item.anchor.y * frameset.scale - item.origin.y * item.scale;
                   this.buffer.push( item );
                 });
 
@@ -233,7 +241,7 @@
       },
       draw() {
         this.clear();
-        this.buffer.sort(( a, b ) => a.index - b.index ).forEach( item => {
+        this.buffer.slice().sort(( a, b ) => a.index - b.index ).forEach( item => {
           this.context.drawImage( item.image, item.x, item.y, item.width, item.height );
         });
       }
