@@ -7,10 +7,115 @@
 <script>
 
   import Builder from '@/views/Builder';
+  import { mapState } from 'vuex';
+  import { lighten, darken } from '@/utils';
+
+  function lightColor( color, level ) {
+    var result;
+    level = level == null ? 60 : level;
+    while( level > 0 ) {
+      result = lighten( color, level );
+      if ( result !== '#ffffff' ) return result;
+      level -= 10;
+    }
+    return '#f4f4f4';
+  }
 
   export default {
     components: {
       Builder
+    },
+    watch: {
+      company: 'refreshStyle'
+    },
+    computed: {
+      ...mapState([ 'company' ]),
+      primary() {
+        const color = '#' + ( this.company.color1 || '000000' ).replace('#','');
+        const light = lightColor( color );
+        return {
+          base: color,
+          light
+        };
+      },
+      secondary() {
+        const color = '#' + ( this.company.color2 || '4b4b4b' ).replace('#','');
+        const light = lightColor( color );
+        const dark  = darken( light, 15 );
+        return {
+          base: color,
+          light,
+          dark
+        };
+      },
+      background() {
+        const color = '#' + ( this.company.color3 || 'ffffff' ).replace('#','');
+        return {
+          base: color
+        };
+      },
+      cssClasses() {
+
+        const classes = {};
+        const root = {};
+
+        this.eachColors(( className, value ) => {
+          root[className] = value;
+          classes[className] = `background-color: ${ value } !important`;
+          classes[className+'--text'] = `color: ${ value } !important`;
+          classes[className+'--border'] = `border-color: ${ value } !important`;
+        });
+
+        var css = '', className;
+        for ( className in classes ) {
+          css += `.${className} {\n  ${ classes[className] };\n}\n`;
+        }
+
+        // Root
+        css += ":root {\n";
+        for ( className in root ) {
+          css += `  --${className}: ${ root[className] };\n`;
+        }
+        css += "}";
+
+        return css;
+      }
+    },
+    methods: {
+      eachColors( fn ) {
+
+        const prefix = 'bb';
+        const colors = {
+          primary: this.primary,
+          secondary: this.secondary,
+          background: this.background
+        };
+
+        var name, type, className;
+        for ( name in colors ) {
+          for ( type in colors[name] ) {
+            className = type === 'base' ? [ prefix, name ].join('-') : [ prefix, name, type ].join('-');
+            fn( className, colors[name][type], name, type );
+          }
+        }
+      },
+      refreshStyle() {
+
+        const head  = document.getElementsByTagName('head')[0];
+        if ( ! head ) return;
+
+        var style = document.getElementById('bikebuilder-style');
+        if ( style ) head.removeChild( style );
+
+        // Create new style
+        style = document.createElement('style');
+        style.id = 'bikebuilder-style';
+        style.innerHTML = this.cssClasses;
+        head.appendChild( style );
+      }
+    },
+    mounted() {
+      this.refreshStyle();
     }
   }
 </script>
@@ -55,42 +160,42 @@
   }
   .outline {
 
-    border: 1px solid var(--v-primary-lighten3) !important;
+    border: 1px solid var(--bb-primary-light) !important;
 
     &.light--border {
-      border-color: var(--v-light-base) !important;
+      border-color: var(--bb-secondary-light) !important;
     }
 
     &-top {
 
-      border-top: 1px solid var(--v-primary-lighten3) !important;
+      border-top: 1px solid var(--bb-primary-light) !important;
 
       &.light--border {
-        border-color: var(--v-light-base) !important;
+        border-color: var(--bb-secondary-light) !important;
       }
     }
     &-right {
 
-      border-right: 1px solid var(--v-primary-lighten4) !important;
+      border-right: 1px solid var(--bb-primary-light) !important;
 
       &.light--border {
-        border-color: var(--v-light-base) !important;
+        border-color: var(--bb-secondary-light) !important;
       }
     }
     &-bottom {
 
-      border-bottom: 1px solid var(--v-primary-lighten3) !important;
+      border-bottom: 1px solid var(--bb-primary-light) !important;
 
       &.light--border {
-        border-color: var(--v-light-base) !important;
+        border-color: var(--bb-secondary-light) !important;
       }
     }
     &-left {
 
-      border-left: 1px solid var(--v-primary-lighten3) !important;
+      border-left: 1px solid var(--bb-primary-light) !important;
 
       &.light--border {
-        border-color: var(--v-light-base) !important;
+        border-color: var(--bb-secondary-light) !important;
       }
     }
   }
@@ -101,12 +206,6 @@
     text-transform: uppercase;
   }
   .body-1, .body-2, .caption, .overline {
-    color: var(--v-light-darken4);
+    color: var(--bb-secondary-darken3);
   }
-
-  /*@media only screen and ( max-width: 600px ) {
-    html {
-      font-size: 24px !important;
-    }
-  }*/
 </style>

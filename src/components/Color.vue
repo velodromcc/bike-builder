@@ -21,7 +21,8 @@
     },
     computed: {
       color() {
-        return toArray( this.value );
+        return toArray( this.value )
+          .map( v => '#' + v.replace('#',''));
       }
     }
   }
@@ -68,11 +69,11 @@
     cursor: pointer;
 
     &:hover, &:focus, &.selected {
-      outline: 1px solid var(--v-primary-base);
+      outline: 1px solid var(--bb-primary);
       outline-offset: 2px;
     }
     &:hover:not(.selected) {
-      outline-color: var(--v-light-base);
+      outline-color: var(--bb-secondary-light);
     }
   }
 </style>

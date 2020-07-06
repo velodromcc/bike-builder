@@ -45,9 +45,9 @@
         />
 
       </v-row>
-      <v-row class="nav-builder flex-column flex-nowrap" no-gutters>
+      <v-row class="nav-builder bb-background flex-column flex-nowrap" no-gutters>
         <v-sheet tag="nav" class="d-flex justify-space-between align-center shrink"
-        color="primary" height="70" tile>
+        color="bb-primary" height="70" tile>
 
           <Btn class="ml-2" color="white" :disabled="isDisabled( index - 1 )" @click="prev" icon>
             <v-icon v-text="'$prev'"/>
@@ -64,7 +64,7 @@
         </v-sheet>
         <v-row class="step-counter shrink outline-bottom light--border ma-0" justify="center" align="center">
 
-          <span class="body-1">Step {{ index + 1 }} of {{ steps.length }}</span>
+          <span class="body-1 bb-primary--text">Step {{ index + 1 }} of {{ steps.length }}</span>
 
         </v-row>
         <div class="grow rel">
@@ -84,24 +84,20 @@
     <v-dialog v-model="description.show" max-width="1024">
       <v-card v-if="description.item" min-height="560">
 
-        <Btn class="btn-close" color="primary" @click="description.show = false" x-small fab>
-          <v-icon v-text="'$close'"/>
+        <Btn class="btn-close" color="bb-primary" @click="description.show = false" width="20" height="20" fab dark>
+          <v-icon small v-text="'$close'"/>
         </Btn>
 
         <v-row class="pr-7 ma-0" style="min-height:560px">
           <v-col class="pa-10" cols="12" md="6">
 
-            <v-img
-              :src="description.image"
-              height="100%"
-              contain
-            />
+            <v-img :src="description.image" height="100%" contain/>
 
           </v-col>
           <v-col class="pa-10" cols="12" md="6">
 
-            <h3 class="display-4 primary--text">{{ description.item.name }}</h3>
             <span class="caption">{{ description.item.step.title }}</span>
+            <h3 class="display-4 bb-primary--text mb-4">{{ description.item.name }}</h3>
             <div v-html="description.item.description"/>
 
           </v-col>
@@ -244,29 +240,18 @@
     methods: {
       image: itemImage,
       fetch() {
-        this.$store.dispatch( 'getData', event => {
-
-          const total = event.lengthComputable
-            ? event.total
-            : parseInt( event.target.getResponseHeader('content-length')
-              || event.target.getResponseHeader('x-decompressed-content-length') || 0 );
-
-          if ( total ) {
-            this.loaded = Math.round(( event.loaded * 100 ) / total );
-          }
-
-          console.log( 'DownloadProgress', this.loaded, total );
-        })
-        .then( res => {
-          console.log( res.data.object );
-          if ( res.data.error ) console.error( res.data );
-          else setTimeout(() => {
-            this.$store.commit( 'set', {
-              loading: false,
-              ...res.data.object
-            })
-          }, 1000 );
-        });
+        this.$store
+          .dispatch( 'getData' )
+          .then( res => {
+            console.log( res.data.object );
+            if ( res.data.error ) console.error( res.data );
+            else setTimeout(() => {
+              this.$store.commit( 'set', {
+                loading: false,
+                ...res.data.object
+              })
+            }, 1000 );
+          });
       },
       isDisabled( index ) {
         if ( index < 0 ) return true;
@@ -314,7 +299,7 @@
     position: relative;
     background-color: white;
     flex: 0 0 400px;
-    border-left: 1px solid var(--v-light-base);
+    border-left: 1px solid var(--bb-secondary-light);
     z-index: 1;
   }
   .step-counter {

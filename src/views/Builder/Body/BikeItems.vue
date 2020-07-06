@@ -9,21 +9,28 @@
       <v-item v-for="( item, i ) in list" v-slot="{ active, toggle }" :key="i">
         <a class="bike-item body-1 pt-3" href="#" :class="{ selected: active }" @click="toggle">
 
-          <v-avatar v-if="active" class="bike-item-icon" size="30" color="primary">
+          <v-avatar v-if="active" class="bike-item-icon" size="30" color="bb-primary">
             <v-icon small dark>mdi-check-bold</v-icon>
           </v-avatar>
 
           <v-row class="fill-height flex-column flex-nowrap ma-0">
 
-            <v-img :src="item.src" :lazy-src="item.src" class="shrink mb-2" :height="imageHeight" contain>
+            <v-img
+              :src="item.src"
+              :lazy-src="item.src"
+              :height="imageHeight"
+              width="200"
+              class="shrink mx-auto mb-2"
+              contain
+            >
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular indeterminate color="primary"/>
+                  <v-progress-circular indeterminate color="bb-primary"/>
                 </v-row>
               </template>
             </v-img>
 
-            <v-row class="bike-item-info shrink pa-3 ma-0" align="center" justify="space-between">
+            <v-row class="bike-item-info bb-primary--text shrink pa-3 ma-0" align="center" justify="space-between">
               <p class="mb-0">{{ item.name }}</p>
               <p class="mb-0">
                 <Color
@@ -102,7 +109,7 @@
     display: block;
     position: relative;
     border-left: 5px solid transparent;
-    border-bottom: 1px solid var(--v-light-base);
+    border-bottom: 1px solid var(--bb-secondary-light);
     transition: all 135ms ease;
     text-decoration: none;
     height: 200px;
@@ -116,11 +123,11 @@
       height: 44px;
     }
     &.selected {
-      background-color: var(--v-light-base);
-      border-left: 5px solid var(--v-primary-base);
+      background-color: var(--bb-secondary-light);
+      border-left: 5px solid var(--bb-primary);
     }
     &:hover {
-      background-color: var(--v-secondary-base);
+      background-color: var(--bb-secondary);
       color: white;
     }
   }
@@ -133,10 +140,10 @@
     }
     .bike-item {
       display: inline-block;
-      max-width: 300px;
+      width: 300px;
       height: 100%;
       border-bottom: 0;
-      border-right: 1px solid var(--v-light-base);
+      border-right: 1px solid var(--bb-secondary-light);
       vertical-align: top;
     }
   }

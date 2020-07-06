@@ -53,3 +53,29 @@ export function itemImage( item, index ) {
   }
   return '';
 }
+
+// COLOR FUNCTIONS
+
+function add( color, amount ) {
+  color = parseInt( color, 16 ) + amount;
+  color = Math.max( Math.min( color, 255 ), 0 ).toString(16);
+  return color.length > 1 ? color : ( '0' + color );
+}
+
+function transformColor( color, amount ) {
+  color = color.replace( '#', '' );
+  amount = parseInt(( 255 * amount ) / 100 );
+  return '#' + [
+    add( color.substring( 0, 2 ), amount ),
+    add( color.substring( 2, 4 ), amount ),
+    add( color.substring( 4, 6 ), amount )
+  ].join('')
+}
+
+export function lighten( color, amount ) {
+  return transformColor( color, amount );
+}
+
+export function darken( color, amount ) {
+  return transformColor( color, -amount );
+}

@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar tag="header" class="outline-bottom light--border" height="70" elevation="0">
+  <v-toolbar tag="header" color="bb-background" class="outline-bottom light--border" height="70" elevation="0">
 
     <h1 class="title">Logotype</h1>
 
@@ -7,11 +7,11 @@
 
     <nav>
 
-      <Btn class="mr-2" color="primary" icon>
+      <Btn class="mr-2" color="bb-primary" icon>
         <v-icon v-text="'mdi-chat-outline'"/>
       </Btn>
 
-      <Btn color="primary" icon>
+      <Btn color="bb-primary" icon>
         <v-icon v-text="'mdi-share-variant'"/>
       </Btn>
 
