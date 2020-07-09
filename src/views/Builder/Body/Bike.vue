@@ -7,9 +7,9 @@
   import { CONSTANTS } from '@/utils';
 
   const GRUOPSET_ANCHORS = {
-    //groupsetsLeft: 'imageBack',
+    groupsetsLeft: 'imageBack',
     groupsetsMiddle: 'imageFront',
-    //groupsetsBar: 'imageBar'
+    groupsetsBar: 'imageBar'
   };
 
   function loadImage( url ) {
@@ -63,6 +63,7 @@
         var frameset = this.items[0];
         if ( ! frameset || ! frameset.item ) return null;
 
+        const itemAnchors = {};
         const anchors = {
           bars: {
             x: frameset.item.barX || 0,
@@ -112,6 +113,7 @@
 
           const props = {
             anchor: a.item.type,
+            type: a.item.type,
             image: color.color.image,
             scale: CONSTANTS[ a.item.type ].scale || 1,
             index: CONSTANTS[ a.item.type ].zIndex,
@@ -128,9 +130,10 @@
 
             case 'bars':
 
-              anchors.groupsetsBar = {
+              itemAnchors.groupsetsBar = {
                 x: a.item.groupsetBarX || 0,
-                y: a.item.groupsetBarY || 0
+                y: a.item.groupsetBarY || 0,
+                type: 'bars'
               };
 
               break;
@@ -139,8 +142,12 @@
 
               return Object.keys( GRUOPSET_ANCHORS ).map( key => ({
                 ...props,
+                type: key,
                 anchor: key,
-                image: color.color[ GRUOPSET_ANCHORS[key] ]
+                index: CONSTANTS[ key ].zIndex,
+                scale: CONSTANTS[ key ].scale || props.scale,
+                image: color.color[ GRUOPSET_ANCHORS[key] ],
+                origin: key === 'groupsetsMiddle' ? props.origin : {}
               }));
 
             case 'wheels':
@@ -148,8 +155,19 @@
 
               return [ 'Left', 'Right' ].map( pos => ({
                 ...props,
+                type: a.item.type + pos,
                 anchor: a.item.type + pos
               }));
+
+            case 'seatposts':
+
+              itemAnchors.saddles = {
+                x: a.item.saddleX || 0,
+                y: a.item.saddleY || 0,
+                type: 'seatposts'
+              };
+
+              break;
           }
 
           return props;
@@ -162,6 +180,7 @@
         return {
           frameset,
           anchors,
+          itemAnchors,
           items
         };
       }
@@ -178,17 +197,16 @@
       mountBike() {
         this.buffer = [];
         const { composition } = this;
-        //console.log( composition );
         if ( composition ) {
 
           const { frameset } = composition;
-          const waiting = [];
+          var waiting = [];
           frameset.loaded = false;
 
           composition.items.forEach( item => {
             loadImage( item.image ).then( image => {
 
-              const anchor = composition.anchors[ item.anchor ];
+              const anchor = composition.itemAnchors[ item.anchor ] || composition.anchors[ item.anchor ];
               const origin = item.origin;
               const width  = image.naturalWidth;
               const height = image.naturalHeight;
@@ -215,21 +233,26 @@
                   height: height * item.scale,
                   image,
                   anchor,
-                  origin 
+                  origin
                 });
 
               }
 
               if ( frameset.loaded ) {
 
-                waiting.forEach( item => {
-                  item.x = frameset.x + item.anchor.x * frameset.scale - item.origin.x * item.scale;
-                  item.y = frameset.y + item.anchor.y * frameset.scale - item.origin.y * item.scale;
-                  this.buffer.push( item );
-                });
+                var item2;
+                waiting = waiting.map( item => {
 
-                // Clear array
-                waiting.length = 0;
+                  item2 = item.anchor.type
+                    ? this.buffer.find( a => a.type === item.anchor.type ) || frameset
+                    : frameset;
+
+                  item.x = item2.x + item.anchor.x * item2.scale - item.origin.x * item.scale;
+                  item.y = item2.y + item.anchor.y * item2.scale - item.origin.y * item.scale;
+                  this.buffer.push( item );
+                })
+                .filter( a => a );
+
               }
             })
           });
@@ -243,7 +266,34 @@
         this.clear();
         this.buffer.slice().sort(( a, b ) => a.index - b.index ).forEach( item => {
           this.context.drawImage( item.image, item.x, item.y, item.width, item.height );
+          if ( item.type === 'framesets' ) this.drawShadow( item );
         });
+      },
+      drawShadow( item ) {
+
+        const ctx = this.context;
+
+        // Calc dimensions and Position
+        const wheel1 = this.composition.anchors.wheelsLeft;
+        const wheel2 = this.composition.anchors.wheelsRight;
+        const size = wheel2.x - wheel1.x;
+        const x = item.x + size / 2;
+        const y = item.y + Math.max( wheel1.y, wheel2.y ) + 215 * CONSTANTS.wheels.scale;
+        const gradient = ctx.createRadialGradient( 0, 0, 0, 0, 0, size );
+
+        gradient.addColorStop( 0, 'rgba(0,0,0,0.05)' );
+        gradient.addColorStop( 1, 'rgba(0,0,0,0)' );
+
+        ctx.save();
+        ctx.translate( x, y );
+        ctx.scale( 1, .05 ); // To draw Gradient as a Ellipse
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse( 0, 0, size, size, 0, 0, 2 * Math.PI );
+        ctx.fill();
+
+        ctx.restore(); // Reset Canvas state
       }
     }
   }

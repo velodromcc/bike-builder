@@ -17,7 +17,7 @@
         />
 
         <div class="grow rel">
-          <div class="layer autoscroll py-4">
+          <div class="d-flex flex-column layer autoscroll py-4">
 
             <BikeInfo
               v-if="current"
@@ -127,9 +127,10 @@
   // Constants
 
   const ITEMS_LIST = Object.keys( CONSTANTS ).map( key => ({
-    id: key,
-    ...CONSTANTS[key]
-  }));
+      id: key,
+      ...CONSTANTS[key]
+    }))
+    .filter( a => a.title );
 
   export default {
     components: {
@@ -339,6 +340,7 @@
     .builder-bike {
       position: static;
       padding-top: 0;
+      order: -1;
     }
     .nav-builder {
 

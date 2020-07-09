@@ -7,22 +7,34 @@ const CONSTANTS = {
   bars: {
     title: 'Bars/Stem',
     zIndex: 6,
-    scale: .3
+    scale: .32
   },
   groupsets: {
     title: 'Groupset',
     zIndex: 10,
     scale: .25
   },
+  groupsetsLeft: {
+    zIndex: 4,
+    scale: .3
+  },
+  groupsetsMiddle: {
+    zIndex: 10,
+    scale: .27
+  },
+  groupsetsBar: {
+    zIndex: 7,
+    scale: .45
+  },
   wheels: {
     title: 'Wheels',
     zIndex: 3,
-    scale: .9
+    scale: .95
   },
   tyres: {
     title: 'Tyres',
     zIndex: 4,
-    scale: .9
+    scale: .95
   },
   seatposts: {
     title: 'Seatposts',

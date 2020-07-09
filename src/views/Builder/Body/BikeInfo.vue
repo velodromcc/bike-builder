@@ -10,7 +10,7 @@
       <p class="caption bb-primary-light--text mb-1">
         Colour <span v-if="current" class="body-1 bb-primary--text">{{ current.colorName || 'Unkwnown' }}</span>
       </p>
-      <v-item-group :value="color" @change="$emit( 'input', $event )">
+      <v-item-group :value="color" mandatory @change="$emit( 'input', $event )">
         <v-item v-for="( color, i ) in colors" :key="i" v-slot:default="{ active, toggle }">
           <Color
             tag="a" href="#"
@@ -58,13 +58,15 @@
 </script>
 
 <style lang="scss">
+
   .item-info {
     float: left;
   }
   .item-actions {
     clear: both;
   }
-  @media ( max-width: 966px ) {
+
+  @media ( max-width: 600px ) {
     .item-info {
       float: none;
       &.outline-left {
