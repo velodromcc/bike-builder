@@ -1,10 +1,10 @@
 <template>
-  <main class="fill-height rel">
+  <main class="fill-height rel" :class="{ 'show-bike-fit': showBikeFit }">
 
     <Loading v-if="loading" :value="loaded" />
 
     <v-row v-else class="builder" no-gutters>
-      <v-row class="flex-column flex-nowrap grow" no-gutters>
+      <v-row class="builder-body flex-column flex-nowrap grow" no-gutters>
 
         <Header class="builder-header shrink"/>
 
@@ -28,11 +28,18 @@
               @description="showDescription(current)"
             />
 
-            <div class="builder-bike">
+            <div v-if="!composition.length" class="builder-start layer pa-10">
 
-              <Bike :items="composition"/>
+              <h1 class="display-4 mb-4 bb-primary--text">Bike Builder</h1>
+              <p class="bb-secondary--text">Use this interactive configurator to design your dream bike; swap components, change colours, the choice is yours.</p>
+              <p class="display-1">CHOOSE A FRAME TO START BUILDING YOUR BIKE</p>
 
             </div>
+
+            <div class="builder-bike">
+              <Bike :items="composition"/>
+            </div>
+
           </div>
         </div>
 
@@ -42,6 +49,7 @@
           :items="composition"
           @reset="reset"
           @description="showDescription"
+          @buy="showForm"
         />
 
       </v-row>
@@ -69,41 +77,36 @@
         </v-row>
         <div class="grow rel">
 
+          <BikeFit v-if="showBikeFit"/>
+
           <BikeItems
+            v-else
             class="layer"
             v-model="selectedItem"
             :items="items"
           />
 
         </div>
+        <Btn v-if="showBikeFit" class="btn-contact outline-top shrink" color="bb-primary"
+        height="70" @click="showForm" text tile block dark>
+          Contact us for a quote
+          <v-icon v-text="'$next'"/>
+        </Btn>
       </v-row>
     </v-row>
 
-    <!-- DESCRIPTION -->
+    <!-- DIALOGS -->
 
-    <v-dialog v-model="description.show" max-width="1024">
-      <v-card v-if="description.item" min-height="560">
+    <Description
+      v-model="description.show"
+      :item="description.item"
+      :image="description.image"
+    />
 
-        <Btn class="btn-close" color="bb-primary" @click="description.show = false" width="20" height="20" fab dark>
-          <v-icon small v-text="'$close'"/>
-        </Btn>
-
-        <v-row class="pr-7 ma-0" style="min-height:560px">
-          <v-col class="pa-10" cols="12" md="6">
-
-            <v-img :src="description.image" height="100%" contain/>
-
-          </v-col>
-          <v-col class="pa-10" cols="12" md="6">
-
-            <span class="caption">{{ description.item.step.title }}</span>
-            <h3 class="display-4 bb-primary--text mb-4">{{ description.item.name }}</h3>
-            <div v-html="description.item.description"/>
-
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-dialog>
+    <Form
+      v-model="form.show"
+      :items="composition"
+    />
 
   </main>
 </template>
@@ -119,10 +122,14 @@
   import Header from './Header';
   import Footer from './Footer';
   import Breadcrumbs from './Breadcrumbs';
+  import Description from './Description';
+  import Form from './Form';
   import BikeItems from './BikeItems';
   import BikeInfo from './BikeInfo';
+  import BikeFit from './BikeFit';
   import Bike from './Bike';
   import { Btn } from '@/components';
+  import { digits } from '@/utils';
 
   // Constants
 
@@ -138,7 +145,10 @@
       Header,
       Footer,
       Breadcrumbs,
+      Description,
+      Form,
       BikeItems,
+      BikeFit,
       BikeInfo,
       Bike,
       Btn
@@ -157,6 +167,9 @@
           show: false,
           item: null,
           image: null
+        },
+        form: {
+          show: false
         }
       }
     },
@@ -186,7 +199,8 @@
           this.selectedItem  = null;
           this.selectedColor = 0;
         }
-      }
+      },
+      compositionID: 'setRoute'
     },
     computed: {
       ...mapState([
@@ -200,19 +214,8 @@
         'saddles'
       ]),
       steps() {
-
         const { selection } = this;
-        const frameset = selection[0] ? selection[0].item : null;
-        const steps = ITEMS_LIST.slice();
-
-        if ( frameset ) {
-          if ( ! frameset.saddleEnabled ) steps.splice( 6, 1 );
-          if ( ! frameset.seatpostEnabled ) steps.splice( 5, 1 );
-          if ( ! frameset.wheelEnabled ) steps.splice( 3, 1 );
-          if ( ! frameset.groupsetEnabled ) steps.splice( 2, 1 );
-          if ( ! frameset.barEnabled ) steps.splice( 1, 1 );
-        }
-
+        const steps = this.getSteps( selection[0] ? selection[0].item : null );
         return steps.concat([{ title: 'Bike Fit' }]);
       },
       step() {
@@ -236,6 +239,21 @@
         const steps = this.steps.map( a => a.id );
         const { selection } = this;
         return selection.filter( a => a.item && steps.indexOf( a.item.type ) !== -1 );
+      },
+      showBikeFit() {
+        return this.index === this.steps.length - 1;
+      },
+      compositionID() {
+        return this.composition.map(( c, n )=> {
+
+          if ( ! c.item ) return '0000';
+
+          n = digits( c.item.id.toString( 16 ), 2 );
+          if ( ! c.item.colors[ c.color ] ) n += '00';
+          else n += digits( c.color.toString( 16 ), 2 );
+          return n;
+
+        }).join('');
       }
     },
     methods: {
@@ -244,13 +262,17 @@
         this.$store
           .dispatch( 'getData' )
           .then( res => {
-            console.log( res.data.object );
+            //console.log( res.data.object );
             if ( res.data.error ) console.error( res.data );
             else setTimeout(() => {
+
               this.$store.commit( 'set', {
                 loading: false,
                 ...res.data.object
-              })
+              });
+
+              this.getComposition();
+
             }, 1000 );
           });
       },
@@ -283,6 +305,69 @@
         this.description.item  = item;
         this.description.image = this.image( item );
         this.description.show  = true;
+      },
+      showForm() {
+        this.$refs.footer.close();
+        this.description.show = false;
+        this.form.show = true;
+      },
+      setRoute( id ) {
+        const { history } = window;
+        if ( history ) {
+          if ( id ) history.replaceState( '', '', `?id=${ id }`);
+          else history.replaceState( '', '', '/' );
+        }
+      },
+      getSteps( frameset ) {
+        const steps = ITEMS_LIST.slice();
+        if ( frameset ) {
+          if ( ! frameset.saddleEnabled ) steps.splice( 6, 1 );
+          if ( ! frameset.seatpostEnabled ) steps.splice( 5, 1 );
+          if ( ! frameset.wheelEnabled ) steps.splice( 3, 1 );
+          if ( ! frameset.groupsetEnabled ) steps.splice( 2, 1 );
+          if ( ! frameset.barEnabled ) steps.splice( 1, 1 );
+        }
+        return steps;
+      },
+      getComposition() {
+        var id = window.location.search.replace( /^\?.*id=(\d+).*$/, '$1' );
+        if ( id ) {
+
+          var codes = [];
+          while ( id.length ) {
+            codes.push([ parseInt( id.slice( 0, 2 ), 16 ), parseInt( id.slice( 2, 4 ), 16 ) ]);
+            id = id.slice( 4 );
+          }
+
+          const selection = [];
+          var index = this.framesets.findIndex( a => a.id === codes[0][0] );
+          //var index = 0, color = codes[0][1];
+
+          if ( index !== -1 ) {
+            const steps = this.getSteps( this.framesets[ index ] );
+            steps.forEach(( step, i ) => {
+              if ( codes[i] ) {
+
+                index = step.id === 'framesets'
+                  ? index
+                  : this[ step.id ].findIndex( a => a.id === codes[i][0] );
+
+                selection.push({
+                  props: step,
+                  selected: index,
+                  color: codes[i][1],
+                  item: Object.assign( this[ step.id ][ index ],{
+                    type: step.id,
+                    step
+                  })
+                });
+              }
+            });
+          }
+
+          this.selection = selection;
+          this.index = this.selection.length;
+        }
       }
     }
   }
@@ -300,7 +385,7 @@
     position: relative;
     background-color: white;
     flex: 0 0 400px;
-    border-left: 1px solid var(--bb-secondary-light);
+    border-left: 1px solid var(--bb-primary-light);
     z-index: 1;
   }
   .step-counter {
@@ -314,6 +399,24 @@
     position: relative;
     z-index: 1;
   }
+  .builder-start {
+    z-index: 1;
+    background: url('../../../assets/frameset-bg.svg') no-repeat center;
+    background-size: 460px;
+  }
+  .builder-start > p {
+    max-width: 440px;
+  }
+  .builder-start > p.display-1 {
+    max-width: none;
+    position: absolute;
+    text-align: center;
+    left: 0; right: 0;
+    top: 50%;
+  }
+  .builder-title > h1 {
+    margin-bottom: 16px;
+  }
   .builder-bike {
     position: absolute;
     width: 100%;
@@ -322,17 +425,15 @@
     z-index: 0;
     text-align: center;
   }
-  .btn-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
 
   /* MEDIA */
 
   @media ( max-width: 966px ) {
     .builder {
       flex-direction: column;
+    }
+    .show-bike-fit .builder-body {
+      height: calc( 100% - 70px );
     }
     .breadcrumbs, .step-counter {
       display: none !important;
@@ -350,6 +451,13 @@
 
       & > nav { order: 1; }
       & > div { order: 0; }
+    }
+    .btn-contact {
+      order: 3;
+    }
+    .show-bike-fit .nav-builder {
+      & > nav { order: 0; }
+      & > div { order: 1; }
     }
   }
 </style>

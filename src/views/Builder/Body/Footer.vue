@@ -17,7 +17,7 @@
     </Btn>
 
     <v-dialog v-model="showDetails" max-width="1280">
-      <v-card class="d-flex flex-column flex-nowrap" min-height="90vh">
+      <v-card class="d-flex flex-column flex-nowrap" height="90vh">
         <v-toolbar class="outline-bottom light--border shrink" elevation="0" height="70">
 
           <h3 class="headline bb-primary--text">Your build in detail</h3>
@@ -33,7 +33,7 @@
           <v-row class="layer autoscroll pa-1" no-gutters>
 
             <v-col v-for="( comp, i ) in items" class="pa-1" :key="i" cols="12" sm="6" md="3">
-              <v-card height="400" class="d-flex flex-column justify-end">
+              <v-card height="426" class="d-flex flex-column justify-end">
 
                 <div class="grow rel pa-12">
                   <div class="detail-image" :style="image( comp.item, comp.color )"/>
@@ -45,6 +45,10 @@
                 <div class="px-4 mb-2">
                   <p class="caption bb-primary-light--text mb-0">{{ comp.item.step.title }}</p>
                   <p class="headline bb-primary--text mb-0">{{ comp.item.name }}</p>
+                  <p class="mb-0">
+                    <Color class="mb-0" :value="getColor( comp.item, comp.color )" small/>
+                    <span class="caption bb-primary--text">{{ getColorName( comp.item, comp.color ) }}</span>
+                  </p>
                 </div>
 
                 <v-card-actions>
@@ -66,6 +70,11 @@
         </div>
         <v-toolbar class="outline-top light--border shrink" elevation="0" height="70">
 
+          <Btn class="outline shrink" color="bb-primary" @click="$emit('buy')" text tile dark>
+            Contact us for a quote
+            <v-icon v-text="'$next'"/>
+          </Btn>
+
           <v-spacer/>
 
           <div class="text-right">
@@ -82,11 +91,11 @@
 
 <script>
 
-  import { Btn } from '@/components';
+  import { Btn, Color } from '@/components';
   import { itemImage } from '@/utils';
 
   export default {
-    components: { Btn },
+    components: { Btn, Color },
     props: {
       items: {
         type: Array,
@@ -113,6 +122,14 @@
       getPrice( item, color ) {
         if ( color != null ) item = item.colors[ color ];
         return item.price || item.color.price || 0;
+      },
+      getColor( item, color ) {
+        item = item.colors[ color ];
+        return item.color ? [ item.color.color, item.color.color2 ] : null;
+      },
+      getColorName( item, color ) {
+        item = item.colors[ color ];
+        return item.color ? item.color.colorName : '';
       },
       close() {
         this.showDetails = false;

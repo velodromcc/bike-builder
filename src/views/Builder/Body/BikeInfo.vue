@@ -13,8 +13,8 @@
       <v-item-group :value="color" mandatory @change="$emit( 'input', $event )">
         <v-item v-for="( color, i ) in colors" :key="i" v-slot:default="{ active, toggle }">
           <Color
-            tag="a" href="#"
-            :value="color.color"
+            tag="a"
+            :value="[ color.color, color.color2 ]"
             :selected="active"
             @click="toggle"
           />

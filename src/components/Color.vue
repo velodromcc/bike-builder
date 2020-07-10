@@ -22,6 +22,7 @@
     computed: {
       color() {
         return toArray( this.value )
+          .filter( a => a )
           .map( v => '#' + v.replace('#',''));
       }
     }

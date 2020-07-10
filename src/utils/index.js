@@ -66,6 +66,13 @@ export function itemImage( item, index ) {
   return '';
 }
 
+export function digits( value, digits ) {
+  var n = '';
+  value = String( value );
+  while ( n.length < digits ) n += '0';
+  return n.slice( value.length ) + value;
+}
+
 // COLOR FUNCTIONS
 
 function add( color, amount ) {

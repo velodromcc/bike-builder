@@ -7,7 +7,7 @@
       @change="$emit( 'input', $event )"
     >
       <v-item v-for="( item, i ) in list" v-slot="{ active, toggle }" :key="i">
-        <a class="bike-item body-1 pt-3" href="#" :class="{ selected: active }" @click="toggle">
+        <a class="bike-item body-1 pt-3" :class="{ selected: active }" @click="toggle">
 
           <v-avatar v-if="active" class="bike-item-icon" size="30" color="bb-primary">
             <v-icon small dark>mdi-check-bold</v-icon>
@@ -36,7 +36,7 @@
                 <Color
                   v-for="( color, i ) in item.info.colors"
                   :key="i"
-                  :value="color.color"
+                  :value="[ color.color, color.color2 ]"
                   class="mb-0"
                   small
                 />
@@ -139,12 +139,20 @@
       white-space: nowrap;
     }
     .bike-item {
+
       display: inline-block;
       width: 300px;
       height: 100%;
       border-bottom: 0;
+      border-left: 0;
       border-right: 1px solid var(--bb-secondary-light);
+      border-top: 5px solid transparent;
       vertical-align: top;
+
+      &.selected {
+        border-left: 0;
+        border-top: 5px solid var(--bb-primary);
+      }
     }
   }
 </style>
