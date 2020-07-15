@@ -39,7 +39,7 @@ const CONSTANTS = {
   seatposts: {
     title: 'Seatposts',
     zIndex: 2,
-    scale: .38
+    scale: .36
   },
   saddles: {
     title: 'Saddles',
@@ -64,13 +64,6 @@ export function itemImage( item, index ) {
       item.colors[index].color.imageFront || item.colors[index].color.image );
   }
   return '';
-}
-
-export function digits( value, digits ) {
-  var n = '';
-  value = String( value );
-  while ( n.length < digits ) n += '0';
-  return n.slice( value.length ) + value;
 }
 
 // COLOR FUNCTIONS

@@ -26,6 +26,10 @@
     })
   }
 
+  function radians( degree ) {
+    return degree * Math.PI / 180;
+  }
+
   export default {
     props: {
       width: {
@@ -130,6 +134,7 @@
 
             case 'bars':
 
+              props.rotation = radians( this.items[0].item.inclinationFront || 0 );
               itemAnchors.groupsetsBar = {
                 x: a.item.groupsetBarX || 0,
                 y: a.item.groupsetBarY || 0,
@@ -159,8 +164,15 @@
                 anchor: a.item.type + pos
               }));
 
+            case 'saddles':
+
+              props.blockRotation = true;
+
+              break;
+
             case 'seatposts':
 
+              props.rotation = radians( this.items[0].item.inclinationRear || 0 );
               itemAnchors.saddles = {
                 x: a.item.saddleX || 0,
                 y: a.item.saddleY || 0,
@@ -199,8 +211,8 @@
         const { composition } = this;
         if ( composition ) {
 
-          const { frameset } = composition;
           var waiting = [];
+          const { frameset } = composition;
           frameset.loaded = false;
 
           composition.items.forEach( item => {
@@ -225,34 +237,34 @@
                   loaded: true
                 }));
 
-              } else if ( anchor ) {
+              } else {
 
-                waiting.push({
-                  ...item,
+                waiting.push( Object.assign( item, {
                   width: width * item.scale,
                   height: height * item.scale,
                   image,
                   anchor,
                   origin
-                });
-
+                }));
               }
 
               if ( frameset.loaded ) {
 
-                var item2;
                 waiting = waiting.map( item => {
 
-                  item2 = item.anchor.type
-                    ? this.buffer.find( a => a.type === item.anchor.type ) || frameset
-                    : frameset;
+                  if ( item.anchor.type && ( item.parent = composition.items.find( a => a.type === item.anchor.type ))) {
 
-                  item.x = item2.x + item.anchor.x * item2.scale - item.origin.x * item.scale;
-                  item.y = item2.y + item.anchor.y * item2.scale - item.origin.y * item.scale;
+                    if ( this.buffer.indexOf( item.parent ) < 0 ) return item;
+                    this.buffer.push( item );
+                    return;
+                  }
+
+                  item.parent = null;
+                  item.x = frameset.x + item.anchor.x * frameset.scale;
+                  item.y = frameset.y + item.anchor.y * frameset.scale;
                   this.buffer.push( item );
                 })
                 .filter( a => a );
-
               }
             })
           });
@@ -263,10 +275,64 @@
         context.clearRect( 0, 0, this.width, this.height );
       },
       draw() {
+
         this.clear();
         this.buffer.slice().sort(( a, b ) => a.index - b.index ).forEach( item => {
-          this.context.drawImage( item.image, item.x, item.y, item.width, item.height );
-          if ( item.type === 'framesets' ) this.drawShadow( item );
+
+          this.context.save();
+
+          if ( ! item.parent ) {
+
+            this.context.translate( item.x, item.y );
+
+            if ( item.type !== 'framesets' ) {
+
+              if ( item.rotation && ! item.blockRotation )
+                this.context.rotate( -item.rotation );
+
+              this.context.translate(
+                - item.origin.x * item.scale,
+                - item.origin.y * item.scale
+              );
+            }
+
+          } else {
+
+            this.context.translate(
+              item.parent.x,
+              item.parent.y
+            );
+
+            if ( item.parent.rotation )
+              this.context.rotate( -item.parent.rotation );
+
+            var ox = item.parent.origin.x * item.parent.scale;
+            var oy = item.parent.origin.y * item.parent.scale;
+
+            this.context.translate(
+              item.anchor.x * item.parent.scale - ox,
+              item.anchor.y * item.parent.scale - oy
+            );
+
+            if ( item.blockRotation ) {
+              if ( item.parent.rotation ) {
+                this.context.rotate( item.parent.rotation );
+              }
+            } else if ( item.rotation && ! item.blockRotation ) {
+              this.context.rotate( -item.rotation );
+            }
+
+            this.context.translate(
+              - item.origin.x * item.scale,
+              - item.origin.y * item.scale
+            );
+          }
+
+          this.context.drawImage( item.image, 0, 0, item.width, item.height );
+          this.context.restore();
+
+          if ( item.type === 'framesets' )
+            this.drawShadow( item );
         });
       },
       drawShadow( item ) {

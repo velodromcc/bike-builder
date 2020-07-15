@@ -9,11 +9,11 @@
 
     <nav>
 
-      <Btn class="mr-2" color="bb-primary" icon>
+      <Btn class="mr-2" color="bb-primary" @click="$emit('message')" icon>
         <v-icon v-text="'mdi-chat-outline'"/>
       </Btn>
 
-      <Btn color="bb-primary" icon>
+      <Btn color="bb-primary" @click="$emit('share')" icon>
         <v-icon v-text="'mdi-share-variant'"/>
       </Btn>
 

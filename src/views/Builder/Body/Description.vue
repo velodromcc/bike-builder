@@ -44,12 +44,12 @@
     },
     data() {
       return {
-        show: this.value
+        show: !!this.value
       }
     },
     watch: {
       value( value ) {
-        this.show = value
+        this.show = !!value;
       },
       show() {
         this.$emit( 'input', this.show );

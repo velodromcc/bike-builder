@@ -6,7 +6,10 @@
     <v-row v-else class="builder" no-gutters>
       <v-row class="builder-body flex-column flex-nowrap grow" no-gutters>
 
-        <Header class="builder-header shrink"/>
+        <Header
+          class="builder-header shrink"
+          @share="share = true"
+        />
 
         <Breadcrumbs
           class="breadcrumbs body-1 outline-bottom light--border"
@@ -104,8 +107,13 @@
     />
 
     <Form
-      v-model="form.show"
+      v-model="form"
       :items="composition"
+    />
+
+    <Share
+      v-model="share"
+      :id="compositionID"
     />
 
   </main>
@@ -121,15 +129,21 @@
   import Loading from '../Loading';
   import Header from './Header';
   import Footer from './Footer';
+
   import Breadcrumbs from './Breadcrumbs';
-  import Description from './Description';
-  import Form from './Form';
   import BikeItems from './BikeItems';
   import BikeInfo from './BikeInfo';
   import BikeFit from './BikeFit';
   import Bike from './Bike';
+
+  // DIALOGS
+  import Description from './Description';
+  import Share from './Share';
+  import Form from './Form';
+
+  // UTILS
   import { Btn } from '@/components';
-  import { digits } from '@/utils';
+  const separeChar = '&';
 
   // Constants
 
@@ -146,6 +160,7 @@
       Footer,
       Breadcrumbs,
       Description,
+      Share,
       Form,
       BikeItems,
       BikeFit,
@@ -163,14 +178,13 @@
         selectedItem: null,
         selectedColor: 0,
         selection: [],
+        form: false,
+        share: false,
         description: {
           show: false,
           item: null,
           image: null
         },
-        form: {
-          show: false
-        }
       }
     },
     watch: {
@@ -244,15 +258,11 @@
         return this.index === this.steps.length - 1;
       },
       compositionID() {
-        return this.composition.map(( c, n )=> {
-
-          if ( ! c.item ) return '0000';
-
-          n = digits( c.item.id.toString( 16 ), 2 );
-          if ( ! c.item.colors[ c.color ] ) n += '00';
-          else n += digits( c.color.toString( 16 ), 2 );
-          return n;
-
+        return this.composition.map( a => {
+          return a.item.type.charAt(0) + [
+            a.item ? a.item.id : 0,
+            a.item && a.item.colors[ a.color ] ? a.color : 0
+          ].join( separeChar );
         }).join('');
       }
     },
@@ -266,6 +276,7 @@
             if ( res.data.error ) console.error( res.data );
             else setTimeout(() => {
 
+              //console.log( res.data.object );
               this.$store.commit( 'set', {
                 loading: false,
                 ...res.data.object
@@ -309,7 +320,7 @@
       showForm() {
         this.$refs.footer.close();
         this.description.show = false;
-        this.form.show = true;
+        this.form = true;
       },
       setRoute( id ) {
         const { history } = window;
@@ -330,18 +341,21 @@
         return steps;
       },
       getComposition() {
-        var id = window.location.search.replace( /^\?.*id=(\d+).*$/, '$1' );
+
+        var id = window.location.search
+          .replace(/^\?.*(id=[^=]+).*$/g,'$1')
+          .replace( 'id=', '' )
+          .replace( /&\D+$/, '' );
+
         if ( id ) {
 
-          var codes = [];
-          while ( id.length ) {
-            codes.push([ parseInt( id.slice( 0, 2 ), 16 ), parseInt( id.slice( 2, 4 ), 16 ) ]);
-            id = id.slice( 4 );
-          }
+          var codes = id.split(/[a-z]/i).map( a => {
+            a = a.split( separeChar ).map( n => parseInt( n ));
+            if ( a.length >= 2 ) return a;
+          }).filter( a => a );
 
           const selection = [];
           var index = this.framesets.findIndex( a => a.id === codes[0][0] );
-          //var index = 0, color = codes[0][1];
 
           if ( index !== -1 ) {
             const steps = this.getSteps( this.framesets[ index ] );
@@ -352,15 +366,17 @@
                   ? index
                   : this[ step.id ].findIndex( a => a.id === codes[i][0] );
 
-                selection.push({
-                  props: step,
-                  selected: index,
-                  color: codes[i][1],
-                  item: Object.assign( this[ step.id ][ index ],{
-                    type: step.id,
-                    step
-                  })
-                });
+                if ( index !== -1 ) {
+                  selection.push({
+                    props: step,
+                    selected: index,
+                    color: codes[i][1],
+                    item: Object.assign( this[ step.id ][ index ], {
+                      type: step.id,
+                      step
+                    })
+                  });
+                }
               }
             });
           }
