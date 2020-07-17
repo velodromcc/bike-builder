@@ -26,6 +26,14 @@ const CONSTANTS = {
     zIndex: 7,
     scale: .45
   },
+  groupsetsBrakeLeft: {
+    zIndex: 2,
+    scale: .25
+  },
+  groupsetsBrakeRight: {
+    zIndex: 2,
+    scale: .25
+  },
   wheels: {
     title: 'Wheels',
     zIndex: 3,

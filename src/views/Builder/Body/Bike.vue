@@ -9,7 +9,9 @@
   const GRUOPSET_ANCHORS = {
     groupsetsLeft: 'imageBack',
     groupsetsMiddle: 'imageFront',
-    groupsetsBar: 'imageBar'
+    groupsetsBar: 'imageBar',
+    groupsetsBrakeLeft: 'imageBrake',
+    groupsetsBrakeRight: 'imageBrake'
   };
 
   function loadImage( url ) {
@@ -110,6 +112,14 @@
           groupsetsBar: {
             x: frameset.item.groupsetBarX || 0,
             y: frameset.item.groupsetBarY || 0
+          },
+          groupsetsBrakeLeft: {
+            x: frameset.item.leftWheelX || 0,
+            y: frameset.item.leftWheelY || 0
+          },
+          groupsetsBrakeRight: {
+            x: frameset.item.rightWheelX || 0,
+            y: frameset.item.rightWheelY || 0
           }
         };
 
