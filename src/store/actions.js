@@ -8,6 +8,6 @@ export function getData() {
   return instance.get( '/site/configuration/bikebuilder.inmovens.com' );
 }
 
-export function buyBike( ctx, params ) {
-  return instance.get( '/site/buy', { params });
+export function buyBike( ctx, data ) {
+  return instance.post( '/site/buy', { data });
 }
