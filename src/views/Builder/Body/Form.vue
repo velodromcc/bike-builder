@@ -113,9 +113,9 @@
 
   // RULES
 
-  const required = v => !!v || 'The field is required.';
+  const required = v => !!(v||'').trim() || 'The field is required.';
   const email = v => EMAIL_REGEX.test(v) || 'The email is not valid.';
-  //const shortest = v => v && v.length > 10 || 'The message is too short.'
+  const shortest = n => v => (v||'').trim().length > n || 'The field is too short.';
 
   export default {
     components: { Btn },
@@ -136,7 +136,7 @@
           phone: ''
         },
         rules: {
-          name: [ required ],
+          name: [ required, shortest(2) ],
           email: [ required, email ],
           phone: [ required ]
         }
@@ -165,13 +165,13 @@
             ...this.data,
             idCompany: this.company.id,
             url: this.company.website,
-            idFramesetColor: null,
-            idSeatpostColor: null,
-            idBarColor: null,
-            idSaddleColor: null,
-            idGroupsetColor: null,
-            idWheelColor: null,
-            idTyreColor: null
+            idFramesetColor: -1,
+            idSeatpostColor: -1,
+            idBarColor: -1,
+            idSaddleColor: -1,
+            idGroupsetColor: -1,
+            idWheelColor: -1,
+            idTyreColor: -1
           };
 
           // Add composition
@@ -185,8 +185,12 @@
           this.$store
             .dispatch( 'buyBike', params )
             .then( res => {
-              console.log( res );
-              this.sended = true;
+              if ( res.data.error ) {
+                console.error( res.data.message );
+                this.error = true;
+              } else {
+                this.sended = true;
+              }
             })
             .catch( err => {
               console.error( err );
