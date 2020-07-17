@@ -1,6 +1,7 @@
 <template>
-  <v-dialog v-model="show" max-width="1024">
-    <v-card class="d-flex flex-column flex-nowrap" height="90vh">
+  <v-dialog v-model="show" :persistent="loading" max-width="720" no-click-animation>
+    <v-card class="d-flex flex-column flex-nowrap rel" height="480">
+      <v-overlay :value="loading" color="white" absolute/>
       <v-toolbar class="outline-bottom light--border shrink" elevation="0" height="90">
 
         <span>
@@ -16,29 +17,32 @@
 
       </v-toolbar>
       <v-row class="grow rel" no-gutters>
-        <v-form ref="form" v-model="valid" class="layer autoscroll pa-4">
+        <div v-if="sended" class="fill-width">
+
+          <v-alert type="success" class="ma-4" outlined>
+            <span>Your command has been sended succesfully.</span>
+          </v-alert>
+
+        </div>
+        <div v-else-if="error" class="fill-width">
+
+          <v-alert type="error" class="ma-4" outlined>
+            <span>It seems there has been an error, please try again later.</span>
+          </v-alert>
+
+        </div>
+        <v-form v-else ref="form" v-model="valid" class="layer autoscroll pa-4">
 
           <label class="d-block caption mb-2 bb-primary--text">
-            First Name <span style="color:red">*</span>
+            Name <span style="color:red">*</span>
           </label>
 
           <v-text-field
+            name="name"
+            autocomplete="name"
             color="bb-primary"
-            v-model="data.firstName"
-            :rules="rules.firstName"
-            single-line
-            outlined
-            dense
-          />
-
-          <label class="d-block caption mb-2 bb-primary--text">
-            Last Name <span style="color:red">*</span>
-          </label>
-
-          <v-text-field
-            color="bb-primary"
-            v-model="data.lastName"
-            :rules="rules.lastName"
+            v-model="data.name"
+            :rules="rules.name"
             single-line
             outlined
             dense
@@ -49,6 +53,9 @@
           </label>
 
           <v-text-field
+            type="email"
+            name="email"
+            autocomplete="email"
             color="bb-primary"
             v-model="data.email"
             :rules="rules.email"
@@ -58,49 +65,36 @@
           />
 
           <label class="d-block caption mb-2 bb-primary--text">
-            Telephone Number
+            Telephone Number <span style="color:red">*</span>
           </label>
 
           <v-text-field
             type="number"
+            name="tel"
+            autocomplete="tel"
             color="bb-primary"
             v-model="data.phone"
+            :rules="rules.phone"
             single-line
             outlined
             dense
           />
 
-          <label class="d-block caption mb-2 bb-primary--text">
-            Your Message <span style="color:red">*</span>
-          </label>
-
-          <v-textarea
-            rows="8"
-            color="bb-primary"
-            v-model="data.message"
-            :rules="rules.message"
-            single-line
-            no-resize
-            outlined
-          />
-
-          <small class="d-block" style="max-width:600px">
-            We'd love to keep you up to date with the latest products, events and services at Bespoke.
-            We never sell your details to anyone else, and you can unsubscribe at any time.
-          </small>
-
-          <v-checkbox
-            v-model="data.accept"
-            label="Yes please, sign me up to receive email newsletters from Bespoke"
-          />
-
         </v-form>
       </v-row>
-      <v-toolbar class="outline-top light--border shrink" elevation="0" height="70">
+      <v-toolbar tag="footer" class="outline-top light--border shrink" elevation="0" height="70">
 
         <v-spacer/>
 
-        <Btn color="bb-primary" :disabled="!valid" :dark="valid">
+        <Btn v-if="sended" color="bb-primary" @click="show = false" dark>
+          Accept
+        </Btn>
+
+        <Btn v-else-if="error" color="bb-primary" @click="error = false" dark>
+          Try Again
+        </Btn>
+
+        <Btn v-else color="bb-primary" :disabled="!valid" :loading="loading" @click="send" :dark="valid">
           Send Enquiry
         </Btn>
 
@@ -112,13 +106,16 @@
 <script>
 
   import { Btn } from '@/components';
+  import { capitalize } from '@/utils';
+  import { mapState } from 'vuex';
+
   const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   // RULES
 
   const required = v => !!v || 'The field is required.';
   const email = v => EMAIL_REGEX.test(v) || 'The email is not valid.';
-  const shortest = v => v && v.length > 10 || 'The message is too short.'
+  //const shortest = v => v && v.length > 10 || 'The message is too short.'
 
   export default {
     components: { Btn },
@@ -130,29 +127,18 @@
       return {
         show: !!this.value,
         valid: false,
+        loading: false,
+        sended: false,
+        error: false,
         data: {
-          firstName: '',
-          lastName: '',
+          name: '',
           email: '',
-          phone: '',
-          message: '',
-          accept: false
+          phone: ''
         },
         rules: {
-          firstName: [
-            required
-          ],
-          lastName: [
-            required
-          ],
-          email: [
-            required,
-            email
-          ],
-          message: [
-            required,
-            shortest
-          ]
+          name: [ required ],
+          email: [ required, email ],
+          phone: [ required ]
         }
       }
     },
@@ -165,14 +151,48 @@
         this.$emit( 'input', this.show );
       }
     },
+    computed: mapState([ 'company' ]),
     methods: {
       reset() {
+        //this.sended = this.error = false;
         const { form } = this.$refs;
         if ( form ) form.reset();
       },
       send() {
         if ( this.valid ) {
-          console.log( this.data );
+
+          const params = {
+            ...this.data,
+            idCompany: this.company.id,
+            url: this.company.website,
+            idFramesetColor: null,
+            idSeatpostColor: null,
+            idBarColor: null,
+            idSaddleColor: null,
+            idGroupsetColor: null,
+            idWheelColor: null,
+            idTyreColor: null
+          };
+
+          // Add composition
+          this.items.forEach(( a, key ) => {
+            key = 'id' + capitalize( a.item.step.id ).replace(/s$/,'') + 'Color';
+            params[key] = a.item.colors[ a.color ].color.id;
+          });
+
+          // Send request
+          this.loading = true;
+          this.$store
+            .dispatch( 'buyBike', params )
+            .then( res => {
+              console.log( res );
+              this.sended = true;
+            })
+            .catch( err => {
+              console.error( err );
+              this.error = true;
+            })
+            .finally(() => this.loading = false );
         }
       }
     }

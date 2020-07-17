@@ -66,6 +66,11 @@ export function itemImage( item, index ) {
   return '';
 }
 
+export function capitalize( str ) {
+  str = String(str);
+  return str.charAt(0).toUpperCase() + str.slice( 1 );
+}
+
 // COLOR FUNCTIONS
 
 function add( color, amount ) {

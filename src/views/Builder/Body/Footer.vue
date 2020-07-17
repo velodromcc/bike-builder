@@ -32,32 +32,33 @@
         <div class="grow rel">
           <v-row class="layer autoscroll pa-1" no-gutters>
 
-            <v-col v-for="( comp, i ) in items" class="pa-1" :key="i" cols="12" sm="6" md="3">
+            <v-col v-for="( info, i ) in infoItems" class="pa-1" :key="i" cols="12" sm="6" md="3">
               <v-card height="426" class="d-flex flex-column justify-end">
 
                 <div class="grow rel pa-12">
-                  <div class="detail-image" :style="image( comp.item, comp.color )"/>
+                  <div class="detail-image" :style="info.image"/>
                   <div class="detail-price headline bb-primary--text">
-                    {{ getPrice( comp.item, comp.color ) }} €
+                    {{ info.price }} €
                   </div>
                 </div>
 
                 <div class="px-4 mb-2">
-                  <p class="caption bb-primary-light--text mb-0">{{ comp.item.step.title }}</p>
-                  <p class="headline bb-primary--text mb-0">{{ comp.item.name }}</p>
+                  <p class="caption bb-primary-light--text mb-0">{{ info.type }}</p>
+                  <p class="headline bb-primary--text mb-0">{{ info.name }}</p>
                   <p class="mb-0">
-                    <Color class="mb-0" :value="getColor( comp.item, comp.color )" small/>
-                    <span class="caption bb-primary--text">{{ getColorName( comp.item, comp.color ) }}</span>
+                    <Color class="mb-0" :value="info.color" small/>
+                    <span class="caption bb-primary--text">{{ info.colorName }}</span>
                   </p>
                 </div>
 
                 <v-card-actions>
 
-                  <Btn class="body-1" color="bb-primary" tile dark @click="$emit( 'description', comp.item )">
+                  <Btn class="body-1" color="bb-primary" tile dark @click="$emit( 'description', info.item )">
                     Descripción
                   </Btn>
 
-                  <Btn class="body-1" color="bb-primary" tile outlined @click="$emit( 'buy', comp.item )">
+                  <Btn v-if="info.url" tag="a" :href="info.url" target="_blank"
+                  class="body-1" color="bb-primary" tile outlined>
                     Buy online
                   </Btn>
 
@@ -70,7 +71,7 @@
         </div>
         <v-toolbar class="outline-top light--border shrink" elevation="0" height="70">
 
-          <Btn class="outline shrink" color="bb-primary" @click="$emit('buy')" text tile dark>
+          <Btn v-if="!hideFormButton" class="outline shrink" color="bb-primary" @click="$emit('form')" text tile dark>
             Contact us for a quote
             <v-icon v-text="'$next'"/>
           </Btn>
@@ -100,7 +101,8 @@
       items: {
         type: Array,
         default: () => []
-      }
+      },
+      hideFormButton: Boolean
     },
     data() {
       return {
@@ -108,10 +110,24 @@
       }
     },
     computed: {
+      infoItems() {
+        return this.items.map(( a, item ) => {
+          item = a.item.colors[ a.color ];
+          return {
+            type: a.item.step.title,
+            name: a.item.name,
+            item: a.item,
+            price: item.price || item.color.price || 0,
+            colorName: item.color.colorName,
+            color: [ item.color.color, item.color.color2 ],
+            image: this.image( a.item, a.color ),
+            url: item.url
+          }
+        });
+      },
       price() {
-        return this.items
-          .map( a => a.item.colors[ a.color ])
-          .reduce(( sum, item ) => sum + this.getPrice( item ), 0 );
+        return this.infoItems
+          .reduce(( sum, a ) => sum + a.price, 0 );
       }
     },
     methods: {

@@ -1,7 +1,9 @@
 <template>
   <main class="fill-height rel" :class="{ 'show-bike-fit': showBikeFit }">
 
-    <Loading v-if="loading" :value="loaded" />
+    <Error v-if="error"/>
+
+    <Loading v-else-if="loading" />
 
     <v-row v-else class="builder" no-gutters>
       <v-row class="builder-body flex-column flex-nowrap grow" no-gutters>
@@ -50,9 +52,10 @@
           ref="footer"
           class="shrink"
           :items="composition"
+          :hide-form-button="hideForm"
           @reset="reset"
           @description="showDescription"
-          @buy="showForm"
+          @form="showForm"
         />
 
       </v-row>
@@ -127,6 +130,7 @@
   // COMPONENTS
 
   import Loading from '../Loading';
+  import Error from '../Error';
   import Header from './Header';
   import Footer from './Footer';
 
@@ -156,6 +160,7 @@
   export default {
     components: {
       Loading,
+      Error,
       Header,
       Footer,
       Breadcrumbs,
@@ -173,8 +178,8 @@
     },
     data() {
       return {
-        loaded: 0,
         index: 0,
+        error: false,
         selectedItem: null,
         selectedColor: 0,
         selection: [],
@@ -254,6 +259,9 @@
         const { selection } = this;
         return selection.filter( a => a.item && steps.indexOf( a.item.type ) !== -1 );
       },
+      hideForm() {
+        return this.composition.length < this.steps.length - 1;
+      },
       showBikeFit() {
         return this.index === this.steps.length - 1;
       },
@@ -272,11 +280,15 @@
         this.$store
           .dispatch( 'getData' )
           .then( res => {
-            //console.log( res.data.object );
-            if ( res.data.error ) console.error( res.data );
-            else setTimeout(() => {
+            if ( res.data.error ) {
+
+              this.error = true;
+              console.error( res.data );
+
+            } else setTimeout(() => {
 
               //console.log( res.data.object );
+              this.error = false;
               this.$store.commit( 'set', {
                 loading: false,
                 ...res.data.object
@@ -285,6 +297,10 @@
               this.getComposition();
 
             }, 1000 );
+          })
+          .catch( err => {
+            this.error = true;
+            console.error( err );
           });
       },
       isDisabled( index ) {

@@ -67,7 +67,9 @@
         var frameset = this.items[0];
         if ( ! frameset || ! frameset.item ) return null;
 
+        var chain = null;
         const itemAnchors = {};
+
         const anchors = {
           bars: {
             x: frameset.item.barX || 0,
@@ -145,6 +147,21 @@
 
             case 'groupsets':
 
+              chain = {
+                front: {
+                  top: a.item.chainFrontTop,
+                  bottom: a.item.chainFrontBottom,
+                },
+                rear: {
+                  top: a.item.chainRearTop,
+                  bottom: a.item.chainRearBottom
+                },
+                break: {
+                  x: a.item.brakeFrontX,
+                  y: a.item.brakeFrontY
+                }
+              };
+
               return Object.keys( GRUOPSET_ANCHORS ).map( key => ({
                 ...props,
                 type: key,
@@ -193,7 +210,8 @@
           frameset,
           anchors,
           itemAnchors,
-          items
+          items,
+          chain
         };
       }
     },
@@ -253,7 +271,6 @@
                 waiting = waiting.map( item => {
 
                   if ( item.anchor.type && ( item.parent = composition.items.find( a => a.type === item.anchor.type ))) {
-
                     if ( this.buffer.indexOf( item.parent ) < 0 ) return item;
                     this.buffer.push( item );
                     return;
@@ -278,6 +295,9 @@
 
         this.clear();
         this.buffer.slice().sort(( a, b ) => a.index - b.index ).forEach( item => {
+
+          if ( item.type === 'groupsetsMiddle' )
+            this.drawFrontChain( item );
 
           this.context.save();
 
@@ -331,9 +351,78 @@
           this.context.drawImage( item.image, 0, 0, item.width, item.height );
           this.context.restore();
 
+          if ( item.type === 'groupsetsLeft' )
+            this.drawRearChain( item );
+
           if ( item.type === 'framesets' )
             this.drawShadow( item );
         });
+      },
+      drawFrontChain( item ) {
+
+        const { chain } = this.composition;
+        if ( ! chain || ! chain.rear.top || ! chain.front.top ) return;
+
+        const ctx = this.context;
+        var radius = chain.front.top * item.scale;
+        var f1 = { x: item.x, y: item.y - radius };
+        var f2 = { x: item.x, y: item.y + radius };
+
+        // Draw
+
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.arc( item.x, item.y, radius, Math.PI / 2, Math.PI * 2 * .75, true );
+        ctx.stroke();
+
+        if (( item = this.buffer.find( a => a.type === 'groupsetsLeft' ))) {
+
+          radius = chain.rear.top * item.scale;
+          var r1 = { x: item.x, y: item.y - radius };
+          var r2 = {
+            x: item.x - item.origin.x * item.scale + chain.break.x * item.scale,
+            y: item.y - item.origin.y * item.scale + chain.break.y * item.scale
+          };
+
+          ctx.beginPath();
+          ctx.moveTo( f1.x, f1.y );
+          ctx.lineTo( f1.x + ( r1.x - f1.x ) / 2, f1.y + ( r1.y - f1.y ) / 2 );
+          ctx.moveTo( f2.x, f2.y );
+          ctx.lineTo( r2.x, r2.y );
+          ctx.stroke();
+
+        }
+      },
+      drawRearChain( item ) {
+
+        const { chain } = this.composition;
+        if ( ! chain || ! chain.rear.top || ! chain.front.top ) return;
+
+        const ctx = this.context;
+        var radius = chain.rear.top * item.scale;
+        var r1 = { x: item.x, y: item.y - radius };
+
+        // Draw
+
+        ctx.strokeStyle = '#222';
+        ctx.lineWidth = 4;
+
+        ctx.beginPath();
+        ctx.arc( item.x, item.y, radius, Math.PI * 2 * .75, Math.PI / 2, true );
+        ctx.stroke();
+
+        if (( item = this.buffer.find( a => a.type === 'groupsetsMiddle' ))) {
+
+          radius = chain.front.top * item.scale;
+          var f1 = { x: item.x, y: item.y - radius };
+
+          ctx.beginPath();
+          ctx.moveTo( r1.x, r1.y );
+          ctx.lineTo( r1.x + ( f1.x - r1.x ) / 2, r1.y + ( f1.y - r1.y ) / 2 );
+          ctx.stroke();
+        }
       },
       drawShadow( item ) {
 
