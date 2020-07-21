@@ -1,5 +1,7 @@
 <template>
-  <canvas class="bike-canvas" ref="canvas"></canvas>
+  <div ref="container" v-resize="onResize" class="bike-canvas">
+    <canvas ref="canvas"></canvas>
+  </div>
 </template>
 
 <script>
@@ -54,6 +56,7 @@
       }
     },
     mounted() {
+      this.onResize();
       this.getContext();
       this.mountBike();
     },
@@ -64,6 +67,9 @@
       buffer: 'draw'
     },
     computed: {
+      aspectRatio() {
+        return this.width / this.height;
+      },
       composition() {
 
         var frameset = this.items[0];
@@ -459,6 +465,31 @@
         ctx.fill();
 
         ctx.restore(); // Reset Canvas state
+      },
+      onResize() {
+        const { container, canvas } = this.$refs;
+        if ( container && canvas ) {
+
+          const { width, height } = this;
+          const WIDTH = container.clientWidth;
+          const HEIGHT = container.clientHeight;
+          const REL = WIDTH / HEIGHT;
+          const rel = width / height;
+
+          if ( REL > rel ) {
+
+            var h = Math.min( HEIGHT, height );
+            canvas.style.height = h + 'px';
+            canvas.style.width = ( h * rel ) + 'px';
+
+          } else {
+
+            var w = Math.min( WIDTH, width );
+            canvas.style.width = w + 'px';
+            canvas.style.height = ( w / rel ) + 'px';
+
+          }
+        }
       }
     }
   }
@@ -466,7 +497,8 @@
 
 <style>
   .bike-canvas {
-    max-width: 100%;
-    max-height: 420px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>

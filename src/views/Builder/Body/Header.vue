@@ -5,30 +5,14 @@
       <img :src="logo"/>
     </a>
 
-    <v-spacer/>
-
-    <nav>
-
-      <Btn class="mr-2" color="bb-primary" @click="$emit('message')" icon>
-        <v-icon v-text="'mdi-chat-outline'"/>
-      </Btn>
-
-      <Btn color="bb-primary" @click="$emit('share')" icon>
-        <v-icon v-text="'mdi-share-variant'"/>
-      </Btn>
-
-    </nav>
-
   </v-toolbar>
 </template>
 
 <script>
 
-  import { Btn } from '@/components';
   import { mapState } from 'vuex';
 
   export default {
-    components: { Btn },
     computed: {
       ...mapState([ 'company' ]),
       logo() {

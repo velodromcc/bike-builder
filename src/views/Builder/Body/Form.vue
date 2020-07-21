@@ -154,7 +154,7 @@
     computed: mapState([ 'company' ]),
     methods: {
       reset() {
-        //this.sended = this.error = false;
+        this.sended = this.error = false;
         const { form } = this.$refs;
         if ( form ) form.reset();
       },

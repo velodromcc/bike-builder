@@ -158,6 +158,11 @@
   .autoscroll {
     overflow: auto;
   }
+  .single-line {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
   .outline {
 
     border: 1px solid var(--bb-primary-light) !important;
@@ -199,6 +204,7 @@
       }
     }
   }
+
   h1, h2, h3, h4, h5, h6,
   .display-1, .display-2, .display-3, .display-4,
   .headline, .title, .subtitle-1, .subtitle-2, .body-1, .body-2,

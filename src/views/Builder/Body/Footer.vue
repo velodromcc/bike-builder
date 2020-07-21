@@ -1,20 +1,40 @@
 <template>
-  <v-row class="pa-4" align="end" no-gutters>
+  <footer class="footer pa-4">
 
-    <Btn class="outline light--border" color="bb-primary" width="48" height="48" @click="$emit('reset')" icon>
-      <v-icon v-text="'mdi-restore'"/>
-    </Btn>
+    <nav class="footer-left">
 
-    <v-spacer/>
+      <Btn class="footer-details body-1 mr-3" color="bb-secondary" @click="showDetails = true" height="40" tile outlined>
+        <v-icon left v-text="'mdi-magnify'"/>
+        Your build in detail
+      </Btn>
 
-    <div class="text-right mr-4">
-      <p class="caption bb-primary-light--text mb-0">SRP</p>
-      <p class="display-4 bb-primary--text mb-0">{{ price }} €</p>
+      <Btn class="outline light--border mr-3" color="bb-primary" width="40" height="40" @click="$emit('reset')" icon>
+        <v-icon v-text="'mdi-restore'"/>
+      </Btn>
+
+      <Btn class="outline light--border mr-3" color="bb-primary" width="40" height="40" @click="$emit('message')" icon>
+        <v-icon v-text="'mdi-chat-outline'"/>
+      </Btn>
+
+      <Btn class="outline light--border" color="bb-primary" width="40" height="40" @click="$emit('share')" icon>
+        <v-icon v-text="'mdi-share-variant'"/>
+      </Btn>
+
+    </nav>
+
+    <div class="footer-right">
+
+      <div class="footer-srp">
+        <p class="caption bb-primary-light--text mb-0" style="line-height:1.4;">SRP</p>
+        <p class="display-4 bb-primary--text mt-n1 mb-0">{{ price }} €</p>
+      </div>
+
+      <Btn class="footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
+        <v-icon left v-text="'mdi-send'"/>
+        Enquire about this build
+      </Btn>
+
     </div>
-
-    <Btn class="body-1" color="bb-primary" @click="showDetails = true" tile dark>
-      Details
-    </Btn>
 
     <v-dialog v-model="showDetails" max-width="1280">
       <v-card class="d-flex flex-column flex-nowrap" height="90vh">
@@ -87,7 +107,7 @@
       </v-card>
     </v-dialog>
 
-  </v-row>
+  </footer>
 </template>
 
 <script>
@@ -155,6 +175,17 @@
 </script>
 
 <style>
+  .footer-left { float: left; }
+  .footer-right { float: right; }
+  .footer-srp, .footer-enquire { float: left; }
+  .footer-srp {
+    text-align: right;
+    margin-right: 16px;
+  }
+  .footer-srp > p.caption {
+    line-height: 1.4;
+    font-size: .6rem !important;
+  }
   .detail-image {
     width: 100%;
     height: 100%;
@@ -165,5 +196,43 @@
     position: absolute;
     top: 10px;
     right: 10px;
+  }
+  @media ( max-width: 1120px ) {
+    .footer-left, .footer-right, .footer-srp, .footer-enquire {
+      float: none;
+    }
+    .footer-left, .footer-right {
+      max-width: 350px;
+      margin: 0 auto;
+    }
+    .footer-srp {
+      text-align: left;
+      margin: 8px 0;
+    }
+    .footer-srp > p {
+      display: inline-block;
+    }
+    .footer-srp > p.caption {
+      font-size: 1rem !important;
+      margin-right: 10px;
+    }
+    .footer-srp > p.display-4 {
+      font-size: 1.5rem !important;
+    }
+    .footer-enquire {
+      width: 100%;
+    }
+  }
+  @media ( max-width: 390px ) {
+    .footer {
+      text-align: center;
+    }
+    .footer-details {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .footer-srp {
+      display: inline-block;
+    }
   }
 </style>

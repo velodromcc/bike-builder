@@ -35,9 +35,9 @@
 
     position: relative;
     display: inline-block;
-    width: 1.5rem;
-    height: 1.5rem;
-    margin: 0 0.625rem 0.625rem 0;
+    width: 24px;
+    height: 24px;
+    margin: 0 10px 10px 0;
     vertical-align: middle;
 
     & > span {
@@ -45,7 +45,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      border-width: 0.7rem;
+      border-width: 11px;
       border-style: solid;
 
       &:nth-child(2) {
@@ -55,13 +55,12 @@
     }
     &.small {
 
-      width: 1rem;
-      height: 1rem;
-      margin: 0 0.25rem 0.25rem 0;
+      width: 16px;
+      height: 16px;
+      margin: 0 4px 4px 0;
 
       & > span {
-        border-width: .455rem;
-        top: -.5px;
+        border-width: 7px;
       }
     }
   }

@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="mt-1">
 
-    <div class="item-info px-4 mb-2">
+    <div class="item-info px-5 mb-2">
       <p class="caption bb-primary-light--text mb-0">{{ item.step.title }}</p>
       <p class="headline bb-primary--text mb-0">{{ item.name }}</p>
     </div>
 
-    <div v-if="colors.length" class="item-info outline-left light--border px-4">
+    <div v-if="colors.length > 1" class="item-info outline-left light--border px-5">
       <p class="caption bb-primary-light--text mb-1">
         Colour <span v-if="current" class="body-1 bb-primary--text">{{ current.colorName || 'Unkwnown' }}</span>
       </p>
@@ -22,7 +22,7 @@
       </v-item-group>
     </div>
 
-    <div class="item-actions px-4">
+    <div class="item-actions px-5 mt-2">
       <Btn class="body-1" color="bb-primary" tile dark @click="$emit('description')">
         Descripción
       </Btn>
@@ -60,6 +60,7 @@
 <style lang="scss">
 
   .item-info {
+    width: 50%;
     float: left;
   }
   .item-actions {

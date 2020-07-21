@@ -5,13 +5,11 @@
 
     <Loading v-else-if="loading" />
 
-    <v-row v-else class="builder" no-gutters>
-      <v-row class="builder-body flex-column flex-nowrap grow" no-gutters>
+    <div v-else class="builder layer" no-gutters>
 
-        <Header
-          class="builder-header shrink"
-          @share="share = true"
-        />
+      <Header class="builder-header shrink" @share="share = true"/>
+
+      <v-row class="builder-body flex-column flex-nowrap" no-gutters>
 
         <Breadcrumbs
           class="breadcrumbs body-1 outline-bottom light--border"
@@ -22,7 +20,7 @@
         />
 
         <div class="grow rel">
-          <div class="d-flex flex-column layer autoscroll py-4">
+          <div class="d-flex flex-column layer autoscroll">
 
             <BikeInfo
               v-if="current"
@@ -42,7 +40,7 @@
             </div>
 
             <div class="builder-bike">
-              <Bike :items="composition"/>
+              <Bike class="fill-height" :items="composition"/>
             </div>
 
           </div>
@@ -59,7 +57,8 @@
         />
 
       </v-row>
-      <v-row class="nav-builder bb-background flex-column flex-nowrap" no-gutters>
+
+      <v-row class="builder-nav bb-background flex-column flex-nowrap" no-gutters>
         <v-sheet tag="nav" class="d-flex justify-space-between align-center shrink"
         color="bb-primary" height="70" tile>
 
@@ -67,7 +66,7 @@
             <v-icon v-text="'$prev'"/>
           </Btn>
 
-          <span class="title white--text">
+          <span class="title white--text single-line">
             {{ step.title }} {{ $vuetify.breakpoint.mdAndUp ? '' : '( ' + [ index + 1, steps.length ].join(' of ') + ' )' }}
           </span>
 
@@ -99,7 +98,7 @@
           <v-icon v-text="'$next'"/>
         </Btn>
       </v-row>
-    </v-row>
+    </div>
 
     <!-- DIALOGS -->
 
@@ -407,16 +406,16 @@
 
 <style lang="scss">
 
-  .builder {
+  .builder-body {
     position: absolute;
-    top: 0;  bottom: 0;
-    left: 0; right: 0;
-    flex-wrap: nowrap;
+    top: 70px; bottom: 0;
+    left: 0; right: 400px;
   }
-  .nav-builder {
-    position: relative;
+  .builder-nav {
+    position: absolute;
+    top: 70px; bottom: 0; right: 0;
+    width: 400px;
     background-color: white;
-    flex: 0 0 400px;
     border-left: 1px solid var(--bb-primary-light);
     z-index: 1;
   }
@@ -450,10 +449,10 @@
     margin-bottom: 16px;
   }
   .builder-bike {
+    padding-top: 50px;
     position: absolute;
     width: 100%;
-    padding-top: 100px;
-    bottom: 0;
+    height: 100%;
     z-index: 0;
     text-align: center;
   }
@@ -461,33 +460,44 @@
   /* MEDIA */
 
   @media ( max-width: 966px ) {
-    .builder {
-      flex-direction: column;
+    .builder-body {
+      right: 0;
+      bottom: 250px;
     }
-    .show-bike-fit .builder-body {
-      height: calc( 100% - 70px );
-    }
-    .breadcrumbs, .step-counter {
-      display: none !important;
-    }
-    .builder-bike {
-      position: static;
-      padding-top: 0;
-      order: -1;
-    }
-    .nav-builder {
+    .builder-nav {
 
-      flex: 0 0 250px;
+      top: auto;
+      width: 100%;
+      height: 250px;
+
       border-left: 0;
       border-top: 1px solid var(--v-light-base);
 
       & > nav { order: 1; }
       & > div { order: 0; }
     }
+    .show-bike-fit .builder-body {
+      bottom: 70px;
+    }
+    .show-bike-fit .builder-nav {
+      margin-top: -70px;
+      top: 100%;
+      bottom: auto;
+      height: auto;
+    }
+    .breadcrumbs, .step-counter {
+      display: none !important;
+    }
+    .builder-bike {
+      padding-top: 0;
+      position: static;
+      height: auto;
+      order: -1;
+    }
     .btn-contact {
       order: 3;
     }
-    .show-bike-fit .nav-builder {
+    .show-bike-fit .builder-nav {
       & > nav { order: 0; }
       & > div { order: 1; }
     }

@@ -32,7 +32,7 @@
 
             <v-row class="bike-item-info bb-primary--text shrink pa-3 ma-0" align="center" justify="space-between">
               <p class="mb-0">{{ item.name }}</p>
-              <p class="mb-0">
+              <p class="mb-0" v-if="item.info.colors.length > 1">
                 <Color
                   v-for="( color, i ) in item.info.colors"
                   :key="i"
@@ -110,7 +110,7 @@
     position: relative;
     border-left: 5px solid transparent;
     border-bottom: 1px solid var(--bb-secondary-light);
-    transition: all 135ms ease;
+    transition: background-color 500ms ease;
     text-decoration: none;
     height: 200px;
 
@@ -120,6 +120,7 @@
       right: 10px;
     }
     .bike-item-info {
+      transition: color 500ms ease;
       height: 44px;
     }
     &.selected {
@@ -127,8 +128,13 @@
       border-left: 5px solid var(--bb-primary);
     }
     &:hover {
+
       background-color: var(--bb-secondary);
       color: white;
+
+      .bike-item-info {
+        color: white !important;
+      }
     }
   }
   @media ( max-width: 966px ) {
