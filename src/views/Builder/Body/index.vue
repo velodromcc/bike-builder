@@ -7,12 +7,12 @@
 
     <div v-else class="builder layer" no-gutters>
 
-      <Header class="builder-header shrink" @share="share = true"/>
+      <Header class="builder-header shrink"/>
 
       <v-row class="builder-body flex-column flex-nowrap" no-gutters>
 
         <Breadcrumbs
-          class="breadcrumbs body-1 outline-bottom light--border"
+          class="breadcrumbs outline-bottom light--border body-1"
           :value="index"
           :items="crumbs"
           :height="30"
@@ -54,11 +54,12 @@
           @reset="reset"
           @description="showDescription"
           @form="showForm"
+          @share="share = true"
         />
 
       </v-row>
 
-      <v-row class="builder-nav bb-background flex-column flex-nowrap" no-gutters>
+      <v-row class="builder-nav flex-column flex-nowrap" no-gutters>
         <v-sheet tag="nav" class="d-flex justify-space-between align-center shrink"
         color="bb-primary" height="70" tile>
 
@@ -92,7 +93,7 @@
           />
 
         </div>
-        <Btn v-if="showBikeFit" class="btn-contact outline-top shrink" color="bb-primary"
+        <Btn v-if="showBikeFit" class="btn-contact outline-top light--border shrink" color="bb-primary"
         height="70" @click="showForm" text tile block dark>
           Contact us for a quote
           <v-icon v-text="'$next'"/>
@@ -416,7 +417,7 @@
     top: 70px; bottom: 0; right: 0;
     width: 400px;
     background-color: white;
-    border-left: 1px solid var(--bb-primary-light);
+    border-left: 1px solid var(--v-light-base);
     z-index: 1;
   }
   .step-counter {

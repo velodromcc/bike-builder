@@ -1,13 +1,13 @@
 <template>
-  <div class="mt-1">
+  <div class="my-4">
 
     <div class="item-info px-5 mb-2">
-      <p class="caption bb-primary-light--text mb-0">{{ item.step.title }}</p>
+      <p class="caption mb-0">{{ item.step.title }}</p>
       <p class="headline bb-primary--text mb-0">{{ item.name }}</p>
     </div>
 
     <div v-if="colors.length > 1" class="item-info outline-left light--border px-5">
-      <p class="caption bb-primary-light--text mb-1">
+      <p class="caption mb-1">
         Colour <span v-if="current" class="body-1 bb-primary--text">{{ current.colorName || 'Unkwnown' }}</span>
       </p>
       <v-item-group :value="color" mandatory @change="$emit( 'input', $event )">

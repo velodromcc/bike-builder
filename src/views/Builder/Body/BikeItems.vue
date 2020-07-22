@@ -109,7 +109,7 @@
     display: block;
     position: relative;
     border-left: 5px solid transparent;
-    border-bottom: 1px solid var(--bb-secondary-light);
+    border-bottom: 1px solid var(--v-light-base);
     transition: background-color 500ms ease;
     text-decoration: none;
     height: 200px;
@@ -124,7 +124,7 @@
       height: 44px;
     }
     &.selected {
-      background-color: var(--bb-secondary-light);
+      background-color: #f4f4f4;
       border-left: 5px solid var(--bb-primary);
     }
     &:hover {
@@ -151,7 +151,7 @@
       height: 100%;
       border-bottom: 0;
       border-left: 0;
-      border-right: 1px solid var(--bb-secondary-light);
+      border-right: 1px solid var(--v-light-base);
       border-top: 5px solid transparent;
       vertical-align: top;
 

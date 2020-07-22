@@ -165,42 +165,42 @@
   }
   .outline {
 
-    border: 1px solid var(--bb-primary-light) !important;
+    border: 1px solid var(--v-light-darken2) !important;
 
     &.light--border {
-      border-color: var(--bb-secondary-light) !important;
+      border-color: var(--v-light-base) !important;
     }
 
     &-top {
 
-      border-top: 1px solid var(--bb-primary-light) !important;
+      border-top: 1px solid var(--v-light-darken2) !important;
 
       &.light--border {
-        border-color: var(--bb-secondary-light) !important;
+        border-color: var(--v-light-base) !important;
       }
     }
     &-right {
 
-      border-right: 1px solid var(--bb-primary-light) !important;
+      border-right: 1px solid var(--v-light-darken2) !important;
 
       &.light--border {
-        border-color: var(--bb-secondary-light) !important;
+        border-color: var(--v-light-base) !important;
       }
     }
     &-bottom {
 
-      border-bottom: 1px solid var(--bb-primary-light) !important;
+      border-bottom: 1px solid var(--v-light-darken2) !important;
 
       &.light--border {
-        border-color: var(--bb-secondary-light) !important;
+        border-color: var(--v-light-base) !important;
       }
     }
     &-left {
 
-      border-left: 1px solid var(--bb-primary-light) !important;
+      border-left: 1px solid var(--v-light-darken2) !important;
 
       &.light--border {
-        border-color: var(--bb-secondary-light) !important;
+        border-color: var(--v-light-base) !important;
       }
     }
   }

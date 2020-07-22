@@ -5,7 +5,7 @@
       <v-toolbar class="outline-bottom light--border shrink" elevation="0" height="90">
 
         <span>
-          <h3 class="headline mb-0">ENQUIRE ABOUT THIS SET UP</h3>
+          <h3 class="headline bb-primary--text mb-0">ENQUIRE ABOUT THIS SET UP</h3>
           <small class="mb-0">Simply fill out the form below and we’ll get in touch to discuss your custom bike.</small>
         </span>
 

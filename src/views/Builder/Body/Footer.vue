@@ -25,7 +25,7 @@
     <div class="footer-right">
 
       <div class="footer-srp">
-        <p class="caption bb-primary-light--text mb-0" style="line-height:1.4;">SRP</p>
+        <p class="caption mb-0" style="line-height:1.4;">SRP</p>
         <p class="display-4 bb-primary--text mt-n1 mb-0">{{ price }} €</p>
       </div>
 
@@ -63,11 +63,11 @@
                 </div>
 
                 <div class="px-4 mb-2">
-                  <p class="caption bb-primary-light--text mb-0">{{ info.type }}</p>
+                  <p class="caption mb-0">{{ info.type }}</p>
                   <p class="headline bb-primary--text mb-0">{{ info.name }}</p>
                   <p class="mb-0">
                     <Color class="mb-0" :value="info.color" small/>
-                    <span class="caption bb-primary--text">{{ info.colorName }}</span>
+                    <span class="caption">{{ info.colorName }}</span>
                   </p>
                 </div>
 
@@ -91,7 +91,7 @@
         </div>
         <v-toolbar class="outline-top light--border shrink" elevation="0" height="70">
 
-          <Btn v-if="!hideFormButton" class="outline shrink" color="bb-primary" @click="$emit('form')" text tile dark>
+          <Btn v-if="!hideFormButton" color="bb-primary" @click="$emit('form')" outlined tile dark>
             Contact us for a quote
             <v-icon v-text="'$next'"/>
           </Btn>
@@ -99,7 +99,7 @@
           <v-spacer/>
 
           <div class="text-right">
-            <p class="caption bb-primary-light--text mb-0">SRP</p>
+            <p class="caption mb-0">SRP</p>
             <p class="display-4 bb-primary--text mb-0">{{ price }} €</p>
           </div>
 
@@ -198,6 +198,9 @@
     right: 10px;
   }
   @media ( max-width: 1120px ) {
+    .footer {
+      border-top: 1px solid var(--v-light-base);
+    }
     .footer-left, .footer-right, .footer-srp, .footer-enquire {
       float: none;
     }

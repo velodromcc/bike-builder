@@ -3,8 +3,10 @@
     <div class="d-flex fill-height flex-nowrap">
       <a class="crumb" v-for="(item,i) in items" :key="i" :class="color(i)" @click="toggle(i)">
         <span class="text">{{ item }}</span>
-        <span class="arrow" :style="dimension"/>
-        <span class="arrow-line" :style="dimension"/>
+        <template v-if="i < items.length - 1">
+          <span class="arrow" :style="dimension"/>
+          <span class="arrow-line" :style="dimension"/>
+        </template>
       </a>
     </div>
   </v-sheet>
@@ -32,7 +34,7 @@
       color( index ) {
         if ( index === this.value ) return 'bb-primary white--text';
         else if ( index < this.value ) return 'bb-secondary white--text';
-        else return 'bb-secondary-light';
+        else return 'empty';
       },
       toggle( index ) {
         this.$emit( 'input', index );
@@ -61,9 +63,10 @@
 
     &.bb-primary .arrow { border-left-color: var(--bb-primary) !important; }
     &.bb-secondary .arrow { border-left-color: var(--bb-secondary) !important; }
-    &.bb-secondary-light {
-      .text { color: var(--bb-secondary-dark); }
-      .arrow { border-left-color: var(--bb-secondary-light) !important; }
+    &.empty {
+      background-color: #f4f4f4;
+      .text { color: var(--v-light-darken2); }
+      .arrow { border-left-color: #f4f4f4 !important; }
     }
 
     .arrow-line {
