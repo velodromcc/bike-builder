@@ -164,7 +164,7 @@
           const params = {
             ...this.data,
             idCompany: this.company.id,
-            url: this.company.website,
+            url: window.location.href,
             idFramesetColor: -1,
             idSeatpostColor: -1,
             idBarColor: -1,

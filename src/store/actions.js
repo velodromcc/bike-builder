@@ -5,9 +5,15 @@ const instance = axios.create({
 });
 
 export function getData() {
-  return instance.get( '/site/configuration/bikebuilder.inmovens.com' );
+  var host = window.host;
+  if(!host||host == 'localhost'){
+    host = 'bikebuilder.inmovens.com';
+  }
+
+  console.log(host);
+  return instance.get( '/site/configuration/'+host );
 }
 
 export function buyBike( ctx, data ) {
-  return instance.post( '/site/buy', { data });
+  return instance.post( '/site/buy', data);
 }
