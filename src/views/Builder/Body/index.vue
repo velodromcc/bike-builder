@@ -63,7 +63,7 @@
         <v-sheet tag="nav" class="d-flex justify-space-between align-center shrink"
         color="bb-primary" height="70" tile>
 
-          <Btn class="ml-2" color="white" :disabled="isDisabled( index - 1 )" @click="prev" icon>
+          <Btn class="ml-2" color="white" :disabled="prevDisabled" @click="prev" icon>
             <v-icon v-text="'$prev'"/>
           </Btn>
 
@@ -71,7 +71,7 @@
             {{ step.title }} {{ $vuetify.breakpoint.mdAndUp ? '' : '( ' + [ index + 1, steps.length ].join(' of ') + ' )' }}
           </span>
 
-          <Btn class="mr-2" color="white" :disabled="isDisabled( index + 1 )" @click="next" icon>
+          <Btn class="mr-2" color="white" :disabled="nextDisabled" @click="next" icon>
             <v-icon v-text="'$next'"/>
           </Btn>
 
@@ -93,11 +93,20 @@
           />
 
         </div>
-        <Btn v-if="showBikeFit" class="btn-contact outline-top light--border shrink" color="bb-primary"
-        height="70" @click="showForm" text tile block dark>
-          Contact us for a quote
-          <v-icon v-text="'$next'"/>
+
+        <Btn
+          class="btn-continue outline-top light--border shrink"
+          color="bb-primary"
+          height="70"
+          :disabled="showBikeFit ? false : nextDisabled"
+          :dark="!nextDisabled"
+          @click="showBikeFit ? showForm() : next()"
+          text tile block
+        >
+          {{ showBikeFit ? 'Contact us for a quote' : `Continue to ${ steps[index + 1 ].title }` }}
+          <v-icon right v-text="'$next'"/>
         </Btn>
+
       </v-row>
     </div>
 
@@ -253,6 +262,12 @@
           item.step = this.step;
         }
         return item;
+      },
+      prevDisabled() {
+        return this.isDisabled( this.index - 1 );
+      },
+      nextDisabled() {
+        return this.isDisabled( this.index + 1 );
       },
       composition() {
         const steps = this.steps.map( a => a.id );
@@ -495,7 +510,11 @@
       height: auto;
       order: -1;
     }
-    .btn-contact {
+    .btn-continue {
+      display: none;
+    }
+    .show-bike-fit .btn-continue {
+      display: block;
       order: 3;
     }
     .show-bike-fit .builder-nav {
