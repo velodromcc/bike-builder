@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer pa-4">
+  <footer class="builder-footer pa-4">
 
     <nav class="footer-left">
 
@@ -198,7 +198,7 @@
     right: 10px;
   }
   @media ( max-width: 1120px ) {
-    .footer {
+    .builder-footer {
       border-top: 1px solid var(--v-light-base);
     }
     .footer-left, .footer-right, .footer-srp, .footer-enquire {
@@ -227,7 +227,7 @@
     }
   }
   @media ( max-width: 390px ) {
-    .footer {
+    .builder-footer {
       text-align: center;
     }
     .footer-details {

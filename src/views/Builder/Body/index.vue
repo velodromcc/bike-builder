@@ -1,29 +1,41 @@
 <template>
-  <main class="fill-height rel" :class="{ 'show-bike-fit': showBikeFit }">
+  <main class="fill-height rel" v-resize="redimension">
 
     <Error v-if="error"/>
 
     <Loading v-else-if="loading" />
 
-    <div v-else class="builder layer" no-gutters>
+    <div v-else class="builder layer" :class="{ 'show-bike-fit': showBikeFit }">
 
-      <Header class="builder-header shrink"/>
+      <Header class="builder-header" :height="70"/>
 
-      <v-row class="builder-body flex-column flex-nowrap" no-gutters>
+      <div class="builder-body">
 
         <Breadcrumbs
-          class="breadcrumbs outline-bottom light--border body-1"
+          class="builder-breadcrumbs outline-bottom light--border body-1"
           :value="index"
           :items="crumbs"
           :height="30"
           @input="onChangeIndex"
         />
 
-        <div class="grow rel">
-          <div class="d-flex flex-column layer autoscroll">
+        <div class="builder-content" :style="{ marginBottom: contentMargin }">
+
+          <div v-if="!composition.length" class="builder-start layer pa-10">
+            <h1 class="display-4 mb-4 bb-primary--text">Bike Builder</h1>
+            <p class="bb-secondary--text">Use this interactive configurator to design your dream bike; swap components, change colours, the choice is yours.</p>
+            <p class="display-1">CHOOSE A FRAME TO START BUILDING YOUR BIKE</p>
+          </div>
+
+          <template v-else>
+
+            <div class="builder-bike">
+              <Bike :items="composition"/>
+            </div>
 
             <BikeInfo
               v-if="current"
+              ref="info"
               class="builder-info"
               :item="current"
               :color="selectedColor"
@@ -31,24 +43,11 @@
               @description="showDescription(current)"
             />
 
-            <div v-if="!composition.length" class="builder-start layer pa-10">
-
-              <h1 class="display-4 mb-4 bb-primary--text">Bike Builder</h1>
-              <p class="bb-secondary--text">Use this interactive configurator to design your dream bike; swap components, change colours, the choice is yours.</p>
-              <p class="display-1">CHOOSE A FRAME TO START BUILDING YOUR BIKE</p>
-
-            </div>
-
-            <div class="builder-bike">
-              <Bike class="fill-height" :items="composition"/>
-            </div>
-
-          </div>
+          </template>
         </div>
 
         <Footer
           ref="footer"
-          class="shrink"
           :items="composition"
           :hide-form-button="hideForm"
           @reset="reset"
@@ -57,11 +56,11 @@
           @share="share = true"
         />
 
-      </v-row>
+      </div>
 
-      <v-row class="builder-nav flex-column flex-nowrap" no-gutters>
-        <v-sheet tag="nav" class="d-flex justify-space-between align-center shrink"
-        color="bb-primary" height="70" tile>
+      <nav class="builder-nav">
+
+        <div class="builder-nav--top bb-primary">
 
           <Btn class="ml-2" color="white" :disabled="prevDisabled" @click="prev" icon>
             <v-icon v-text="'$prev'"/>
@@ -75,27 +74,27 @@
             <v-icon v-text="'$next'"/>
           </Btn>
 
-        </v-sheet>
-        <v-row class="step-counter shrink outline-bottom light--border ma-0" justify="center" align="center">
-
-          <span class="body-1 bb-primary--text">Step {{ index + 1 }} of {{ steps.length }}</span>
-
-        </v-row>
-        <div class="grow rel">
-
-          <BikeFit v-if="showBikeFit"/>
-
-          <BikeItems
-            v-else
-            class="layer"
-            v-model="selectedItem"
-            :items="items"
-          />
-
         </div>
 
+        <div class="builder-nav--steps outline-bottom light--border">
+          <span class="body-1 bb-primary--text">
+            Step {{ index + 1 }} of {{ steps.length }}
+          </span>
+        </div>
+
+        <BikeFit
+          v-if="showBikeFit"
+          class="builder-nav--bikefit"
+        />
+
+        <BikeItems
+          v-else
+          v-model="selectedItem"
+          :items="items"
+        />
+
         <Btn
-          class="btn-continue outline-top light--border shrink"
+          class="builder-nav--continue outline-top light--border"
           color="bb-primary"
           height="70"
           :disabled="showBikeFit ? false : nextDisabled"
@@ -107,7 +106,7 @@
           <v-icon right v-text="'$next'"/>
         </Btn>
 
-      </v-row>
+      </nav>
     </div>
 
     <!-- DIALOGS -->
@@ -194,6 +193,7 @@
         selection: [],
         form: false,
         share: false,
+        contentMargin: 0,
         description: {
           show: false,
           item: null,
@@ -228,7 +228,10 @@
           this.selectedColor = 0;
         }
       },
-      compositionID: 'setRoute'
+      compositionID: 'setRoute',
+      current() {
+        this.$nextTick(() => this.redimension());
+      }
     },
     computed: {
       ...mapState([
@@ -415,41 +418,87 @@
           this.selection = selection;
           this.index = this.selection.length;
         }
+      },
+      redimension() {
+        const { info } = this.$refs;
+        if ( info && window.innerWidth < 966 ) this.contentMargin = ( info.$el.clientHeight + 32 ) + 'px';
+        else this.contentMargin = 0;
       }
     }
   }
 </script>
 
-<style lang="scss">
+<style>
 
-  .builder-body {
+  .builder-header, .builder-body, .builder-breadcrumbs, .builder-content, .builder-footer, .builder-nav,
+  .builder-nav--top, .builder-nav--steps, .builder-nav--items, .builder-nav--bikefit, .builder-nav--continue,
+  .builder-info {
     position: absolute;
-    top: 70px; bottom: 0;
-    left: 0; right: 400px;
+  }
+  .builder-header, .builder-nav--top, .builder-nav--steps, .builder-nav--items, .builder-nav--bikefit, .builder-info,
+  .builder-breadcrumbs, .builder-content, .builder-footer {
+    width: 100%;
+  }
+  .builder-header, .builder-breadcrumbs, .builder-nav--top, .builder-info {
+    top: 0;
+    left: 0;
+  }
+  .builder-body {
+    top: 70px;
+    bottom: 0;
+    left: 0;
+    right: 400px;
+  }
+  .builder-content {
+    top: 30px;
+    bottom: 72px;
+    left: 0;
+  }
+  .builder-footer {
+    bottom: 0;
+    left: 0;
   }
   .builder-nav {
-    position: absolute;
-    top: 70px; bottom: 0; right: 0;
     width: 400px;
+    right: 0;
+    top: 70px;
+    bottom: 0;
     background-color: white;
     border-left: 1px solid var(--v-light-base);
-    z-index: 1;
   }
-  .step-counter {
+
+  /* NAV */
+
+  .builder-nav--top {
+    display: flex;
+    height: 70px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .builder-nav--steps {
+    text-align: center;
     height: 30px;
+    top: 70px;
+    left: 0;
   }
-  .builder-header, .breadcrumbs {
-    position: relative;
-    z-index: 2;
+  .builder-nav--items, .builder-nav--bikefit {
+    top: 100px;
+    bottom: 70px;
+    left: 0;
   }
-  .builder-info {
-    position: relative;
-    z-index: 1;
+  .builder-nav--continue {
+    bottom: 0;
+    left: 0;
   }
+  .builder-nav--bikefit {
+    overflow: auto;
+  }
+
+  /* CONTENT */
+
   .builder-start {
-    z-index: 1;
     background: url('../../../assets/frameset-bg.svg') no-repeat center;
-    background-size: 460px;
+    background-size: 320px;
   }
   .builder-start > p {
     max-width: 440px;
@@ -461,65 +510,113 @@
     left: 0; right: 0;
     top: 50%;
   }
-  .builder-title > h1 {
-    margin-bottom: 16px;
-  }
   .builder-bike {
     padding-top: 50px;
-    position: absolute;
     width: 100%;
     height: 100%;
-    z-index: 0;
     text-align: center;
+  }
+  .builder-bike > div {
+    height: 100%;
   }
 
   /* MEDIA */
+
+  @media ( max-width: 1120px ) {
+    .builder-content {
+      bottom: 154px;
+    }
+  }
 
   @media ( max-width: 966px ) {
     .builder-body {
       right: 0;
       bottom: 250px;
+      overflow: auto;
+    }
+    .builder-breadcrumbs, .builder-nav--continue {
+      display: none;
+    }
+    .builder-content, .builder-start {
+      position: static;
+      height: 100%;
+    }
+    .builder-footer, .builder-info, .builder-nav--bikefit {
+      position: static;
     }
     .builder-nav {
-
-      top: auto;
       width: 100%;
+      top: auto;
       height: 250px;
-
-      border-left: 0;
       border-top: 1px solid var(--v-light-base);
+      border-left: 0;
+    }
+    .builder-nav--top {
+      top: auto;
+      bottom: 0;
+    }
+    .builder-nav--steps {
+      display: none;
+    }
+    .builder-nav--items {
+      top: 0;
+      bottom: 70px;
+    }
+    .builder-bike {
+      padding-top: 0;
+    }
+    .builder-nav--bikefit {
+      position: static;
+      overflow: visible;
+    }
 
-      & > nav { order: 1; }
-      & > div { order: 0; }
+    /* On Bike fit */
+
+    .builder.show-bike-fit {
+      padding-top: 70px;
+      overflow: auto;
     }
     .show-bike-fit .builder-body {
+      position: relative;
+      overflow: visible;
+      height: 100%;
+      top: 0;
+    }
+    .show-bike-fit .builder-content {
+      position: absolute;
+      height: auto;
+      bottom: 224px;
+      top: 0;
+    }
+    .show-bike-fit .builder-footer {
+      position: absolute;
       bottom: 70px;
     }
     .show-bike-fit .builder-nav {
       margin-top: -70px;
-      top: 100%;
-      bottom: auto;
-      height: auto;
-    }
-    .breadcrumbs, .step-counter {
-      display: none !important;
-    }
-    .builder-bike {
-      padding-top: 0;
       position: static;
       height: auto;
-      order: -1;
     }
-    .btn-continue {
-      display: none;
+    .show-bike-fit .builder-nav--top {
+      position: static;
     }
-    .show-bike-fit .btn-continue {
+    .show-bike-fit .builder-nav--continue {
+      position: static;
       display: block;
-      order: 3;
     }
-    .show-bike-fit .builder-nav {
-      & > nav { order: 0; }
-      & > div { order: 1; }
+  }
+
+  @media ( max-width: 520px ) {
+    .builder-start {
+      background-position: center bottom;
+      background-size: 90%;
+    }
+    .builder-start > p.display-1 {
+      font-size: 1rem !important;
+      position: static;
+      text-align: left;
+      border-top: 1px solid;
+      padding-top: 1rem;
     }
   }
 </style>

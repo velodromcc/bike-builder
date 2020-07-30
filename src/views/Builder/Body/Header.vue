@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar tag="header" color="bb-background" class="outline-bottom light--border" height="70" elevation="0">
+  <v-toolbar tag="header" color="bb-background" class="outline-bottom light--border" :height="height" elevation="0">
 
     <a v-if="logo" class="logo" target="_blank" :href="company.website">
       <img :src="logo"/>
@@ -13,6 +13,12 @@
   import { mapState } from 'vuex';
 
   export default {
+    props: {
+      height: {
+        type: [ Number, String ],
+        default: 70
+      }
+    },
     computed: {
       ...mapState([ 'company' ]),
       logo() {

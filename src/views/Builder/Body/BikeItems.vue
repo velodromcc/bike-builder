@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" v-resize="onResize" class="bike-items autoscroll">
+  <div ref="container" v-resize="onResize" class="builder-nav--items autoscroll">
     <v-item-group
       class="fill-height"
       :value="value"
@@ -138,10 +138,10 @@
     }
   }
   @media ( max-width: 966px ) {
-    .bike-items {
+    .builder-nav--items {
       overflow-y: hidden !important;
     }
-    .bike-items > div {
+    .builder-nav--items > div {
       white-space: nowrap;
     }
     .bike-item {

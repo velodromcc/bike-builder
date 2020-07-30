@@ -1,5 +1,5 @@
 <template>
-  <div class="bike-fit">
+  <div>
 
     <div class="outline-bottom light--border pa-4">
       <h3 class="display-2 bb-primary--text mb-3">
@@ -83,18 +83,3 @@
     }
   }
 </script>
-
-<style>
-  .bike-fit {
-    position: absolute;
-    top: 0; left: 0;
-    right: 0; bottom: 0;
-    overflow: auto;
-  }
-  @media ( max-width: 966px ) {
-    .bike-fit {
-      position: static;
-      overflow: visible;
-    }
-  }
-</style>

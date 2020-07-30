@@ -75,57 +75,57 @@
         var frameset = this.items[0];
         if ( ! frameset || ! frameset.item ) return null;
 
-        var chain = null;
+        var framesetProps = this.itemProps( frameset ), chain = null, itemProps;
         const itemAnchors = {};
 
         const anchors = {
           bars: {
-            x: frameset.item.barX || 0,
-            y: frameset.item.barY || 0,
+            x: framesetProps.barX || 0,
+            y: framesetProps.barY || 0,
           },
           wheelsLeft: {
-            x: frameset.item.leftWheelX || 0,
-            y: frameset.item.leftWheelY || 0
+            x: framesetProps.leftWheelX || 0,
+            y: framesetProps.leftWheelY || 0
           },
           wheelsRight: {
-            x: frameset.item.rightWheelX || 0,
-            y: frameset.item.rightWheelY || 0
+            x: framesetProps.rightWheelX || 0,
+            y: framesetProps.rightWheelY || 0
           },
           tyresLeft: {
-            x: frameset.item.leftWheelX || 0,
-            y: frameset.item.leftWheelY || 0
+            x: framesetProps.leftWheelX || 0,
+            y: framesetProps.leftWheelY || 0
           },
           tyresRight: {
-            x: frameset.item.rightWheelX || 0,
-            y: frameset.item.rightWheelY || 0,
+            x: framesetProps.rightWheelX || 0,
+            y: framesetProps.rightWheelY || 0,
           },
           seatposts: {
-            x: frameset.item.seatpostX || 0,
-            y: frameset.item.seatpostY || 0
+            x: framesetProps.seatpostX || 0,
+            y: framesetProps.seatpostY || 0
           },
           saddles: {
-            x: frameset.item.saddleX || 0,
-            y: frameset.item.saddleY || 0,
+            x: framesetProps.saddleX || 0,
+            y: framesetProps.saddleY || 0,
           },
           groupsetsLeft: {
-            x: frameset.item.leftWheelX || 0,
-            y: frameset.item.leftWheelY || 0
+            x: framesetProps.leftWheelX || 0,
+            y: framesetProps.leftWheelY || 0
           },
           groupsetsMiddle: {
-            x: frameset.item.groupsetMiddleX || 0,
-            y: frameset.item.groupsetMiddleY || 0
+            x: framesetProps.groupsetMiddleX || 0,
+            y: framesetProps.groupsetMiddleY || 0
           },
           groupsetsBar: {
-            x: frameset.item.groupsetBarX || 0,
-            y: frameset.item.groupsetBarY || 0
+            x: framesetProps.groupsetBarX || 0,
+            y: framesetProps.groupsetBarY || 0
           },
           groupsetsBrakeLeft: {
-            x: frameset.item.leftWheelX || 0,
-            y: frameset.item.leftWheelY || 0
+            x: framesetProps.leftWheelX || 0,
+            y: framesetProps.leftWheelY || 0
           },
           groupsetsBrakeRight: {
-            x: frameset.item.rightWheelX || 0,
-            y: frameset.item.rightWheelY || 0
+            x: framesetProps.rightWheelX || 0,
+            y: framesetProps.rightWheelY || 0
           }
         };
 
@@ -152,10 +152,12 @@
 
             case 'bars':
 
-              props.rotation = radians( this.items[0].item.inclinationFront || 0 );
+              itemProps = this.itemProps( a );
+              props.rotation = radians( framesetProps.inclinationFront || 0 );
+
               itemAnchors.groupsetsBar = {
-                x: a.item.groupsetBarX || 0,
-                y: a.item.groupsetBarY || 0,
+                x: itemProps.groupsetBarX || 0,
+                y: itemProps.groupsetBarY || 0,
                 type: 'bars'
               };
 
@@ -163,18 +165,13 @@
 
             case 'groupsets':
 
+              itemProps = this.itemProps( a );
               chain = {
-                front: {
-                  top: a.item.chainFrontTop,
-                  bottom: a.item.chainFrontBottom,
-                },
-                rear: {
-                  top: a.item.chainRearTop,
-                  bottom: a.item.chainRearBottom
-                },
+                front: itemProps.chainFrontDiameter || itemProps.chainFrontTop,
+                rear: itemProps.chainRearDiameter || itemProps.chainRearTop,
                 break: {
-                  x: a.item.brakeFrontX,
-                  y: a.item.brakeFrontY
+                  x: itemProps.brakeFrontX,
+                  y: itemProps.brakeFrontY
                 }
               };
 
@@ -205,10 +202,13 @@
 
             case 'seatposts':
 
-              props.rotation = radians( this.items[0].item.inclinationRear || 0 );
+              itemProps = this.itemProps( a );
+              props.rotation = radians( framesetProps.inclinationRear || 0 );
+              props.scale = framesetProps.seatpostScale || props.scale;
+
               itemAnchors.saddles = {
-                x: a.item.saddleX || 0,
-                y: a.item.saddleY || 0,
+                x: itemProps.saddleX || 0,
+                y: itemProps.saddleY || 0,
                 type: 'seatposts'
               };
 
@@ -232,6 +232,24 @@
       }
     },
     methods: {
+      itemProps( comp ) {
+
+        const props = { ...comp.item };
+        const selected = comp.item.colors[ comp.color ];
+
+        if ( selected ) {
+          const excludeKeys = ['id','color','color2','colorName','image','price','priority'];
+          for ( var key in selected.color ) {
+            if ( excludeKeys.indexOf( key ) < 0 ) {
+              if ( selected.color[key] != null ) {
+                props[key] = selected.color[key];
+              }
+            }
+          }
+        }
+
+        return props;
+      },
       getContext() {
         const { canvas } = this.$refs;
         if ( canvas ) {
@@ -377,10 +395,10 @@
       drawFrontChain( item ) {
 
         const { chain } = this.composition;
-        if ( ! chain || ! chain.rear.top || ! chain.front.top ) return;
+        if ( ! chain || ! chain.rear || ! chain.front ) return;
 
         const ctx = this.context;
-        var radius = chain.front.top * item.scale;
+        var radius = ( chain.front * item.scale ) / 2;
         var f1 = { x: item.x, y: item.y - radius };
         var f2 = { x: item.x, y: item.y + radius };
 
@@ -395,7 +413,7 @@
 
         if (( item = this.buffer.find( a => a.type === 'groupsetsLeft' ))) {
 
-          radius = chain.rear.top * item.scale;
+          radius = ( chain.rear * item.scale ) / 2;
           var r1 = { x: item.x, y: item.y - radius };
           var r2 = {
             x: item.x - item.origin.x * item.scale + chain.break.x * item.scale,
@@ -414,10 +432,10 @@
       drawRearChain( item ) {
 
         const { chain } = this.composition;
-        if ( ! chain || ! chain.rear.top || ! chain.front.top ) return;
+        if ( ! chain || ! chain.rear || ! chain.front ) return;
 
         const ctx = this.context;
-        var radius = chain.rear.top * item.scale;
+        var radius = ( chain.rear * item.scale ) / 2;
         var r1 = { x: item.x, y: item.y - radius };
 
         // Draw
@@ -431,7 +449,7 @@
 
         if (( item = this.buffer.find( a => a.type === 'groupsetsMiddle' ))) {
 
-          radius = chain.front.top * item.scale;
+          radius = ( chain.front * item.scale ) / 2;
           var f1 = { x: item.x, y: item.y - radius };
 
           ctx.beginPath();
