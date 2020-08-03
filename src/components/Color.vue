@@ -1,7 +1,13 @@
 <template>
-  <component :is="tag" v-bind="$attrs" v-on="$listeners" class="b-color outline light--border" :class="{ selected, small }">
-    <span :style="`border-color: ${ color[0] }`"/>
-    <span :style="`border-color: ${ color[1] || color[0] }`"/>
+  <component
+    :is="tag"
+    v-bind="$attrs"
+    v-on="$listeners"
+    class="b-color outline light--border"
+    :class="{ selected, small }"
+    :style="`background-color:${ color[0] };`"
+  >
+    <span v-if="color[1]" :style="`border-color: ${ color[1] }`"/>
   </component>
 </template>
 
@@ -39,6 +45,7 @@
     height: 24px;
     margin: 0 10px 10px 0;
     vertical-align: middle;
+    overflow: hidden;
 
     & > span {
 
@@ -47,11 +54,9 @@
       left: 0;
       border-width: 11px;
       border-style: solid;
+      border-top-color: transparent !important;
+      border-left-color: transparent !important;
 
-      &:nth-child(2) {
-        border-top-color: transparent !important;
-        border-left-color: transparent !important;
-      }
     }
     &.small {
 

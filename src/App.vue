@@ -130,6 +130,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: left;
     color: #2c3e50;
+    min-width: 300px;
 
     .v-application--wrap {
       -webkit-backface-visibility: visible;
@@ -205,6 +206,8 @@
     }
   }
 
+  /* TYPOGRAPHY */
+
   h1, h2, h3, h4, h5, h6,
   .display-1, .display-2, .display-3, .display-4,
   .headline, .title, .subtitle-1, .subtitle-2, .body-1, .body-2,
@@ -213,5 +216,20 @@
   }
   .body-1, .body-2, .caption, .overline {
     color: var(--bb-secondary-darken3);
+  }
+
+  /* SCROLLBAR */
+
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--bb-primary);
+    border-radius: 20px;
+    border: 1px solid white;
   }
 </style>

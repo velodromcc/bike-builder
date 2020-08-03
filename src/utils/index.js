@@ -65,6 +65,13 @@ export function toArray( value ) {
   return [ value ];
 }
 
+export function itemThumbnail( item ) {
+  if ( item && item.thumbnail ) {
+    return 'http://bikebuilder.inmovens.com' + item.thumbnail;
+  }
+  return '';
+}
+
 export function itemImage( item, index ) {
   index = index || 0;
   if ( item && item.colors[index] ) {

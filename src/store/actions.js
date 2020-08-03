@@ -6,12 +6,11 @@ const instance = axios.create({
 
 export function getData() {
   var host = window.host;
-  if(!host||host == 'localhost'){
+  if ( !host || host == 'localhost' ) {
     host = 'bikebuilder.inmovens.com';
   }
-
   console.log(host);
-  return instance.get( '/site/configuration/'+host );
+  return instance.get( '/site/configuration/'+ host );
 }
 
 export function buyBike( ctx, data ) {

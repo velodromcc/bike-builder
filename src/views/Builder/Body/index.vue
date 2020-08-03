@@ -47,10 +47,9 @@
         </div>
 
         <Footer
-          ref="footer"
-          :items="composition"
-          :hide-form-button="hideForm"
+          :price="price"
           @reset="reset"
+          @details="showDetails"
           @description="showDescription"
           @form="showForm"
           @share="share = true"
@@ -117,6 +116,15 @@
       :image="description.image"
     />
 
+    <Details
+      v-model="details"
+      :items="detailsInfo"
+      :price="price"
+      :hide-form-button="hideForm"
+      @form="showForm"
+      @description="showDescription"
+    />
+
     <Form
       v-model="form"
       :items="composition"
@@ -133,7 +141,7 @@
 <script>
 
   import { mapState } from 'vuex';
-  import { CONSTANTS, itemImage } from '@/utils';
+  import { CONSTANTS, itemImage, itemThumbnail } from '@/utils';
 
   // COMPONENTS
 
@@ -150,6 +158,7 @@
 
   // DIALOGS
   import Description from './Description';
+  import Details from './Details';
   import Share from './Share';
   import Form from './Form';
 
@@ -173,6 +182,7 @@
       Footer,
       Breadcrumbs,
       Description,
+      Details,
       Share,
       Form,
       BikeItems,
@@ -193,6 +203,7 @@
         selection: [],
         form: false,
         share: false,
+        details: false,
         contentMargin: 0,
         description: {
           show: false,
@@ -205,12 +216,13 @@
       selectedItem( value ) {
         const { selection, index, step } = this;
         if ( value != null ) {
-          this.selectedColor = 0;
+          var color = selection[index] ? selection[index].color : 0;
+          this.selectedColor = color;
           selection.splice( index, 1, {
             props: step,
             selected: value,
             item: this.current,
-            color: 0
+            color
           });
         }
       },
@@ -290,10 +302,28 @@
             a.item && a.item.colors[ a.color ] ? a.color : 0
           ].join( separeChar );
         }).join('');
+      },
+      detailsInfo() {
+        return this.composition.map(( a, item ) => {
+          item = a.item.colors[ a.color ];
+          return {
+            type: a.item.step.title,
+            name: a.item.name,
+            item: a.item,
+            price: item.price || item.color.price || 0,
+            colorName: item.color.colorName,
+            color: [ item.color.color, item.color.color2 ],
+            image: itemImage( a.item, a.color ),
+            url: item.url
+          }
+        });
+      },
+      price() {
+        return this.detailsInfo
+          .reduce(( sum, a ) => sum + a.price, 0 );
       }
     },
     methods: {
-      image: itemImage,
       fetch() {
         this.$store
           .dispatch( 'getData' )
@@ -345,15 +375,18 @@
       next() {
         this.index = Math.min( this.index + 1, this.steps.length - 1 );
       },
+      showDetails() {
+        this.details = true;
+        this.description.show = this.form = false;
+      },
       showDescription( item ) {
-        this.$refs.footer.close();
+        this.details = this.form = false;
         this.description.item  = item;
-        this.description.image = this.image( item );
+        this.description.image = itemThumbnail( item ) || itemImage( item );
         this.description.show  = true;
       },
       showForm() {
-        this.$refs.footer.close();
-        this.description.show = false;
+        this.details = this.description.show = false;
         this.form = true;
       },
       setRoute( id ) {
@@ -540,6 +573,9 @@
     .builder-content, .builder-start {
       position: static;
       height: 100%;
+    }
+    .builder-content {
+      max-height: 320px;
     }
     .builder-footer, .builder-info, .builder-nav--bikefit {
       position: static;

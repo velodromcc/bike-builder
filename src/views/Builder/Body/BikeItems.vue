@@ -56,7 +56,7 @@
 <script>
 
   import { Color } from '@/components';
-  import { itemImage } from '@/utils';
+  import { itemThumbnail, itemImage } from '@/utils';
 
   export default {
     components: { Color },
@@ -73,7 +73,7 @@
           const colors = item.colors.map( a => a.color );
           return {
             ...item,
-            src: itemImage( item ),
+            src: itemThumbnail( item ) || itemImage( item ),
             info: {
               colors: colors.slice( 0, 3 ),
               more: colors.length > 3 ? colors.length - 3 : 0
