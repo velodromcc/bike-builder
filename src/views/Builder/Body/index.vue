@@ -310,7 +310,7 @@
             type: a.item.step.title,
             name: a.item.name,
             item: a.item,
-            price: item.price || item.color.price || 0,
+            price: item.price || a.item.price || 0,
             colorName: item.color.colorName,
             color: [ item.color.color, item.color.color2 ],
             image: itemImage( a.item, a.color ),
