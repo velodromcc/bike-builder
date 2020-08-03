@@ -306,11 +306,12 @@
       detailsInfo() {
         return this.composition.map(( a, item ) => {
           item = a.item.colors[ a.color ];
+          console.log( item );
           return {
             type: a.item.step.title,
             name: a.item.name,
             item: a.item,
-            price: item.price || a.item.price || 0,
+            price: item.color.price || item.price || 0,
             colorName: item.color.colorName,
             color: [ item.color.color, item.color.color2 ],
             image: itemImage( a.item, a.color ),
