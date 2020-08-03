@@ -1,6 +1,6 @@
 <template>
   <div class="layer pa-4">
-    <v-row class="flex-column fill-height outline" align="center" justify="center" no-gutters>
+    <v-row class="flex-column fill-height" align="center" justify="center" no-gutters>
 
       <v-alert type="error" class="mx-2" outlined>
         <p class="mb-0">
