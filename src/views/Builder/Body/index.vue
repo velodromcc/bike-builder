@@ -216,9 +216,13 @@
       selectedItem( value ) {
         const { selection, index, step } = this;
         if ( value != null ) {
+
           var color = selection[index] ? selection[index].color : 0;
+          var replace = selection[index] && selection[index].item.type === this.current.type ? 1 : 0;
+          console.log( replace );
+
           this.selectedColor = color;
-          selection.splice( index, 1, {
+          selection.splice( index, replace, {
             props: step,
             selected: value,
             item: this.current,
@@ -306,7 +310,6 @@
       detailsInfo() {
         return this.composition.map(( a, item ) => {
           item = a.item.colors[ a.color ];
-          console.log( item );
           return {
             type: a.item.step.title,
             name: a.item.name,

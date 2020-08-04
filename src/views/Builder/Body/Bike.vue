@@ -13,8 +13,17 @@
     groupsetsMiddle: 'imageFront',
     groupsetsBar: 'imageBar',
     groupsetsBrakeLeft: 'imageBrake',
-    groupsetsBrakeRight: 'imageBrake'
+    groupsetsBrakeRight: 'imageBrake',
+    groupsetsCapilierLeft: 'imageBrakeCapilierRear',
+    groupsetsCapilierRight: 'imageBrakeCapilierFront',
+    groupsetsGear: 'imageGearShift'
   };
+
+  const GROUPSET_ORIGINS = {
+    groupsetsCapilierLeft: 'brakeCapilierRear',
+    groupsetsCapilierRight: 'brakeCapilierFront',
+    groupsetsGear: 'gearShift'
+  }
 
   function loadImage( url ) {
     return new Promise( resolve => {
@@ -126,6 +135,18 @@
           groupsetsBrakeRight: {
             x: framesetProps.rightWheelX || 0,
             y: framesetProps.rightWheelY || 0
+          },
+          groupsetsCapilierLeft: {
+            x: framesetProps.leftWheelX || 0,
+            y: framesetProps.leftWheelY || 0
+          },
+          groupsetsCapilierRight: {
+            x: framesetProps.rightWheelX || 0,
+            y: framesetProps.rightWheelY || 0
+          },
+          groupsetsGear: {
+            x: framesetProps.groupsetMiddleX || 0,
+            y: framesetProps.groupsetMiddleY || 0
           }
         };
 
@@ -167,23 +188,32 @@
 
               itemProps = this.itemProps( a );
               chain = {
-                front: itemProps.chainFrontDiameter || itemProps.chainFrontTop,
-                rear: itemProps.chainRearDiameter || itemProps.chainRearTop,
+                front: itemProps.chainFrontDiameter || 0,
+                rear: itemProps.chainRearDiameter || 0,
                 break: {
                   x: itemProps.brakeFrontX,
                   y: itemProps.brakeFrontY
                 }
               };
 
-              return Object.keys( GRUOPSET_ANCHORS ).map( key => ({
-                ...props,
-                type: key,
-                anchor: key,
-                index: CONSTANTS[ key ].zIndex,
-                scale: CONSTANTS[ key ].scale || props.scale,
-                image: color.color[ GRUOPSET_ANCHORS[key] ],
-                origin: key === 'groupsetsMiddle' ? props.origin : {}
-              }));
+              var origin, p;
+              return Object.keys( GRUOPSET_ANCHORS ).map( key => {
+
+                p = GROUPSET_ORIGINS[key];
+                if ( p ) origin = { x: itemProps[p+'X'], y: itemProps[p+'Y'] };
+                else if ( key === 'groupsetsMiddle' ) origin = props.origin;
+                else origin = {};
+
+                return {
+                  ...props,
+                  type: key,
+                  anchor: key,
+                  index: CONSTANTS[ key ].zIndex,
+                  scale: CONSTANTS[ key ].scale || props.scale,
+                  image: color.color[ GRUOPSET_ANCHORS[key] ],
+                  origin
+                }
+              });
 
             case 'wheels':
             case 'tyres':

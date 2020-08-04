@@ -34,6 +34,18 @@ const CONSTANTS = {
     zIndex: 2,
     scale: .25
   },
+  groupsetsCapilierLeft: {
+    zIndex: 3,
+    scale: .13
+  },
+  groupsetsCapilierRight: {
+    zIndex: 4,
+    scale: .13
+  },
+  groupsetsGear: {
+    zIndex: 11,
+    scale: .28
+  },
   wheels: {
     title: 'Wheels',
     zIndex: 3,
