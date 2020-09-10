@@ -217,9 +217,9 @@
         const { selection, index, step } = this;
         if ( value != null ) {
 
-          var color = selection[index] ? selection[index].color : 0;
           var replace = selection[index] && selection[index].item.type === this.current.type ? 1 : 0;
-          console.log( replace );
+          var color = selection[index] ? selection[index].color : 0;
+          color = Math.min( this.current.colors.length - 1, color );
 
           this.selectedColor = color;
           selection.splice( index, replace, {
