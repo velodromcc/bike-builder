@@ -12,12 +12,26 @@
         <v-icon v-text="'mdi-restore'"/>
       </Btn>
 
-      <Btn class="outline light--border mr-3" color="bb-primary" width="40" height="40" @click="$emit('message')" icon>
-        <v-icon v-text="'mdi-chat-outline'"/>
+      <Btn class="outline light--border mr-3" color="bb-primary" width="40" height="40" @click="$emit('share')" icon>
+        <v-icon v-text="'mdi-share-variant'"/>
       </Btn>
 
-      <Btn class="outline light--border" color="bb-primary" width="40" height="40" @click="$emit('share')" icon>
-        <v-icon v-text="'mdi-share-variant'"/>
+      <Btn
+        class="outline light--border" width="40" height="40"
+        :color="!chatVisibility ? (chatOnline ? 'success' : 'error') : 'bb-primary'"
+        :dark="chatVisibility"
+        :fab="chatVisibility"
+        :icon="!chatVisibility"
+        @click="$emit('message')"
+      >
+        <v-icon v-text="chatWritting ? 'mdi-chat-processing-outline' : 'mdi-chat-outline'"/>
+        <v-badge
+          class="mb-5"
+          color="success"
+          :content="chatMessages"
+          :hidden="chatVisibility || !chatMessages"
+          bordered
+        />
       </Btn>
 
     </nav>
@@ -47,7 +61,14 @@
       price: {
         type: Number,
         default: 0
-      }
+      },
+      chatMessages: {
+        type: Number,
+        default: 0
+      },
+      chatWritting: Boolean,
+      chatOnline: Boolean,
+      chatVisibility: Boolean
     }
   }
 </script>

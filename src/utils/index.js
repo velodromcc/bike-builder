@@ -2,7 +2,7 @@ const CONSTANTS = {
   framesets: {
     title: 'Frameset',
     zIndex: 5,
-    scale: 1
+    scale: 1.2
   },
   bars: {
     title: 'Bars/Stem',

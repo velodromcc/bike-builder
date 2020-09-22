@@ -51,7 +51,7 @@
       },
       height: {
         type: Number,
-        default: 820
+        default: 1000
       },
       items: {
         type: Array,
@@ -307,6 +307,7 @@
 
               if ( origin.x == null ) origin.x = width / 2;
               if ( origin.y == null ) origin.y = height / 2;
+              if ( item.anchor === 'framesets' ) origin.y += 60 * item.scale; // Reajust to centrate
 
               if ( item.anchor === 'framesets' ) {
 
@@ -322,11 +323,8 @@
               } else {
 
                 waiting.push( Object.assign( item, {
-                  width: width * item.scale,
-                  height: height * item.scale,
-                  image,
-                  anchor,
-                  origin
+                  width,  height, image,
+                  anchor, origin
                 }));
               }
 
@@ -336,11 +334,19 @@
 
                   if ( item.anchor.type && ( item.parent = composition.items.find( a => a.type === item.anchor.type ))) {
                     if ( this.buffer.indexOf( item.parent ) < 0 ) return item;
+
+                    item.scale  *= frameset.scale;
+                    item.width  *= item.scale;
+                    item.height *= item.scale;
+
                     this.buffer.push( item );
                     return;
                   }
 
                   item.parent = null;
+                  item.scale  *= frameset.scale;
+                  item.width  *= item.scale;
+                  item.height *= item.scale;
                   item.x = frameset.x + item.anchor.x * frameset.scale;
                   item.y = frameset.y + item.anchor.y * frameset.scale;
                   this.buffer.push( item );
@@ -356,6 +362,8 @@
         context.clearRect( 0, 0, this.width, this.height );
       },
       draw() {
+
+        //const frameset = this.buffer.find( a => a.type === 'framesets' );
 
         this.clear();
         this.buffer.slice().sort(( a, b ) => a.index - b.index ).forEach( item => {
@@ -495,9 +503,9 @@
         // Calc dimensions and Position
         const wheel1 = this.composition.anchors.wheelsLeft;
         const wheel2 = this.composition.anchors.wheelsRight;
-        const size = wheel2.x - wheel1.x;
+        const size = ( wheel2.x - wheel1.x ) * item.scale;
         const x = item.x + size / 2;
-        const y = item.y + Math.max( wheel1.y, wheel2.y ) + 215 * CONSTANTS.wheels.scale;
+        const y = item.y + (Math.max( wheel1.y, wheel2.y ) + 215 * CONSTANTS.wheels.scale) * item.scale;
         const gradient = ctx.createRadialGradient( 0, 0, 0, 0, 0, size );
 
         gradient.addColorStop( 0, 'rgba(0,0,0,0.05)' );

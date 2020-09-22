@@ -22,9 +22,15 @@
         <div class="builder-content" :style="{ marginBottom: contentMargin }">
 
           <div v-if="!composition.length" class="builder-start layer pa-10">
-            <h1 class="display-4 mb-4 bb-primary--text">Bike Builder</h1>
-            <p class="bb-secondary--text">Use this interactive configurator to design your dream bike; swap components, change colours, the choice is yours.</p>
-            <p class="display-1">CHOOSE A FRAME TO START BUILDING YOUR BIKE</p>
+            <h1 class="display-4 mb-4 bb-primary--text">
+              {{ company.name || 'Bike Builder' }}
+            </h1>
+            <p class="bb-secondary--text">
+              {{ company.description || builderDescription }}
+            </p>
+            <p class="display-1">
+              CHOOSE A FRAME TO START BUILDING YOUR BIKE
+            </p>
           </div>
 
           <template v-else>
@@ -48,11 +54,16 @@
 
         <Footer
           :price="price"
+          :chat-visibility="chat.show"
+          :chat-online="chat.online"
+          :chat-messages="chat.messages"
+          :chat-writting="chat.chatting"
           @reset="reset"
           @details="showDetails"
           @description="showDescription"
-          @form="showForm"
           @share="share = true"
+          @form="showForm"
+          @message="toggleMessage"
         />
 
       </div>
@@ -205,11 +216,21 @@
         share: false,
         details: false,
         contentMargin: 0,
+        chat: {
+          show: false,
+          chatting: false,
+          online: false,
+          messages: 0
+        },
         description: {
           show: false,
           item: null,
           image: null
         },
+        builderDescription: (
+          'Use this interactive configurator to design your dream bike; '+
+          'swap components, change colours, the choice is yours.'
+        )
       }
     },
     watch: {
@@ -258,7 +279,8 @@
         'wheels',
         'tyres',
         'seatposts',
-        'saddles'
+        'saddles',
+        'company'
       ]),
       steps() {
         const { selection } = this;
@@ -460,6 +482,39 @@
         const { info } = this.$refs;
         if ( info && window.innerWidth < 966 ) this.contentMargin = ( info.$el.clientHeight + 32 ) + 'px';
         else this.contentMargin = 0;
+      },
+      toggleMessage() {
+        const LCW = window.LiveChatWidget;
+        LCW && LCW.call( this.chat.show ? 'hide' : 'maximize' );
+      }
+    },
+    beforeCreate() {
+
+      const LCW = window.LiveChatWidget;
+      if ( LCW ) {
+
+        // On change visibility
+        LCW.on( 'visibility_changed', ({ visibility }) => {
+          this.chat.show = visibility !== 'hidden';
+          if ( visibility === 'minimized' ) LCW.call('hide');
+          else if ( this.chat.show ) this.chat.messages = 0;
+        });
+
+        // On change availability
+        LCW.on( 'availability_changed', ({ availability }) => {
+          this.chat.online = availability === 'online';
+        });
+
+        // On change status
+        LCW.on( 'customer_status_changed', ({ status }) => {
+          this.chat.chatting = status === 'chatting';
+        });
+
+        // On new event
+        LCW.on( 'new_event', ({ author }) => {
+          if ( author.type === 'agent' && !this.chat.show )
+            this.chat.messages++;
+        });
       }
     }
   }
