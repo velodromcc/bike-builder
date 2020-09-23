@@ -20,15 +20,9 @@
         />
 
         <div class="builder-content" :style="{ marginBottom: contentMargin }">
-
           <div v-if="!composition.length" class="builder-start layer pa-10">
-            <h1 class="display-4 mb-4 bb-primary--text">
-              {{ company.name || 'Bike Builder' }}
-            </h1>
-            <p class="bb-secondary--text">
-              {{ company.description || builderDescription }}
-            </p>
-            <p class="display-1">
+            <div v-if="company.introHtml" v-html="company.introHtml"></div>
+            <p class="builder-start--info">
               CHOOSE A FRAME TO START BUILDING YOUR BIKE
             </p>
           </div>
@@ -226,11 +220,7 @@
           show: false,
           item: null,
           image: null
-        },
-        builderDescription: (
-          'Use this interactive configurator to design your dream bike; '+
-          'swap components, change colours, the choice is yours.'
-        )
+        }
       }
     },
     watch: {
@@ -592,16 +582,39 @@
     background: url('../../../assets/frameset-bg.svg') no-repeat center;
     background-size: 320px;
   }
-  .builder-start > p {
+  .builder-start p {
     max-width: 440px;
+    color: var(--bb-secondary) !important;
   }
-  .builder-start > p.display-1 {
-    max-width: none;
+  .builder-start h1, .builder-start h2, .builder-start h3 {
+    font-family: "Open sans", Helvetica, Arial, sans-serif;
+    letter-spacing: normal;
+    color: var(--bb-primary) !important;
+    margin-bottom: 12px !important;
+  }
+  .builder-start h1 {
+    font-size: 1.875rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .builder-start h2 {
+    font-size: 1.875rem;
+    font-weight: 300;
+    line-height: 1;
+  }
+  .builder-start h3 {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+  .builder-start--info {
+    max-width: none !important;
     position: absolute;
     text-align: center;
     left: 0; right: 0;
     top: 50%;
   }
+
   .builder-bike {
     padding-top: 50px;
     width: 100%;
@@ -664,6 +677,9 @@
       position: static;
       overflow: visible;
     }
+    .builder-start--info {
+      top: 38%;
+    }
 
     /* On Bike fit */
 
@@ -706,11 +722,13 @@
       background-position: center bottom;
       background-size: 90%;
     }
-    .builder-start > p.display-1 {
+    .builder-start > div {
+      border-bottom: 1px solid;
+    }
+    .builder-start--info {
       font-size: 1rem !important;
       position: static;
       text-align: left;
-      border-top: 1px solid;
       padding-top: 1rem;
     }
   }
