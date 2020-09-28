@@ -218,6 +218,7 @@
             case 'wheels':
             case 'tyres':
 
+              props.scale *= framesetProps[`${ a.item.type.slice( 0, -1 )}Scale`] || 1;
               return [ 'Left', 'Right' ].map( pos => ({
                 ...props,
                 type: a.item.type + pos,
