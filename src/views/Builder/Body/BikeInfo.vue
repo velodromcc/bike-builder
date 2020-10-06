@@ -24,7 +24,7 @@
 
     <div class="item-actions px-5 mt-2">
       <Btn class="body-1" color="bb-primary" tile dark @click="$emit('description')">
-        Descripción
+        Description
       </Btn>
     </div>
 

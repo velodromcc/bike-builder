@@ -37,7 +37,7 @@
               <v-card-actions>
 
                 <Btn class="body-1" color="bb-primary" tile dark @click="$emit( 'description', item.item )">
-                  Descripción
+                  Description
                 </Btn>
 
                 <Btn v-if="item.url" tag="a" :href="item.url" target="_blank"
