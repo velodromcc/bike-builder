@@ -351,7 +351,7 @@
 
             } else setTimeout(() => {
 
-              //console.log( res.data.object );
+              console.log( res.data.object );
               this.error = false;
               this.$store.commit( 'set', {
                 loading: false,

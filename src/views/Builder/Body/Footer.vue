@@ -26,10 +26,10 @@
       >
         <v-icon v-text="chatWritting ? 'mdi-chat-processing-outline' : 'mdi-chat-outline'"/>
         <v-badge
+          v-show="!chatVisibility && !!chatMessages"
           class="mb-5"
           color="success"
           :content="chatMessages"
-          :hidden="chatVisibility || !chatMessages"
           bordered
         />
       </Btn>
