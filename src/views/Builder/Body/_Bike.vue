@@ -19,11 +19,11 @@
     groupsetsGear: 'imageGearShift'
   };
 
-  const GROUPSET_ANGLE = {
-    groupsetsCapilierLeft: 'groupsetCapilierRearAngle',
-    groupsetsCapilierRight: 'groupsetCapilierFrontAngle',
-    groupsetsGear: 'groupsetCapilierMiddleAngle'
-  };
+  const GROUPSET_ORIGINS = {
+    groupsetsCapilierLeft: 'brakeCapilierRear',
+    groupsetsCapilierRight: 'brakeCapilierFront',
+    groupsetsGear: 'gearShift'
+  }
 
   function loadImage( url ) {
     return new Promise( resolve => {
@@ -86,7 +86,6 @@
 
         var framesetProps = this.itemProps( frameset ), chain = null, itemProps;
         const itemAnchors = {};
-        console.log( framesetProps );
 
         const anchors = {
           bars: {
@@ -138,16 +137,16 @@
             y: framesetProps.rightWheelY || 0
           },
           groupsetsCapilierLeft: {
-            x: framesetProps.groupsetCapilierRearX || 0,
-            y: framesetProps.groupsetCapilierRearY || 0
+            x: framesetProps.leftWheelX || 0,
+            y: framesetProps.leftWheelY || 0
           },
           groupsetsCapilierRight: {
-            x: framesetProps.groupsetCapilierFrontX || 0,
-            y: framesetProps.groupsetCapilierFrontY || 0
+            x: framesetProps.rightWheelX || 0,
+            y: framesetProps.rightWheelY || 0
           },
           groupsetsGear: {
-            x: framesetProps.groupsetCapilierMiddleX || 0,
-            y: framesetProps.groupsetCapilierMiddleY || 0
+            x: framesetProps.groupsetMiddleX || 0,
+            y: framesetProps.groupsetMiddleY || 0
           }
         };
 
@@ -197,9 +196,14 @@
                 }
               };
 
-              var rot;
+              var origin, p;
               return Object.keys( GRUOPSET_ANCHORS ).map( key => {
-                rot = GROUPSET_ANGLE[key];
+
+                p = GROUPSET_ORIGINS[key];
+                if ( p ) origin = { x: itemProps[p+'X'], y: itemProps[p+'Y'] };
+                else if ( key === 'groupsetsMiddle' ) origin = props.origin;
+                else origin = {};
+
                 return {
                   ...props,
                   type: key,
@@ -207,8 +211,7 @@
                   index: CONSTANTS[ key ].zIndex,
                   scale: CONSTANTS[ key ].scale || props.scale,
                   image: color.color[ GRUOPSET_ANCHORS[key] ],
-                  origin: key === 'groupsetsMiddle' ? props.origin : {},
-                  rotation: rot ? radians( framesetProps[rot] || 0 ) : 0
+                  origin
                 }
               });
 
@@ -288,7 +291,6 @@
       mountBike() {
         this.buffer = [];
         const { composition } = this;
-        console.log( composition );
         if ( composition ) {
 
           var waiting = [];
