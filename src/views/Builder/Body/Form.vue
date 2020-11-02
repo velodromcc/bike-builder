@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" :persistent="loading" max-width="720" no-click-animation>
-    <v-card class="d-flex flex-column flex-nowrap rel" height="480">
+    <v-card class="d-flex flex-column flex-nowrap rel" height="600">
       <v-overlay :value="loading" color="white" absolute/>
       <v-toolbar class="outline-bottom light--border shrink" elevation="0" height="90">
 
@@ -80,6 +80,19 @@
             dense
           />
 
+          <label class="d-block caption mb-2 bb-primary--text">
+            Your message <span style="color:red">*</span>
+          </label>
+
+          <v-textarea
+            color="bb-primary"
+            rows="4"
+            v-model="data.message"
+            :rules="rules.message"
+            outlined
+            no-resize
+          />
+
         </v-form>
       </v-row>
       <v-toolbar tag="footer" class="outline-top light--border shrink" elevation="0" height="70">
@@ -133,12 +146,14 @@
         data: {
           name: '',
           email: '',
-          phone: ''
+          phone: '',
+          message: ''
         },
         rules: {
           name: [ required, shortest(2) ],
           email: [ required, email ],
-          phone: [ required ]
+          phone: [ required ],
+          message: [ required ]
         }
       }
     },

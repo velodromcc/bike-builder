@@ -289,7 +289,6 @@
       mountBike() {
         this.buffer = [];
         const { composition } = this;
-        console.log( composition );
         if ( composition ) {
 
           var waiting = [];
