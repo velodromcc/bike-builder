@@ -18,8 +18,11 @@
           <v-col v-for="( item, i ) in items" class="pa-1" :key="i" cols="12" sm="6" md="3">
             <v-card height="426" class="d-flex flex-column justify-end">
 
-              <div class="grow rel pa-12">
-                <div class="detail-image" :style="`background-image: url(${item.image})`"/>
+              <div class="grow rel" :class="{ 'pa-12': !( item.image.front || item.image.thumb )}">
+                <div
+                  class="detail-image"
+                  :style="`background-image: url(${ item.image.front || item.image.thumb || item.image.src })`"
+                />
                 <div class="detail-price headline bb-primary--text">
                   {{ item.price }} €
                 </div>
@@ -74,7 +77,6 @@
 <script>
 
   import { Btn, Color } from '@/components';
-  import { itemImage } from '@/utils';
 
   export default {
     components: { Btn, Color },
@@ -101,12 +103,6 @@
       },
       show() {
         this.$emit( 'input', this.show );
-      }
-    },
-    methods: {
-      image( item, color ) {
-        const src = itemImage( item, color );
-        return `background-image: url(${ src })`;
       }
     }
   }

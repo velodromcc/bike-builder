@@ -1,7 +1,12 @@
 <template>
   <v-dialog v-model="show" max-width="1024">
     <v-card v-if="item" class="d-flex flex-column flex-nowrap" height="90vh">
-      <v-toolbar class="shrink" elevation="0" height="40">
+      <v-toolbar class="shrink" elevation="0" height="60">
+
+        <Btn v-if="backButton" color="bb-primary" @click="$emit('back')" text>
+          <v-icon left>mdi-arrow-left</v-icon>
+          Return
+        </Btn>
 
         <v-spacer/>
 
@@ -14,7 +19,7 @@
         <v-row class="layer autoscroll ma-0">
           <v-col class="pa-10 fill-height" cols="12" md="6">
 
-            <v-img :src="image" height="100%" contain/>
+            <v-img :src="image.front || image.thumb || image.src" height="100%" contain/>
 
           </v-col>
           <v-col class="pa-10 info-column" cols="12" md="6">
@@ -40,7 +45,8 @@
     props: {
       value: null,
       item: Object,
-      image: String
+      image: Object,
+      backButton: Boolean
     },
     data() {
       return {

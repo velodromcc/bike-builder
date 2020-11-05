@@ -77,20 +77,22 @@ export function toArray( value ) {
   return [ value ];
 }
 
-export function itemThumbnail( item ) {
-  if ( item && item.thumbnail ) {
-    return 'http://bikebuilder.inmovens.com' + item.thumbnail;
-  }
-  return '';
-}
-
 export function itemImage( item, index ) {
   index = index || 0;
+  const image = { src: '', front: '', thumb: '' };
   if ( item && item.colors[index] ) {
-    return 'http://bikebuilder.inmovens.com' + (
-      item.colors[index].color.imageFront || item.colors[index].color.image );
+
+    image.thumb = item.thumbnail;
+    image.front = item.colors[index].color.imageFront;
+    image.src = item.colors[index].color.image;
+
+    for ( var img in image ) {
+      if ( image[img] ) {
+        image[img] = 'http://bikebuilder.inmovens.com' + image[img];
+      }
+    }
   }
-  return '';
+  return image;
 }
 
 export function capitalize( str ) {

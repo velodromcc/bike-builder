@@ -5,14 +5,28 @@
       <img :src="logo"/>
     </a>
 
+    <v-spacer/>
+
+    <Btn
+      :href="company.website"
+      color="bb-primary"
+      target="_blank"
+      text
+    >
+      Return
+      <v-icon right>mdi-exit-to-app</v-icon>
+    </Btn>
+
   </v-toolbar>
 </template>
 
 <script>
 
+  import { Btn } from '@/components';
   import { mapState } from 'vuex';
 
   export default {
+    components: { Btn },
     props: {
       height: {
         type: [ Number, String ],

@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" v-resize="onResize" class="builder-nav--items autoscroll">
+  <div ref="container" class="builder-nav--items autoscroll">
     <v-item-group
       class="fill-height"
       :value="value"
@@ -7,45 +7,35 @@
       @change="$emit( 'input', $event )"
     >
       <v-item v-for="( item, i ) in list" v-slot="{ active, toggle }" :key="i">
-        <a class="bike-item body-1 pt-3" :class="{ selected: active }" @click="toggle">
+        <a
+          class="bike-item body-1"
+          :class="{ selected: active, thumb: item.thumb }"
+          @click="toggle"
+        >
 
           <v-avatar v-if="active" class="bike-item-icon" size="30" color="bb-primary">
             <v-icon small dark>mdi-check-bold</v-icon>
           </v-avatar>
 
-          <v-row class="fill-height flex-column flex-nowrap ma-0">
+          <div
+            class="bike-item-image"
+            :style="`background-image: url(${ item.src })`"
+          />
 
-            <v-img
-              :src="item.src"
-              :lazy-src="item.src"
-              :height="imageHeight"
-              width="200"
-              class="shrink mx-auto mb-2"
-              contain
-            >
-              <template v-slot:placeholder>
-                <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular indeterminate color="bb-primary"/>
-                </v-row>
-              </template>
-            </v-img>
-
-            <v-row class="bike-item-info bb-primary--text shrink pa-3 ma-0" align="center" justify="space-between">
-              <p class="mb-0">{{ item.name }}</p>
-              <p class="mb-0" v-if="item.info.colors.length > 1">
-                <Color
-                  v-for="( color, i ) in item.info.colors"
-                  :key="i"
-                  :value="[ color.color, color.color2 ]"
-                  class="mb-0"
-                  small
-                />
-                <span v-if="item.info.more">
-                  +{{ item.info.more }}
-                </span>
-              </p>
-            </v-row>
-
+          <v-row class="bike-item-info bb-primary--text shrink pa-3 ma-0" align="center" justify="space-between">
+            <p class="mb-0">{{ item.name }}</p>
+            <p class="mb-0" v-if="item.info.colors.length > 1">
+              <Color
+                v-for="( color, i ) in item.info.colors"
+                :key="i"
+                :value="[ color.color, color.color2 ]"
+                class="mb-0"
+                small
+              />
+              <span v-if="item.info.more">
+                +{{ item.info.more }}
+              </span>
+            </p>
           </v-row>
         </a>
       </v-item>
@@ -56,7 +46,7 @@
 <script>
 
   import { Color } from '@/components';
-  import { itemThumbnail, itemImage } from '@/utils';
+  import { itemImage } from '@/utils';
 
   export default {
     components: { Color },
@@ -71,33 +61,17 @@
       list() {
         return this.items.map( item => {
           const colors = item.colors.map( a => a.color );
+          const image = itemImage( item );
           return {
             ...item,
-            src: itemThumbnail( item ) || itemImage( item ),
+            thumb: !!( image.front || image.thumb ),
+            src: image.front || image.thumb || image.src,
             info: {
               colors: colors.slice( 0, 3 ),
               more: colors.length > 3 ? colors.length - 3 : 0
             }
           };
         });
-      }
-    },
-    data() {
-      return {
-        imageHeight: 140
-      }
-    },
-    methods: {
-      onResize() {
-        const { container } = this.$refs;
-        if ( container && window.innerWidth <= 966 ) {
-          const info = container.querySelector('.bike-item-info');
-          if ( info ) {
-            this.imageHeight = container.clientHeight - info.clientHeight;
-          }
-        } else {
-          this.imageHeight = 140;
-        }
       }
     }
   };
@@ -106,7 +80,8 @@
 <style lang="scss">
   .bike-item {
 
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: relative;
     border-left: 5px solid transparent;
     border-bottom: 1px solid var(--v-light-base);
@@ -114,14 +89,30 @@
     text-decoration: none;
     height: 200px;
 
+    .bike-item-image {
+      flex: 1 0 auto;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: contain;
+      margin: 10px 0;
+    }
     .bike-item-icon {
       position: absolute;
       top: 10px;
       right: 10px;
     }
     .bike-item-info {
+      flex: 0 1 44px;
+      max-height: 44px;
       transition: color 500ms ease;
-      height: 44px;
+    }
+    &.thumb .bike-item-info {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    &.thumb .bike-item-image {
+      margin: 0;
     }
     &.selected {
       background-color: #f4f4f4;
@@ -146,8 +137,8 @@
     }
     .bike-item {
 
-      display: inline-block;
-      width: 300px;
+      display: inline-flex;
+      width: 350px;
       height: 100%;
       border-bottom: 0;
       border-left: 0;

@@ -86,7 +86,6 @@
 
         var framesetProps = this.itemProps( frameset ), chain = null, itemProps;
         const itemAnchors = {};
-        console.log( framesetProps );
 
         const anchors = {
           bars: {

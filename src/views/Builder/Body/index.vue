@@ -54,7 +54,6 @@
           :chat-writting="chat.chatting"
           @reset="reset"
           @details="showDetails"
-          @description="showDescription"
           @share="share = true"
           @form="showForm"
           @message="toggleMessage"
@@ -119,6 +118,8 @@
       v-model="description.show"
       :item="description.item"
       :image="description.image"
+      :back-button="description.backButton"
+      @back="showDetails"
     />
 
     <Details
@@ -127,7 +128,7 @@
       :price="price"
       :hide-form-button="hideForm"
       @form="showForm"
-      @description="showDescription"
+      @description="showDescription( $event, true )"
     />
 
     <Form
@@ -146,7 +147,7 @@
 <script>
 
   import { mapState } from 'vuex';
-  import { CONSTANTS, itemImage, itemThumbnail } from '@/utils';
+  import { CONSTANTS, itemImage } from '@/utils';
 
   // COMPONENTS
 
@@ -214,12 +215,14 @@
           show: false,
           chatting: false,
           online: false,
-          messages: 0
+          messages: 0,
+          toggle: false
         },
         description: {
           show: false,
           item: null,
-          image: null
+          image: null,
+          backButton: false
         }
       }
     },
@@ -395,10 +398,11 @@
         this.details = true;
         this.description.show = this.form = false;
       },
-      showDescription( item ) {
+      showDescription( item, backButton ) {
         this.details = this.form = false;
         this.description.item  = item;
-        this.description.image = itemThumbnail( item ) || itemImage( item );
+        this.description.image = itemImage( item );
+        this.description.backButton = backButton;
         this.description.show  = true;
       },
       showForm() {
@@ -475,6 +479,7 @@
       },
       toggleMessage() {
         const LCW = window.LiveChatWidget;
+        this.chat.toggle = true;
         LCW && LCW.call( this.chat.show ? 'hide' : 'maximize' );
       }
     },
@@ -486,8 +491,12 @@
         // On change visibility
         LCW.on( 'visibility_changed', ({ visibility }) => {
           this.chat.show = visibility !== 'hidden';
-          if ( visibility === 'minimized' ) LCW.call('hide');
+          if ( this.chat.toggle ) {
+            if ( this.chat.show ) this.chat.messages = 0;
+          }
+          else if ( visibility === 'minimized' ) LCW.call('hide');
           else if ( this.chat.show ) this.chat.messages = 0;
+          this.chat.toggle = false;
         });
 
         // On change availability
