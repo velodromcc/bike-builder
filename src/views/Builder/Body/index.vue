@@ -5,7 +5,7 @@
 
     <Loading v-else-if="loading" />
 
-    <div v-else class="builder layer" :class="{ 'show-bike-fit': showBikeFit }">
+    <div v-else class="builder layer" :class="{ 'show-bike-fit': showBikeFit, 'builder-initial': !composition.length }">
 
       <Header class="builder-header" :height="70"/>
 
@@ -20,6 +20,7 @@
         />
 
         <div class="builder-content" :style="{ marginBottom: contentMargin }">
+
           <div v-if="!composition.length" class="builder-start layer pa-10">
             <div v-if="company.introHtml" v-html="company.introHtml"></div>
             <p class="builder-start--info">
@@ -535,12 +536,15 @@
     left: 0;
   }
   .builder-body {
+    display: flex;
+    flex-direction: column;
     top: 70px;
     bottom: 0;
     left: 0;
     right: 400px;
   }
   .builder-content {
+    flex: 1 1 auto;
     top: 30px;
     bottom: 72px;
     left: 0;
@@ -653,10 +657,9 @@
     }
     .builder-content, .builder-start {
       position: static;
-      height: 100%;
     }
-    .builder-content {
-      max-height: 320px;
+    .builder:not(.builder-initial) .builder-content {
+      max-height: 260px;
     }
     .builder-footer, .builder-info, .builder-nav--bikefit {
       position: static;

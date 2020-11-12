@@ -64,7 +64,7 @@
           const image = itemImage( item );
           return {
             ...item,
-            thumb: !!( image.front || image.thumb ),
+            thumb: !!image.thumb,
             src: image.front || image.thumb || image.src,
             info: {
               colors: colors.slice( 0, 3 ),

@@ -131,6 +131,7 @@
     text-align: left;
     color: #2c3e50;
     min-width: 300px;
+    min-height: 632px;
 
     .v-application--wrap {
       -webkit-backface-visibility: visible;
