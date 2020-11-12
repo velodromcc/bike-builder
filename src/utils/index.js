@@ -88,7 +88,7 @@ export function itemImage( item, index ) {
 
     for ( var img in image ) {
       if ( image[img] ) {
-        image[img] = 'http://bikebuilder.inmovens.com' + image[img];
+        image[img] = 'http://velodrom.dreambikebuilder.com' + image[img];
       }
     }
   }

@@ -1,13 +1,13 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: 'https://bikebuilder.inmovens.com/api'
+  baseURL: 'https://velodrom.dreambikebuilder.com/api'
 });
 
 export function getData() {
   var host = window.host;
   if ( !host || host == 'localhost' ) {
-    host = 'bikebuilder.inmovens.com';
+    host = 'velodrom.dreambikebuilder.com';
   }
   console.log(host);
   return instance.get( '/site/configuration/'+ host );

@@ -29,7 +29,7 @@
     return new Promise( resolve => {
 
       const image = new Image();
-      image.src = 'http://bikebuilder.inmovens.com' + url;
+      image.src = 'http://velodrom.dreambikebuilder.com' + url;
 
       if ( image.complete && image.naturalHeight !== 0 ) {
         resolve( image );
