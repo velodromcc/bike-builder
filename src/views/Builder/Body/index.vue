@@ -19,7 +19,7 @@
           @input="onChangeIndex"
         />
 
-        <div class="builder-content" :style="{ marginBottom: contentMargin }">
+        <div class="builder-content" :style="contentStyle">
 
           <div v-if="!composition.length" class="builder-start layer pa-10">
             <div v-if="company.introHtml" v-html="company.introHtml"></div>
@@ -31,7 +31,7 @@
           <template v-else>
 
             <div class="builder-bike">
-              <Bike :items="composition"/>
+              <Bike ref="bike" :items="composition"/>
             </div>
 
             <BikeInfo
@@ -48,6 +48,7 @@
         </div>
 
         <Footer
+          ref="footer"
           :price="price"
           :chat-visibility="chat.show"
           :chat-online="chat.online"
@@ -212,6 +213,7 @@
         share: false,
         details: false,
         contentMargin: 0,
+        footerHeight: 0,
         chat: {
           show: false,
           chatting: false,
@@ -261,7 +263,20 @@
       },
       compositionID: 'setRoute',
       current() {
-        this.$nextTick(() => this.redimension());
+        this.$nextTick( this.redimension );
+      },
+      loading() {
+        this.$nextTick( this.redimension );
+      },
+      contentStyle() {
+        this.$nextTick(() => {
+          if ( this.$refs.bike ) {
+            this.$refs.bike.onResize();
+          }
+        });
+      },
+      showBikeFit( value ) {
+        this.$emit( 'bike-fit', value );
       }
     },
     computed: {
@@ -341,6 +356,15 @@
       price() {
         return this.detailsInfo
           .reduce(( sum, a ) => sum + a.price, 0 );
+      },
+      contentStyle() {
+        const minHeight = window && window.innerHeight > 480 ? '40vh' : '80vh';
+        const calculatedHeigth = this.contentMargin + this.footerHeight;
+        return {
+          minHeight,
+          height: calculatedHeigth > 0 ? `calc( 100% - ${ calculatedHeigth }px )` : null,
+          marginBottom: `${this.contentMargin}px`
+        };
       }
     },
     methods: {
@@ -474,9 +498,11 @@
         }
       },
       redimension() {
-        const { info } = this.$refs;
-        if ( info && window.innerWidth < 966 ) this.contentMargin = ( info.$el.clientHeight + 32 ) + 'px';
+        const { info, footer } = this.$refs;
+        if ( info && window.innerWidth < 966 ) this.contentMargin = info.$el.clientHeight + 32;
         else this.contentMargin = 0;
+        if ( footer ) this.footerHeight = footer.$el.clientHeight + 32;
+        else this.footerHeight = 0;
       },
       toggleMessage() {
         const LCW = window.LiveChatWidget;
@@ -546,7 +572,7 @@
   .builder-content {
     flex: 1 1 auto;
     top: 30px;
-    bottom: 72px;
+    bottom: 75px;
     left: 0;
   }
   .builder-footer {
@@ -650,16 +676,20 @@
     .builder-body {
       right: 0;
       bottom: 250px;
-      overflow: auto;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
     .builder-breadcrumbs, .builder-nav--continue {
       display: none;
     }
-    .builder-content, .builder-start {
+    .builder-content {
       position: static;
     }
+    .builder-start {
+      position: relative;
+    }
     .builder:not(.builder-initial) .builder-content {
-      max-height: 260px;
+      height: 100%;
     }
     .builder-footer, .builder-info, .builder-nav--bikefit {
       position: static;
@@ -688,9 +718,6 @@
     .builder-nav--bikefit {
       position: static;
       overflow: visible;
-    }
-    .builder-start--info {
-      top: 38%;
     }
 
     /* On Bike fit */

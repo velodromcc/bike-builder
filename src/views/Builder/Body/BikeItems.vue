@@ -22,7 +22,7 @@
             :style="`background-image: url(${ item.src })`"
           />
 
-          <v-row class="bike-item-info bb-primary--text shrink pa-3 ma-0" align="center" justify="space-between">
+          <v-row class="bike-item-info bb-primary--text shrink pa-3 ma-0">
             <p class="mb-0">{{ item.name }}</p>
             <p class="mb-0" v-if="item.info.colors.length > 1">
               <Color
@@ -96,15 +96,26 @@
       background-size: contain;
       margin: 10px 0;
     }
+    &:not(.thumb) .bike-item-image {
+      transform: scale(.75);
+    }
     .bike-item-icon {
       position: absolute;
       top: 10px;
       right: 10px;
     }
     .bike-item-info {
+
       flex: 0 1 44px;
-      max-height: 44px;
       transition: color 500ms ease;
+      align-items: center;
+      justify-content: space-between;
+
+      & > p {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
     }
     &.thumb .bike-item-info {
       position: absolute;
@@ -150,6 +161,23 @@
         border-left: 0;
         border-top: 5px solid var(--bb-primary);
       }
+    }
+  }
+  @media ( max-width: 480px ) {
+    .bike-item {
+      width: 180px;
+    }
+    .bike-item .bike-item-info {
+      flex-direction: column;
+      align-items: flex-start !important;
+      min-height: 63px;
+    }
+    .bike-item .bike-item-info > p {
+      width: 100%;
+    }
+    .bike-item.thumb .bike-item-image {
+      background-position: center 20px;
+      background-size: 90%;
     }
   }
 </style>

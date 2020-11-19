@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <Builder />
+    <Builder/>
   </v-app>
 </template>
 
@@ -130,10 +130,15 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: left;
     color: #2c3e50;
-    min-width: 300px;
-    min-height: 632px;
+
+    position: fixed;
+    top: 0; left: 0;
+    right: 0; bottom: 0;
+    overflow: auto;
 
     .v-application--wrap {
+      min-width: 300px;
+      min-height: 632px;
       -webkit-backface-visibility: visible;
       backface-visibility: visible;
     }
