@@ -3,6 +3,14 @@ $line-height-root: 1.6;
 $body-font-family: 'Open sans', Helvetica, Arial, sans-serif;
 $heading-font-family: 'Open sans', Helvetica, Arial, sans-serif;
 
+$grid-breakpoints: (
+  'xs': 0,
+  'sm': 600px,
+  'md': 1024px,
+  'lg': 1280px - 7px,
+  'xl': 1920px - 7px
+);
+
 $headings: (
   'h1': (
     'size': 1.875rem,

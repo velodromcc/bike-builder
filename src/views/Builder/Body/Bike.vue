@@ -295,7 +295,7 @@
           frameset.loaded = false;
 
           composition.items.forEach( item => {
-            loadImage( item.image ).then( image => {
+            item.image && loadImage( item.image ).then( image => {
 
               const anchor = composition.itemAnchors[ item.anchor ] || composition.anchors[ item.anchor ];
               const origin = item.origin;

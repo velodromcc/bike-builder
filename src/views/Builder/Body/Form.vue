@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="show" :persistent="loading" max-width="720" no-click-animation>
-    <v-card class="d-flex flex-column flex-nowrap rel" height="600">
+    <v-card class="contact-form d-flex flex-column flex-nowrap rel" height="83vh">
       <v-overlay :value="loading" color="white" absolute/>
       <v-toolbar class="outline-bottom light--border shrink" elevation="0" height="90">
 
@@ -85,8 +85,9 @@
           </label>
 
           <v-textarea
+            rows="3"
+            class="mb-0"
             color="bb-primary"
-            rows="4"
             v-model="data.message"
             :rules="rules.message"
             outlined
@@ -217,3 +218,9 @@
     }
   }
 </script>
+
+<style>
+.contact-form .v-input__slot {
+  min-height: 32px !important;
+}
+</style>

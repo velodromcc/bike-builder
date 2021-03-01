@@ -1,12 +1,12 @@
 <template>
   <div class="my-4">
 
-    <div class="item-info px-5 mb-2">
+    <div class="item-info px-5 mb-2" :class="{ alone: !hasColors }">
       <p class="caption mb-0">{{ item.step.title }}</p>
       <p class="headline bb-primary--text mb-0">{{ item.name }}</p>
     </div>
 
-    <div v-if="colors.length > 1" class="item-info outline-left light--border px-5">
+    <div v-if="hasColors" class="item-info outline-left light--border px-5">
       <p class="caption mb-1">
         Colour <span v-if="current" class="body-1 bb-primary--text">{{ current.colorName || 'Unkwnown' }}</span>
       </p>
@@ -52,6 +52,9 @@
       },
       current() {
         return this.colors[ this.color ];
+      },
+      hasColors() {
+        return this.colors.length > 1;
       }
     }
   }
@@ -60,8 +63,13 @@
 <style lang="scss">
 
   .item-info {
+
     width: 50%;
     float: left;
+
+    &.alone {
+      width: 100%;
+    }
   }
   .item-actions {
     clear: both;
@@ -70,6 +78,7 @@
   @media ( max-width: 600px ) {
     .item-info {
       float: none;
+      width: 100%;
       &.outline-left {
         border: 0 !important;
       }

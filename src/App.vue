@@ -238,4 +238,9 @@
     border-radius: 20px;
     border: 1px solid white;
   }
+
+  /* OTHERS */
+  .v-dialog:not(.v-dialog--fullscreen) {
+    max-height: 90vh !important;
+  }
 </style>

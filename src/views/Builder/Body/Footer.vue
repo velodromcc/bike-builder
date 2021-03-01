@@ -130,7 +130,7 @@
       width: 100%;
     }
   }
-  @media ( max-width: 966px ) {
+  @media ( max-width: 1024px ) {
     .builder-footer {
       display: -webkit-flex;
       display: flex;

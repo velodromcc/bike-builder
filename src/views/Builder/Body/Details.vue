@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-model="show" max-width="1280">
-    <v-card class="d-flex flex-column flex-nowrap" height="90vh">
-      <v-toolbar class="outline-bottom light--border shrink" elevation="0" height="70">
+    <v-card class="details-dialog" :class="{ 'is-small': isSmall }">
+      <v-toolbar class="details-dialog-header outline-bottom light--border" elevation="0" height="70">
 
         <h3 class="headline bb-primary--text">Your build in detail</h3>
 
@@ -12,8 +12,8 @@
         </Btn>
 
       </v-toolbar>
-      <div class="grow rel">
-        <v-row class="layer autoscroll pa-1" no-gutters>
+      <div class="details-dialog-body">
+        <v-row class="pa-1" no-gutters>
 
           <v-col v-for="( item, i ) in items" class="pa-1" :key="i" cols="12" sm="6" md="3">
             <v-card height="426" class="d-flex flex-column justify-end">
@@ -55,16 +55,22 @@
 
         </v-row>
       </div>
-      <v-toolbar class="outline-top light--border shrink" elevation="0" height="70">
+      <v-toolbar class="details-dialog-footer outline-top light--border" elevation="0" height="70">
 
-        <Btn v-if="!hideFormButton" color="bb-primary" @click="$emit('form')" outlined tile dark>
-          Contact us for a quote
+        <Btn
+          v-if="!hideFormButton"
+          color="bb-primary"
+          :small="isSmall"
+          outlined tile dark
+          @click="$emit('form')"
+        >
+          {{ isSmall ? 'Contact us' : 'Contact us for a quote' }}
           <v-icon v-text="'$next'"/>
         </Btn>
 
         <v-spacer/>
 
-        <div class="text-right">
+        <div class="details-bottom-price text-right">
           <p class="caption mb-0">SRP</p>
           <p class="display-4 bb-primary--text mb-0">{{ price }} €</p>
         </div>
@@ -97,6 +103,11 @@
         show: !!this.value
       }
     },
+    computed: {
+      isSmall() {
+        return this.$vuetify.breakpoint.xs;
+      }
+    },
     watch: {
       value( value ) {
         this.show = !!value;
@@ -109,5 +120,36 @@
 </script>
 
 <style>
-
+.details-dialog {
+  position: relative;
+  overflow: hidden;
+  height: 80vh;
+}
+.details-dialog-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.details-dialog-body {
+  position: absolute;
+  top: 70px;
+  bottom: 70px;
+  left: 0;
+  right: 0;
+  overflow: auto;
+}
+.details-dialog-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.is-small .details-bottom-price > p {
+  display: inline-block;
+}
+.is-small .details-bottom-price > p.display-4 {
+  font-size: 22px !important;
+  margin-left: 7px;
+}
 </style>

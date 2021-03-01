@@ -139,7 +139,7 @@
       }
     }
   }
-  @media ( max-width: 966px ) {
+  @media ( max-width: 1024px ) {
     .builder-nav--items {
       overflow-y: hidden !important;
     }

@@ -499,7 +499,7 @@
       },
       redimension() {
         const { info, footer } = this.$refs;
-        if ( info && window.innerWidth < 966 ) this.contentMargin = info.$el.clientHeight + 32;
+        if ( info && window.innerWidth < 1024 ) this.contentMargin = info.$el.clientHeight + 32;
         else this.contentMargin = 0;
         if ( footer ) this.footerHeight = footer.$el.clientHeight + 32;
         else this.footerHeight = 0;
@@ -672,7 +672,7 @@
     }
   }
 
-  @media ( max-width: 966px ) {
+  @media ( max-width: 1024px ) {
     .builder-body {
       right: 0;
       bottom: 250px;
