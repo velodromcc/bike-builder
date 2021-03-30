@@ -50,15 +50,10 @@
         <Footer
           ref="footer"
           :price="price"
-          :chat-visibility="chat.show"
-          :chat-online="chat.online"
-          :chat-messages="chat.messages"
-          :chat-writting="chat.chatting"
           @reset="reset"
           @details="showDetails"
           @share="share = true"
           @form="showForm"
-          @message="toggleMessage"
         />
 
       </div>
@@ -214,13 +209,6 @@
         details: false,
         contentMargin: 0,
         footerHeight: 0,
-        chat: {
-          show: false,
-          chatting: false,
-          online: false,
-          messages: 0,
-          toggle: false
-        },
         description: {
           show: false,
           item: null,
@@ -379,7 +367,7 @@
 
             } else setTimeout(() => {
 
-              console.log( res.data.object );
+              // console.log( res.data.object );
               this.error = false;
               this.$store.commit( 'set', {
                 loading: false,
@@ -503,44 +491,6 @@
         else this.contentMargin = 0;
         if ( footer ) this.footerHeight = footer.$el.clientHeight + 32;
         else this.footerHeight = 0;
-      },
-      toggleMessage() {
-        const LCW = window.LiveChatWidget;
-        this.chat.toggle = true;
-        LCW && LCW.call( this.chat.show ? 'hide' : 'maximize' );
-      }
-    },
-    beforeCreate() {
-
-      const LCW = window.LiveChatWidget;
-      if ( LCW ) {
-
-        // On change visibility
-        LCW.on( 'visibility_changed', ({ visibility }) => {
-          this.chat.show = visibility !== 'hidden';
-          if ( this.chat.toggle ) {
-            if ( this.chat.show ) this.chat.messages = 0;
-          }
-          else if ( visibility === 'minimized' ) LCW.call('hide');
-          else if ( this.chat.show ) this.chat.messages = 0;
-          this.chat.toggle = false;
-        });
-
-        // On change availability
-        LCW.on( 'availability_changed', ({ availability }) => {
-          this.chat.online = availability === 'online';
-        });
-
-        // On change status
-        LCW.on( 'customer_status_changed', ({ status }) => {
-          this.chat.chatting = status === 'chatting';
-        });
-
-        // On new event
-        LCW.on( 'new_event', ({ author }) => {
-          if ( author.type === 'agent' && !this.chat.show )
-            this.chat.messages++;
-        });
       }
     }
   }

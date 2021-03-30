@@ -17,21 +17,15 @@
       </Btn>
 
       <Btn
-        class="outline light--border" width="40" height="40"
-        :color="!chatVisibility ? (chatOnline ? 'success' : 'error') : 'bb-primary'"
-        :dark="chatVisibility"
-        :fab="chatVisibility"
-        :icon="!chatVisibility"
-        @click="$emit('message')"
+        class="outline light--border"
+        href="https://web.whatsapp.com/send?phone=34652923272&text=%C2%A1Hola!%20Me%20gustar%C3%ADa%20que%20me%20ayudaras%20con...."
+        width="40" height="40"
+        title="¿Cómo puedo ayudarte?"
+        color="bb-primary"
+        target="_blank"
+        icon
       >
-        <v-icon v-text="chatWritting ? 'mdi-chat-processing-outline' : 'mdi-chat-outline'"/>
-        <v-badge
-          v-show="!chatVisibility && !!chatMessages"
-          class="mb-5"
-          color="success"
-          :content="chatMessages"
-          bordered
-        />
+        <v-icon v-text="'mdi-whatsapp'"/>
       </Btn>
 
     </nav>
@@ -61,14 +55,7 @@
       price: {
         type: Number,
         default: 0
-      },
-      chatMessages: {
-        type: Number,
-        default: 0
-      },
-      chatWritting: Boolean,
-      chatOnline: Boolean,
-      chatVisibility: Boolean
+      }
     }
   }
 </script>
@@ -159,9 +146,16 @@
     }
   }
   @media ( max-width: 520px ) {
+    .builder-footer {
+      text-align: right;
+    }
     .footer-details {
       width: 100%;
       margin-bottom: 8px;
+    }
+    .footer-srp {
+      float: none;
+      display: inline-block;
     }
   }
 </style>
