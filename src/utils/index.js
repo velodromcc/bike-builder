@@ -1,4 +1,7 @@
 const CONSTANTS = {
+  host: 'bikebuilder.inmovens.com',
+  //imageBase: 'https://bikebuilder.inmovens.com',
+  imageBase: 'http://velodrom.dreambikebuilder.com',
   framesets: {
     title: 'Frameset',
     zIndex: 5,
@@ -88,7 +91,7 @@ export function itemImage( item, index ) {
 
     for ( var img in image ) {
       if ( image[img] ) {
-        image[img] = 'http://velodrom.dreambikebuilder.com' + image[img];
+        image[img] = CONSTANTS.imageBase + image[img];
       }
     }
   }

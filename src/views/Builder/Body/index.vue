@@ -1,13 +1,24 @@
 <template>
-  <main class="fill-height rel" v-resize="redimension">
+  <main
+    class="fill-height rel"
+    v-resize="redimension"
+  >
 
     <Error v-if="error"/>
 
     <Loading v-else-if="loading" />
 
-    <div v-else class="builder layer" :class="{ 'show-bike-fit': showBikeFit, 'builder-initial': !composition.length }">
+    <div
+      v-else
+      class="builder layer"
+      :class="{ 'show-bike-fit': showBikeFit, 'builder-initial': !composition.length }"
+    >
 
-      <Header class="builder-header" :height="70"/>
+      <Header
+        :items="headerMenu"
+        :account-link="loginHref"
+        @click:menu="drawer = !drawer"
+      />
 
       <div class="builder-body">
 
@@ -109,6 +120,56 @@
       </nav>
     </div>
 
+    <v-navigation-drawer
+      v-if="headerMenu.length"
+      v-model="drawer"
+      class="builder-navigation-drawer"
+      overlay-opacity="0.8"
+      width="337"
+      temporary
+      absolute
+    >
+      <v-sheet class="d-flex flex-column fill-height pl-1 pr-2">
+        <div class="py-6 grow text-center">
+
+          <Logo/>
+
+          <Btn
+            class="btn-close-drawer"
+            color="bb-primary"
+            width="40" height="40"
+            :ripple="false"
+            @click="drawer = false"
+            tile fab dark
+            absolute
+          >
+            <v-icon>mdi-close</v-icon>
+          </Btn>
+
+        </div>
+        <v-sheet class="shrink" color="#f8f8f8">
+          <v-divider/>
+          <v-list>
+            <v-list-item
+              v-for="(item,i) in headerMenu"
+              class="px-5"
+              :href="item.href"
+              :ripple="false"
+              :title="item.text"
+              :key="i"
+            >
+              <v-list-item-content>
+                <v-list-item-title
+                  v-text="item.text"
+                  class="text-uppercase bb-primary--text"
+                />
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-sheet>
+      </v-sheet>
+    </v-navigation-drawer>
+
     <!-- DIALOGS -->
 
     <Description
@@ -166,10 +227,18 @@
   import Form from './Form';
 
   // UTILS
-  import { Btn } from '@/components';
+  import { Btn, Logo } from '@/components';
   const separeChar = '&';
 
   // Constants
+
+  const HEADER_MENU = [
+    { key: 'shopHref', text: 'Shop' },
+    { key: 'locationsHref', text: 'Locations' },
+    { key: 'storiesHref', text: 'Stories' },
+    { key: 'bikebuilderHref', text: 'Bike Builder' },
+    { key: 'contactHref', text: 'Contact' },
+  ];
 
   const ITEMS_LIST = Object.keys( CONSTANTS ).map( key => ({
       id: key,
@@ -192,6 +261,7 @@
       BikeFit,
       BikeInfo,
       Bike,
+      Logo,
       Btn
     },
     mounted() {
@@ -201,6 +271,7 @@
       return {
         index: 0,
         error: false,
+        drawer: false,
         selectedItem: null,
         selectedColor: 0,
         selection: [],
@@ -279,6 +350,17 @@
         'saddles',
         'company'
       ]),
+      headerMenu() {
+        return HEADER_MENU.map( item => {
+          if ( this.company[item.key] ) {
+            if ( item.key === 'bikebuilderHref' ) return item;
+            return { ...item, href: this.company[item.key] };
+          }
+        }).filter( Boolean );
+      },
+      loginHref() {
+        return this.company.loginHref;
+      },
       steps() {
         const { selection } = this;
         const steps = this.getSteps( selection[0] ? selection[0].item : null );
@@ -498,23 +580,22 @@
 
 <style>
 
-  .builder-header, .builder-body, .builder-breadcrumbs, .builder-content, .builder-footer, .builder-nav,
+  .builder-body, .builder-breadcrumbs, .builder-content, .builder-footer, .builder-nav,
   .builder-nav--top, .builder-nav--steps, .builder-nav--items, .builder-nav--bikefit, .builder-nav--continue,
   .builder-info {
     position: absolute;
   }
-  .builder-header, .builder-nav--top, .builder-nav--steps, .builder-nav--items, .builder-nav--bikefit, .builder-info,
+  .builder-nav--top, .builder-nav--steps, .builder-nav--items, .builder-nav--bikefit, .builder-info,
   .builder-breadcrumbs, .builder-content, .builder-footer {
     width: 100%;
   }
-  .builder-header, .builder-breadcrumbs, .builder-nav--top, .builder-info {
+  .builder-breadcrumbs, .builder-nav--top, .builder-info {
     top: 0;
     left: 0;
   }
   .builder-body {
     display: flex;
     flex-direction: column;
-    top: 70px;
     bottom: 0;
     left: 0;
     right: 400px;
@@ -532,7 +613,7 @@
   .builder-nav {
     width: 400px;
     right: 0;
-    top: 70px;
+    top: 76px;
     bottom: 0;
     background-color: white;
     border-left: 1px solid var(--v-light-base);
@@ -612,6 +693,14 @@
   }
   .builder-bike > div {
     height: 100%;
+  }
+
+  .builder-navigation-drawer, .builder-navigation-drawer > div {
+    overflow: visible !important;
+  }
+  .builder-navigation-drawer .btn-close-drawer {
+    right: -40px;
+    top: 0;
   }
 
   /* MEDIA */

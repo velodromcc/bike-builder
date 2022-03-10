@@ -2,6 +2,9 @@ import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 import es from 'vuetify/es5/locale/es';
 
+import AccountIcon from '@/components/icons/account';
+import CartIcon from '@/components/icons/cart';
+
 Vue.use(Vuetify);
 
 export default new Vuetify({
@@ -34,4 +37,11 @@ export default new Vuetify({
     locales: { es },
     current: 'es',
   },
+  icons: {
+    iconfont: 'mdi',
+    values: {
+      account: { component: AccountIcon },
+      cart: { component: CartIcon }
+    }
+  }
 });

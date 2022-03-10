@@ -22,21 +22,44 @@
             :style="`background-image: url(${ item.src })`"
           />
 
-          <v-row class="bike-item-info bb-primary--text shrink pa-3 ma-0">
-            <p class="mb-0">{{ item.name }}</p>
-            <p class="mb-0" v-if="item.info.colors.length > 1">
-              <Color
-                v-for="( color, i ) in item.info.colors"
-                :key="i"
-                :value="[ color.color, color.color2 ]"
-                class="mb-0"
-                small
-              />
-              <span v-if="item.info.more">
-                +{{ item.info.more }}
-              </span>
-            </p>
-          </v-row>
+          <div class="bike-item-info-name">
+            {{ item.name }}
+          </div>
+
+          <div class="bike-item-info-colors"  v-if="item.info.colors.length > 1">
+            <Color
+              v-for="( color, i ) in item.info.colors"
+              :key="i"
+              :value="[ color.color, color.color2 ]"
+              class="mb-0"
+              small
+            />
+            <span v-if="item.info.more">
+              +{{ item.info.more }}
+            </span>
+          </div>
+
+          <v-card
+            class="bike-item-select d-flex align-center"
+            :color="active ? 'bb-primary' : 'white'"
+            elevation="0"
+            dark
+          >
+            <v-card
+              class="py-1 px-2"
+              :color="active ? 'bb-primary-dark' : 'bb-primary-light'"
+              elevation="0"
+              tile
+            >
+              <v-icon size="12">
+                {{ active ? 'mdi-check' : 'mdi-cursor-default' }}
+              </v-icon>
+            </v-card>
+            <div class="text-uppercase px-2" :class="{ 'bb-primary--text': !active }">
+              {{ active ? 'Selected' : 'Select' }}
+            </div>
+          </v-card>
+
         </a>
       </v-item>
     </v-item-group>
@@ -87,43 +110,41 @@
     border-bottom: 1px solid var(--v-light-base);
     transition: background-color 500ms ease;
     text-decoration: none;
-    height: 200px;
+    height: 240px;
 
     .bike-item-image {
       flex: 1 0 auto;
       background-repeat: no-repeat;
       background-position: center center;
       background-size: contain;
-      margin: 10px 0;
+      margin: 10px 0 60px 0;
     }
     &:not(.thumb) .bike-item-image {
       transform: scale(.75);
+    }
+    .bike-item-select {
+      overflow: hidden;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      border: 1px solid var(--v-light-base) !important;
     }
     .bike-item-icon {
       position: absolute;
       top: 10px;
       right: 10px;
     }
-    .bike-item-info {
-
-      flex: 0 1 44px;
-      transition: color 500ms ease;
-      align-items: center;
-      justify-content: space-between;
-
-      & > p {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-    }
-    &.thumb .bike-item-info {
+    .bike-item-info-name {
       position: absolute;
-      bottom: 0;
-      width: 100%;
+      left: 0; bottom: 0; right: 120px;
+      padding: 10px;
+    }
+    .bike-item-info-colors {
+      position: absolute;
+      right: 10px; bottom: 47px;
     }
     &.thumb .bike-item-image {
-      margin: 0;
+      margin: 0 0 60px 0;
     }
     &.selected {
       background-color: #f4f4f4;
@@ -134,7 +155,7 @@
       background-color: var(--bb-secondary);
       color: white;
 
-      .bike-item-info {
+      .bike-item-info-name, .bike-item-info-colors {
         color: white !important;
       }
     }
@@ -157,6 +178,12 @@
       border-top: 5px solid transparent;
       vertical-align: top;
 
+      .bike-item-info-name {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
       &.selected {
         border-left: 0;
         border-top: 5px solid var(--bb-primary);
@@ -166,14 +193,15 @@
   @media ( max-width: 480px ) {
     .bike-item {
       width: 180px;
-    }
-    .bike-item .bike-item-info {
-      flex-direction: column;
-      align-items: flex-start !important;
-      min-height: 63px;
-    }
-    .bike-item .bike-item-info > p {
-      width: 100%;
+      .bike-item-select {
+        display: none !important;
+      }
+      .bike-item-info-colors {
+        bottom: 37px;
+      }
+      .bike-item-info-name {
+        right: 10px;
+      }
     }
     .bike-item.thumb .bike-item-image {
       background-position: center 20px;
