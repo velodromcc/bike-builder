@@ -1,13 +1,13 @@
 <template>
-  <div v-if="company" v-html="company.finalHtml" class="bike-fit-content">
-
+  <div
+    v-if="company"
+    v-html="company.finalHtml"
+    class="bike-fit-content">
   </div>
 </template>
 
 <script>
-
   import { mapState } from 'vuex';
-
   export default {
     computed: mapState([ 'company' ])
   };

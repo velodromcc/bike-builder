@@ -11,7 +11,11 @@
     <div
       v-else
       class="builder layer"
-      :class="{ 'show-bike-fit': showBikeFit, 'builder-initial': !composition.length }"
+      :class="{
+        'show-bike-fit': showBikeFit,
+        'builder-initial': !composition.length,
+        'show-details-complete': this.detailsComplete
+      }"
     >
 
       <Header
@@ -23,6 +27,7 @@
       <div class="builder-body">
 
         <Breadcrumbs
+          v-if="!detailsComplete"
           class="builder-breadcrumbs outline-bottom light--border body-1"
           :value="index"
           :items="crumbs"
@@ -46,7 +51,7 @@
             </div>
 
             <BikeInfo
-              v-if="current"
+              v-if="current && !detailsComplete"
               ref="info"
               class="builder-info"
               :item="current"
@@ -58,8 +63,16 @@
           </template>
         </div>
 
+        <Details
+          v-if="detailsComplete"
+          @return="detailsComplete = false"
+          :items="detailsInfo"
+          :price="price"
+        />
+
         <Footer
           ref="footer"
+          v-else
           :price="price"
           @reset="reset"
           @details="showDetails"
@@ -69,7 +82,10 @@
 
       </div>
 
-      <nav class="builder-nav">
+      <nav
+        v-if="!detailsComplete"
+        class="builder-nav"
+      >
 
         <div class="builder-nav--top bb-primary">
 
@@ -118,6 +134,7 @@
         </Btn>
 
       </nav>
+
     </div>
 
     <v-navigation-drawer
@@ -180,7 +197,7 @@
       @back="showDetails"
     />
 
-    <Details
+    <DetailsForm
       v-model="details"
       :items="detailsInfo"
       :price="price"
@@ -222,6 +239,7 @@
 
   // DIALOGS
   import Description from './Description';
+  import DetailsForm from './DetailsForm';
   import Details from './Details';
   import Share from './Share';
   import Form from './Form';
@@ -254,6 +272,7 @@
       Footer,
       Breadcrumbs,
       Description,
+      DetailsForm,
       Details,
       Share,
       Form,
@@ -278,6 +297,7 @@
         form: false,
         share: false,
         details: false,
+        detailsComplete: false,
         contentMargin: 0,
         footerHeight: 0,
         description: {
@@ -428,8 +448,12 @@
           .reduce(( sum, a ) => sum + a.price, 0 );
       },
       contentStyle() {
+
         const minHeight = window && window.innerHeight > 480 ? '40vh' : '80vh';
-        const calculatedHeigth = this.contentMargin + this.footerHeight;
+        const calculatedHeigth = !this.detailsComplete
+          ? this.contentMargin + this.footerHeight
+          : 0;
+
         return {
           minHeight,
           height: calculatedHeigth > 0 ? `calc( 100% - ${ calculatedHeigth }px )` : null,
@@ -490,8 +514,12 @@
         this.index = Math.min( this.index + 1, this.steps.length - 1 );
       },
       showDetails() {
-        this.details = true;
         this.description.show = this.form = false;
+        if ( this.showBikeFit ) {
+          this.detailsComplete = true;
+        } else {
+          this.details = true;
+        }
       },
       showDescription( item, backButton ) {
         this.details = this.form = false;
@@ -618,6 +646,9 @@
     background-color: white;
     border-left: 1px solid var(--v-light-base);
   }
+  .details-complete {
+    top: 76px;
+  }
 
   /* NAV */
 
@@ -701,6 +732,38 @@
   .builder-navigation-drawer .btn-close-drawer {
     right: -40px;
     top: 0;
+  }
+
+  /* DETAILS COMPLETE */
+
+  .show-details-complete .builder-body {
+    display: block;
+    padding: 0 3.175%;
+    max-width: 1200px;
+    margin: 0 auto;
+    right: 0;
+  }
+  .show-details-complete .builder-content {
+    right: 20px;
+    left: auto;
+    bottom: auto;
+    max-width: 720px;
+  }
+  .show-details-complete .builder-bike {
+    height: auto;
+    position: relative;
+    padding-top: 0;
+    margin-top: 20px;
+  }
+  .show-details-complete .builder-bike::before {
+    display: block;
+    content: '';
+    padding-top: 71.428%;
+  }
+  .show-details-complete .builder-bike > div {
+    position: absolute;
+    width: 100%;
+    top: 0; left: 0;
   }
 
   /* MEDIA */
@@ -792,6 +855,18 @@
     .show-bike-fit .builder-nav--continue {
       position: static;
       display: block;
+    }
+  }
+
+  @media( max-width: 992px ) {
+    .show-details-complete .builder-content {
+      max-width: 100%;
+    }
+    .show-details-complete .builder-bike {
+      margin-top: 70px;
+    }
+    .show-details-complete .builder-bike::before {
+      padding-top: 56%;
     }
   }
 

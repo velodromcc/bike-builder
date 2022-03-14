@@ -1,155 +1,113 @@
 <template>
-  <v-dialog v-model="show" max-width="1280">
-    <v-card class="details-dialog" :class="{ 'is-small': isSmall }">
-      <v-toolbar class="details-dialog-header outline-bottom light--border" elevation="0" height="70">
+  <div class="details-complete">
+    <div class="details-wrapper">
 
-        <h3 class="headline bb-primary--text">Your build in detail</h3>
+      <Btn class="mb-6" @click="$emit('return')" small text>
+        <v-icon left>$prev</v-icon>
+        Return to builder
+      </Btn>
 
-        <v-spacer/>
+      <div class="builder-bike mt-0 mb-6"/>
 
-        <Btn color="bb-primary" @click="show = false" width="20" height="20" fab dark>
-          <v-icon small v-text="'$close'"/>
-        </Btn>
+      <h1 class="bb-primary--text mb-6">
+        YOUR BUILD
+      </h1>
 
-      </v-toolbar>
-      <div class="details-dialog-body">
-        <v-row class="pa-1" no-gutters>
+      <p>
+        Thank you for creating your dream build with Bespoke. Whatever combination you've c
+        hosen we'll ensure that it all works together and, of course, fits you perfectly.
+      </p>
 
-          <v-col v-for="( item, i ) in items" class="pa-1" :key="i" cols="12" sm="6" md="3">
-            <v-card height="426" class="d-flex flex-column justify-end">
+      <p>
+        Get in touch to discuss your requirements in more detail, and for impartial expert
+        advice on bike and component choice.
+      </p>
 
-              <div class="grow rel" :class="{ 'pa-12': !( item.image.front || item.image.thumb )}">
-                <div
-                  class="detail-image"
-                  :style="`background-image: url(${ item.image.front || item.image.thumb || item.image.src })`"
-                />
-                <div class="detail-price headline bb-primary--text">
-                  {{ item.price }} €
-                </div>
-              </div>
-
-              <div class="px-4 mb-2">
-                <p class="caption mb-0">{{ item.type }}</p>
-                <p class="headline bb-primary--text mb-0">{{ item.name }}</p>
-                <p class="mb-0">
-                  <Color class="mb-0" :value="item.color" small/>
-                  <span class="caption">{{ item.colorName }}</span>
-                </p>
-              </div>
-
-              <v-card-actions>
-
-                <Btn class="body-1" color="bb-primary" tile dark @click="$emit( 'description', item.item )">
-                  Description
-                </Btn>
-
-                <Btn v-if="item.url" tag="a" :href="item.url" target="_blank"
-                class="body-1" color="bb-primary" tile outlined>
-                  Buy online
-                </Btn>
-
-              </v-card-actions>
-
-            </v-card>
-          </v-col>
-
-        </v-row>
+      <div class="mb-6">
+        <p class="body-2 mb-0">SRP</p>
+        <p class="display-4 bb-primary--text mb-0">
+          <strong>{{ price }} €</strong>
+        </p>
       </div>
-      <v-toolbar class="details-dialog-footer outline-top light--border" elevation="0" height="70">
+
+      <Btn class="footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
+        <v-icon left v-text="'mdi-send'"/>
+        Contact us to discuss this build
+      </Btn>
+
+      <div class="mt-6">
+
+        <Btn class="outline light--border mr-3" color="bb-primary" width="40" height="40" @click="$emit('share')" icon>
+          <v-icon v-text="'mdi-share-variant'"/>
+        </Btn>
 
         <Btn
-          v-if="!hideFormButton"
+          class="outline light--border"
+          href="https://web.whatsapp.com/send?phone=34652923272&text=%C2%A1Hola!%20Me%20gustar%C3%ADa%20que%20me%20ayudaras%20con...."
+          width="40" height="40"
+          title="¿Cómo puedo ayudarte?"
           color="bb-primary"
-          :small="isSmall"
-          outlined tile dark
-          @click="$emit('form')"
+          target="_blank"
+          icon
         >
-          {{ isSmall ? 'Contact us' : 'Contact us for a quote' }}
-          <v-icon v-text="'$next'"/>
+          <v-icon v-text="'mdi-whatsapp'"/>
         </Btn>
+      </div>
 
-        <v-spacer/>
+      <v-divider class="my-5"/>
 
-        <div class="details-bottom-price text-right">
-          <p class="caption mb-0">SRP</p>
-          <p class="display-4 bb-primary--text mb-0">{{ price }} €</p>
-        </div>
+      <h2 class="bb-primary--text my-6">
+        YOUR BUILD IN DEATIL
+      </h2>
 
-      </v-toolbar>
-    </v-card>
-  </v-dialog>
+    </div>
+
+    <DetailItems
+      :items="items"
+      show-description
+    />
+
+  </div>
 </template>
 
 <script>
+import Btn from '@/components/Btn';
+import DetailItems from './DetailItems';
 
-  import { Btn, Color } from '@/components';
-
-  export default {
-    components: { Btn, Color },
-    props: {
-      value: null,
-      hideFormButton: Boolean,
-      price: {
-        type: Number,
-        default: 0
-      },
-      items: {
-        type: Array,
-        default: () => []
-      }
-    },
-    data() {
-      return {
-        show: !!this.value
-      }
-    },
-    computed: {
-      isSmall() {
-        return this.$vuetify.breakpoint.xs;
-      }
-    },
-    watch: {
-      value( value ) {
-        this.show = !!value;
-      },
-      show() {
-        this.$emit( 'input', this.show );
-      }
-    }
+export default {
+  components: { Btn, DetailItems },
+  props: {
+    items: Array,
+    price: Number
   }
+}
 </script>
 
 <style>
-.details-dialog {
-  position: relative;
-  overflow: hidden;
-  height: 80vh;
+.details-complete {
+  padding-top: 32px;
 }
-.details-dialog-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+.details-complete p {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.details-dialog-body {
-  position: absolute;
-  top: 70px;
-  bottom: 70px;
-  left: 0;
-  right: 0;
-  overflow: auto;
+.details-complete > .details-wrapper {
+  padding-right: 720px;
 }
-.details-dialog-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.details-complete .builder-bike {
+  display: none;
 }
-.is-small .details-bottom-price > p {
-  display: inline-block;
-}
-.is-small .details-bottom-price > p.display-4 {
-  font-size: 22px !important;
-  margin-left: 7px;
+@media(max-width:993px) {
+  .details-complete {
+    text-align: center;
+    padding-top: 0;
+  }
+  .details-complete > .details-wrapper {
+    padding-right: 0;
+  }
+  .details-complete .builder-bike {
+    display: block;
+  }
 }
 </style>
