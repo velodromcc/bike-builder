@@ -103,6 +103,24 @@ export function capitalize( str ) {
   return str.charAt(0).toUpperCase() + str.slice( 1 );
 }
 
+const from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç";
+const to = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc";
+const map = {};
+
+for ( var i = 0, j = from.length; i < j; i++ )
+  map[from.charAt(i)] = to.charAt(i);
+
+export const normalize = str => {
+  var ret = [];
+  for ( var i = 0, j = str.length; i < j; i++ ) {
+    var c = str.charAt(i);
+    // eslint-disable-next-line
+    if ( map.hasOwnProperty(c)) ret.push( map[c] );
+    else ret.push(c);
+  }
+  return ret.join('').toLowerCase();
+}
+
 // COLOR FUNCTIONS
 
 function add( color, amount ) {

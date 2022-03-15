@@ -1,8 +1,8 @@
 <template>
-  <div class="details-complete">
+  <div class="details-complete pb-4">
     <div class="details-wrapper">
 
-      <Btn class="mb-6" @click="$emit('return')" small text>
+      <Btn class="btn-return mb-6" @click="$emit('return')" small text>
         <v-icon left>$prev</v-icon>
         Return to builder
       </Btn>
@@ -30,12 +30,12 @@
         </p>
       </div>
 
-      <Btn class="footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
+      <Btn class="btn-form footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
         <v-icon left v-text="'mdi-send'"/>
         Contact us to discuss this build
       </Btn>
 
-      <div class="mt-6">
+      <div class="detail-actions mt-6">
 
         <Btn class="outline light--border mr-3" color="bb-primary" width="40" height="40" @click="$emit('share')" icon>
           <v-icon v-text="'mdi-share-variant'"/>
@@ -63,7 +63,9 @@
     </div>
 
     <DetailItems
+      class="text-left"
       :items="items"
+      :print="print"
       show-description
     />
 
@@ -77,6 +79,7 @@ import DetailItems from './DetailItems';
 export default {
   components: { Btn, DetailItems },
   props: {
+    print: Boolean,
     items: Array,
     price: Number
   }

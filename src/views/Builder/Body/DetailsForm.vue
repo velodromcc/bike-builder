@@ -16,6 +16,7 @@
 
         <DetailItems
           :items="items"
+          @description="$emit('description',$event)"
           dense
         />
 

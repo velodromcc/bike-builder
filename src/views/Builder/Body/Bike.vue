@@ -519,13 +519,13 @@
 
         ctx.restore(); // Reset Canvas state
       },
-      onResize() {
+      onResize( e = {} ) {
         const { container, canvas } = this.$refs;
         if ( container && canvas ) {
 
           const { width, height } = this;
-          const WIDTH = container.clientWidth;
-          const HEIGHT = container.clientHeight;
+          const WIDTH = e.containerWidth || container.clientWidth;
+          const HEIGHT = e.containerHeight || container.clientHeight;
           const REL = WIDTH / HEIGHT;
           const rel = width / height;
 

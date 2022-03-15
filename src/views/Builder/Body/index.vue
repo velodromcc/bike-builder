@@ -66,8 +66,11 @@
         <Details
           v-if="detailsComplete"
           @return="detailsComplete = false"
+          @form="showForm"
+          @share="share = true"
           :items="detailsInfo"
           :price="price"
+          :print="print"
         />
 
         <Footer
@@ -109,15 +112,15 @@
           </span>
         </div>
 
-        <BikeFit
-          v-if="showBikeFit"
-          class="builder-nav--bikefit"
+        <BikeItems
+          v-model="selectedItem"
+          v-if="!showBikeFit"
+          :items="items"
         />
 
-        <BikeItems
+        <BikeFit
           v-else
-          v-model="selectedItem"
-          :items="items"
+          class="builder-nav--bikefit"
         />
 
         <Btn
@@ -285,12 +288,19 @@
     },
     mounted() {
       this.fetch();
+      window.addEventListener( 'beforeprint', this.onPrint );
+      window.addEventListener( 'afterprint', this.onAfterPrint );
+    },
+    beforeDestroy() {
+      window.removeEventListener( 'beforeprint', this.onPrint );
+      window.removeEventListener( 'afterprint', this.onAfterPrint );
     },
     data() {
       return {
         index: 0,
         error: false,
         drawer: false,
+        print: false,
         selectedItem: null,
         selectedColor: 0,
         selection: [],
@@ -347,13 +357,7 @@
       loading() {
         this.$nextTick( this.redimension );
       },
-      contentStyle() {
-        this.$nextTick(() => {
-          if ( this.$refs.bike ) {
-            this.$refs.bike.onResize();
-          }
-        });
-      },
+      contentStyle: 'resizeBike',
       showBikeFit( value ) {
         this.$emit( 'bike-fit', value );
       }
@@ -601,6 +605,23 @@
         else this.contentMargin = 0;
         if ( footer ) this.footerHeight = footer.$el.clientHeight + 32;
         else this.footerHeight = 0;
+      },
+      resizeBike( dim ) {
+        this.$nextTick(() => {
+          if ( this.$refs.bike ) {
+            this.$refs.bike.onResize( dim );
+          }
+        });
+      },
+      onPrint() {
+        this.print = true;
+        this.resizeBike( this.detailsComplete ? {
+          containerWidth: 400,
+          containerHeight: 240
+        } : {} );
+      },
+      onAfterPrint() {
+        this.print = false;
       }
     }
   }
@@ -654,18 +675,18 @@
 
   .builder-nav--top {
     display: flex;
-    height: 70px;
+    height: 48px;
     justify-content: space-between;
     align-items: center;
   }
   .builder-nav--steps {
     text-align: center;
     height: 30px;
-    top: 70px;
+    top: 48px;
     left: 0;
   }
   .builder-nav--items, .builder-nav--bikefit {
-    top: 100px;
+    top: 78px;
     bottom: 70px;
     left: 0;
   }
@@ -736,6 +757,11 @@
 
   /* DETAILS COMPLETE */
 
+  .show-details-complete .builder-header {
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+  }
   .show-details-complete .builder-body {
     display: block;
     padding: 0 3.175%;
@@ -883,6 +909,56 @@
       position: static;
       text-align: left;
       padding-top: 1rem;
+    }
+  }
+
+  @media print {
+    .builder.layer {
+      top: -70px;
+    }
+    .show-details-complete .builder-content {
+      max-width: 360px !important;
+    }
+    .show-details-complete .builder-bike {
+      margin-top: 20px !important;
+    }
+    .show-details-complete .builder-bike::before {
+      padding-top: 71.428% !important;
+    }
+    .details-complete {
+      text-align: left;
+      padding-top: 32px;
+    }
+    .details-complete > .details-wrapper {
+      padding-right: 360px;
+    }
+    .details-complete .builder-bike {
+      display: none;
+    }
+    .builder-header,
+    .details-complete .btn-return,
+    .details-complete .btn-form,
+    .details-complete .detail-actions {
+      display: none;
+    }
+    .details-complete .col-12 {
+      flex: 0 0 33.3333333333% !important;
+      max-width: 33.3333333333% !important;
+    }
+    .details-complete .detail-item-info .caption {
+      font-size: 8px !important;
+    }
+    .details-complete .details-wrapper > p {
+      font-size: 12px !important;
+    }
+    .details-complete .detail-item-info .headline,
+    .details-complete .detail-price,
+    .details-complete h2 {
+      font-size: 16px !important;
+      text-transform: none !important;
+    }
+    .detail-image-container {
+      height: 100px !important;
     }
   }
 </style>

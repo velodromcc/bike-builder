@@ -1,12 +1,32 @@
 <template>
-  <div ref="container" class="builder-nav--items autoscroll">
+  <div class="builder-nav--items">
+    <header class="outline-bottom light--border">
+
+      <input
+        type="text"
+        v-model="search"
+        autocomplete="off"
+        placeholder="Search..."
+        class="outline light--border"
+      />
+
+      <v-icon class="mx-2">
+        mdi-magnify
+      </v-icon>
+
+    </header>
     <v-item-group
-      class="fill-height"
+      class="fill-height autoscroll"
       :value="value"
       :mandatory="value != null"
       @change="$emit( 'input', $event )"
     >
-      <v-item v-for="( item, i ) in list" v-slot="{ active, toggle }" :key="i">
+      <v-item
+        v-for="( item, i ) in list"
+        v-slot="{ active, toggle }"
+        v-show="!item.hide"
+        :key="i"
+      >
         <a
           class="bike-item body-1"
           :class="{ selected: active, thumb: item.thumb }"
@@ -69,7 +89,7 @@
 <script>
 
   import { Color } from '@/components';
-  import { itemImage } from '@/utils';
+  import { itemImage, normalize } from '@/utils';
 
   export default {
     components: { Color },
@@ -80,8 +100,17 @@
         default: () => []
       }
     },
+    data: () => ({
+      search: ''
+    }),
+    watch: {
+      items() {
+        this.search = '';
+      }
+    },
     computed: {
       list() {
+        let search = normalize( this.search );
         return this.items.map( item => {
           const colors = item.colors.map( a => a.color );
           const image = itemImage( item );
@@ -89,6 +118,7 @@
             ...item,
             thumb: !!image.thumb,
             src: image.front || image.thumb || image.src,
+            hide: ! normalize( item.name || '' ).includes( search ),
             info: {
               colors: colors.slice( 0, 3 ),
               more: colors.length > 3 ? colors.length - 3 : 0
@@ -101,6 +131,26 @@
 </script>
 
 <style lang="scss">
+  .builder-nav--items {
+    padding-top: 48px;
+  }
+  .builder-nav--items > header {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+  }
+  .builder-nav--items > header > input {
+    flex: 1 1 auto;
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
+  /*.builder-nav--items > header > input:focus {
+    outline: 0;
+  }*/
   .bike-item {
 
     display: flex;
@@ -161,7 +211,7 @@
     }
   }
   @media ( max-width: 1024px ) {
-    .builder-nav--items {
+    .builder-nav--items > div {
       overflow-y: hidden !important;
     }
     .builder-nav--items > div {

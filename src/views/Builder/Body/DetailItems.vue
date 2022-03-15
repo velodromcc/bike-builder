@@ -1,23 +1,34 @@
 <template>
-  <v-row>
+  <v-row
+    class="detail-items"
+    :class="{'show-description': showDescription, print }">
 
     <v-col v-for="( item, i ) in items" :key="i" v-bind="columns">
       <v-card class="fill-height">
 
         <v-sheet
-          min-height="200"
+          class="detail-image-container grow"
           :class="{ 'pa-12': !( item.image.front || item.image.thumb )}"
+          height="200"
         >
+
           <div
+            v-if="!print"
             class="detail-image"
             :style="`background-image: url(${ item.image.front || item.image.thumb || item.image.src })`"
           />
+
+          <img
+            v-else
+            :src="item.image.front || item.image.thumb || item.image.src"
+          />
+
           <div class="detail-price headline bb-primary--text">
             {{ item.price }} €
           </div>
         </v-sheet>
 
-        <div class="px-4 mb-2">
+        <div class="detail-item-info px-4 mb-2">
           <p class="caption mb-0">{{ item.type }}</p>
           <p class="headline bb-primary--text mb-0">{{ item.name }}</p>
           <p class="mb-0">
@@ -26,7 +37,7 @@
           </p>
         </div>
 
-        <div class="body-2 pa-4" v-if="showDescription">
+        <div class="detail-item-description body-2 pa-4" v-if="showDescription">
           {{ item.item.description }}
         </div>
 
@@ -55,6 +66,7 @@
     components: { Btn, Color },
     props: {
       dense: Boolean,
+      print: Boolean,
       showDescription: Boolean,
       items: {
         type: Array,
@@ -69,3 +81,25 @@
     }
   }
 </script>
+
+<style>
+.detail-items .v-card {
+  display: flex;
+  flex-direction: column;
+}
+.detail-items.show-description .v-card {
+  display: block;
+}
+.detail-item-description {
+  text-transform: none !important;
+}
+.detail-items.print .detail-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.detail-items.print img {
+  width: auto;
+  height: 80%;
+}
+</style>
