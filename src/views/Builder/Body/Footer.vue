@@ -32,10 +32,12 @@
 
     <v-spacer class="footer-spacer"/>
 
-    <div class="footer-srp">
-      <p class="caption mb-0" style="line-height:1.4;">SRP</p>
-      <p class="display-4 bb-primary--text mt-n1 mb-0">{{ price }} €</p>
-    </div>
+    <Price
+      class="footer-srp"
+      align="right"
+      :price="price"
+      :offer="specialBuild && specialBuild.price"
+    />
 
     <Btn class="footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
       <v-icon left v-text="'mdi-send'"/>
@@ -47,11 +49,12 @@
 
 <script>
 
-  import { Btn } from '@/components';
+  import { Btn, Price } from '@/components';
 
   export default {
-    components: { Btn },
+    components: { Btn, Price },
     props: {
+      specialBuild: Object,
       price: {
         type: Number,
         default: 0
@@ -67,12 +70,7 @@
     display: flex;
   }
   .footer-srp {
-    text-align: right;
     margin-right: 16px;
-  }
-  .footer-srp > p.caption {
-    line-height: 1.4;
-    font-size: .6rem !important;
   }
   .detail-image {
     width: 100%;
@@ -85,7 +83,7 @@
     top: 10px;
     right: 10px;
   }
-  @media ( max-width: 1120px ) {
+  @media ( max-width: 1160px ) {
     .builder-footer {
       display: block;
       border-top: 1px solid var(--v-light-base);
@@ -145,7 +143,7 @@
       width: 100%;
     }
   }
-  @media ( max-width: 520px ) {
+  @media ( max-width: 540px ) {
     .builder-footer {
       text-align: right;
     }

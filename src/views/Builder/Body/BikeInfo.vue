@@ -1,5 +1,5 @@
 <template>
-  <div class="my-4">
+  <div class="builder-info my-4">
 
     <div class="item-info px-5 mb-2" :class="{ alone: !hasColors }">
       <p class="caption mb-0">{{ item.step.title }}</p>
@@ -38,11 +38,12 @@
   export default {
     components: { Btn, Color },
     props: {
+      color: null,
+      specialBuild: Object,
       item: {
         type: Object,
         default: () => ({})
-      },
-      color: null
+      }
     },
     computed: {
       colors() {
@@ -61,7 +62,9 @@
 </script>
 
 <style lang="scss">
-
+  .builder-info {
+    position: relative;
+  }
   .item-info {
 
     width: 50%;

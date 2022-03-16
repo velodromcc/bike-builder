@@ -36,10 +36,12 @@
 
         <v-spacer/>
 
-        <div class="details-bottom-price text-right">
-          <p class="caption mb-0">SRP</p>
-          <p class="display-4 bb-primary--text mb-0">{{ price }} €</p>
-        </div>
+        <Price
+          class="details-bottom-price"
+          align="right"
+          :price="price"
+          :offer="specialBuild && specialBuild.price"
+        />
 
       </v-toolbar>
     </v-card>
@@ -48,15 +50,16 @@
 
 <script>
 
-  import { Btn } from '@/components';
+  import { Btn, Price } from '@/components';
   import DetailItems from './DetailItems';
 
   export default {
-    components: { DetailItems, Btn },
+    components: { DetailItems, Price, Btn },
     props: {
       value: null,
       hideFormButton: Boolean,
       items: Array,
+      specialBuild: Object,
       price: {
         type: Number,
         default: 0

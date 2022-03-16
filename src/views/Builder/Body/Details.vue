@@ -23,12 +23,19 @@
         advice on bike and component choice.
       </p>
 
-      <div class="mb-6">
-        <p class="body-2 mb-0">SRP</p>
-        <p class="display-4 bb-primary--text mb-0">
-          <strong>{{ price }} €</strong>
-        </p>
-      </div>
+      <Price
+        class="mb-6"
+        :price="price"
+        :offer="specialBuild && specialBuild.price"
+      >
+        <template v-slot:right>
+          <BtnSpecialBuild
+            v-if="specialBuild"
+            @click="$emit('special-build')"
+            right
+          />
+        </template>
+      </Price>
 
       <Btn class="btn-form footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
         <v-icon left v-text="'mdi-send'"/>
@@ -73,15 +80,16 @@
 </template>
 
 <script>
-import Btn from '@/components/Btn';
+import { Btn, BtnSpecialBuild, Price } from '@/components';
 import DetailItems from './DetailItems';
 
 export default {
-  components: { Btn, DetailItems },
+  components: { Btn, Price, BtnSpecialBuild, DetailItems },
   props: {
     print: Boolean,
     items: Array,
-    price: Number
+    price: Number,
+    specialBuild: Object
   }
 }
 </script>

@@ -53,11 +53,17 @@
             <BikeInfo
               v-if="current && !detailsComplete"
               ref="info"
-              class="builder-info"
               :item="current"
               :color="selectedColor"
+              :special-build="specialBuild"
               @input="selectedColor = $event"
               @description="showDescription(current)"
+            />
+
+            <BtnSpecialBuild
+              v-if="specialBuild && !detailsComplete"
+              @click="showDescription(composition[0].item)"
+              bottom
             />
 
           </template>
@@ -68,7 +74,9 @@
           @return="detailsComplete = false"
           @form="showForm"
           @share="share = true"
+          @special-build="showDescription(composition[0].item)"
           :items="detailsInfo"
+          :special-build="specialBuild"
           :price="price"
           :print="print"
         />
@@ -77,6 +85,7 @@
           ref="footer"
           v-else
           :price="price"
+          :special-build="specialBuild"
           @reset="reset"
           @details="showDetails"
           @share="share = true"
@@ -115,7 +124,9 @@
         <BikeItems
           v-model="selectedItem"
           v-if="!showBikeFit"
+          :type="step.title"
           :items="items"
+          @special-build="showDescription({ ...$event, step })"
         />
 
         <BikeFit
@@ -197,12 +208,15 @@
       :item="description.item"
       :image="description.image"
       :back-button="description.backButton"
+      :special-build-selected="specialBuild"
       @back="showDetails"
+      @special-build="getComposition($event.query)"
     />
 
     <DetailsForm
       v-model="details"
       :items="detailsInfo"
+      :special-build="specialBuild"
       :price="price"
       :hide-form-button="hideForm"
       @form="showForm"
@@ -248,7 +262,7 @@
   import Form from './Form';
 
   // UTILS
-  import { Btn, Logo } from '@/components';
+  import { Btn, Logo, BtnSpecialBuild } from '@/components';
   const separeChar = '&';
 
   // Constants
@@ -273,6 +287,7 @@
       Error,
       Header,
       Footer,
+      BtnSpecialBuild,
       Breadcrumbs,
       Description,
       DetailsForm,
@@ -365,6 +380,7 @@
     computed: {
       ...mapState([
         'loading',
+        'specialBuilds',
         'framesets',
         'bars',
         'groupsets',
@@ -425,12 +441,7 @@
         return this.index === this.steps.length - 1;
       },
       compositionID() {
-        return this.composition.map( a => {
-          return a.item.type.charAt(0) + [
-            a.item ? a.item.id : 0,
-            a.item && a.item.colors[ a.color ] ? a.color : 0
-          ].join( separeChar );
-        }).join('');
+        return this.getQuery( true );
       },
       detailsInfo() {
         return this.composition.map(( a, item ) => {
@@ -450,6 +461,10 @@
       price() {
         return this.detailsInfo
           .reduce(( sum, a ) => sum + a.price, 0 );
+      },
+      specialBuild() {
+        const query = this.getQuery();
+        return this.specialBuilds.find( s => s.query === query );
       },
       contentStyle() {
 
@@ -554,9 +569,9 @@
         }
         return steps;
       },
-      getComposition() {
+      getComposition( id ) {
 
-        var id = window.location.search
+        id = id || window.location.search
           .replace(/^\?.*(id=[^=]+).*$/g,'$1')
           .replace( 'id=', '' )
           .replace( /&\D+$/, '' );
@@ -597,7 +612,16 @@
 
           this.selection = selection;
           this.index = this.selection.length;
+          this.description.show = false;
         }
+      },
+      getQuery( color ) {
+        return this.composition.map( a => {
+          return a.item.type.charAt(0) + [
+            a.item ? a.item.id : 0,
+            color && a.item && a.item.colors[ a.color ] ? a.color : 0
+          ].join( separeChar );
+        }).join('');
       },
       redimension() {
         const { info, footer } = this.$refs;
@@ -669,6 +693,11 @@
   }
   .details-complete {
     top: 76px;
+  }
+  .builder-content .btn-special-build {
+    position: absolute;
+    top: 20px;
+    right: 20px;
   }
 
   /* NAV */
@@ -838,7 +867,13 @@
     }
     .builder-nav--items {
       top: 0;
-      bottom: 70px;
+      bottom: 48px;
+    }
+    .builder-nav--items > header {
+      justify-content: flex-end;
+    }
+    .builder-nav--items > header > input {
+      max-width: 320px;
     }
     .builder-bike {
       padding-top: 0;
@@ -868,10 +903,10 @@
     }
     .show-bike-fit .builder-footer {
       position: absolute;
-      bottom: 70px;
+      bottom: 50px;
     }
     .show-bike-fit .builder-nav {
-      margin-top: -70px;
+      margin-top: -50px;
       position: static;
       height: auto;
     }

@@ -57,28 +57,17 @@
             <span v-if="item.info.more">
               +{{ item.info.more }}
             </span>
+
+            <BtnSpecialBuild
+              v-if="item.specialBuild"
+              @click.stop="$emit( 'special-build', item )"
+              :large="false"
+              top
+            />
+
           </div>
 
-          <v-card
-            class="bike-item-select d-flex align-center"
-            :color="active ? 'bb-primary' : 'white'"
-            elevation="0"
-            dark
-          >
-            <v-card
-              class="py-1 px-2"
-              :color="active ? 'bb-primary-dark' : 'bb-primary-light'"
-              elevation="0"
-              tile
-            >
-              <v-icon size="12">
-                {{ active ? 'mdi-check' : 'mdi-cursor-default' }}
-              </v-icon>
-            </v-card>
-            <div class="text-uppercase px-2" :class="{ 'bb-primary--text': !active }">
-              {{ active ? 'Selected' : 'Select' }}
-            </div>
-          </v-card>
+          <BtnSelect :active="active"/>
 
         </a>
       </v-item>
@@ -88,13 +77,15 @@
 
 <script>
 
-  import { Color } from '@/components';
+  import { Color, BtnSelect, BtnSpecialBuild } from '@/components';
   import { itemImage, normalize } from '@/utils';
+  import { mapState } from 'vuex';
 
   export default {
-    components: { Color },
+    components: { Color, BtnSelect, BtnSpecialBuild },
     props: {
       value: null,
+      type: String,
       items: {
         type: Array,
         default: () => []
@@ -109,6 +100,7 @@
       }
     },
     computed: {
+      ...mapState([ 'specialBuilds' ]),
       list() {
         let search = normalize( this.search );
         return this.items.map( item => {
@@ -119,6 +111,9 @@
             thumb: !!image.thumb,
             src: image.front || image.thumb || image.src,
             hide: ! normalize( item.name || '' ).includes( search ),
+            specialBuild: this.type === 'Frameset' && this.specialBuilds.find( s => {
+              return s.frameset === item.id;
+            }),
             info: {
               colors: colors.slice( 0, 3 ),
               more: colors.length > 3 ? colors.length - 3 : 0
@@ -172,13 +167,6 @@
     &:not(.thumb) .bike-item-image {
       transform: scale(.75);
     }
-    .bike-item-select {
-      overflow: hidden;
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      border: 1px solid var(--v-light-base) !important;
-    }
     .bike-item-icon {
       position: absolute;
       top: 10px;
@@ -208,6 +196,12 @@
       .bike-item-info-name, .bike-item-info-colors {
         color: white !important;
       }
+    }
+    .bike-item-select {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      border: 1px solid var(--v-light-base) !important;
     }
   }
   @media ( max-width: 1024px ) {

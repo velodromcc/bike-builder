@@ -9,6 +9,7 @@ export default new Vuex.Store({
   state: {
     loading: true,
     company: {},
+    specialBuilds: [],
     framesets: [],
     bars: [],
     groupsets: [],
