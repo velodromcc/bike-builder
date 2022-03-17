@@ -235,6 +235,12 @@
     }
   }
   @media ( max-width: 480px ) {
+    .builder-nav--items {
+      padding-top: 0;
+    }
+    .builder-nav--items > header {
+      display: none;
+    }
     .bike-item {
       width: 180px;
       .bike-item-select {

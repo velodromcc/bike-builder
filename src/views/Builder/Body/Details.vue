@@ -2,10 +2,12 @@
   <div class="details-complete pb-4">
     <div class="details-wrapper">
 
-      <Btn class="btn-return mb-6" @click="$emit('return')" small text>
-        <v-icon left>$prev</v-icon>
-        Return to builder
-      </Btn>
+      <div class="text-left">
+        <Btn class="btn-return mb-6" @click="$emit('return')" small text>
+          <v-icon left>$prev</v-icon>
+          Return to builder
+        </Btn>
+      </div>
 
       <div class="builder-bike mt-0 mb-6"/>
 
@@ -14,8 +16,8 @@
       </h1>
 
       <p>
-        Thank you for creating your dream build with Bespoke. Whatever combination you've c
-        hosen we'll ensure that it all works together and, of course, fits you perfectly.
+        Thank you for creating your dream build with Bespoke. Whatever combination you've
+        chosen we'll ensure that it all works together and, of course, fits you perfectly.
       </p>
 
       <p>
@@ -24,7 +26,7 @@
       </p>
 
       <Price
-        class="mb-6"
+        class="d-inline-block mb-6"
         :price="price"
         :offer="specialBuild && specialBuild.price"
       >
@@ -37,10 +39,12 @@
         </template>
       </Price>
 
-      <Btn class="btn-form footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
-        <v-icon left v-text="'mdi-send'"/>
-        Contact us to discuss this build
-      </Btn>
+      <div>
+        <Btn class="btn-form footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
+          <v-icon left v-text="'mdi-send'"/>
+          Contact us to discuss this build
+        </Btn>
+      </div>
 
       <div class="detail-actions mt-6">
 
@@ -49,7 +53,7 @@
         </Btn>
 
         <Btn
-          class="outline light--border"
+          class="outline light--border mr-3"
           href="https://web.whatsapp.com/send?phone=34652923272&text=%C2%A1Hola!%20Me%20gustar%C3%ADa%20que%20me%20ayudaras%20con...."
           width="40" height="40"
           title="¿Cómo puedo ayudarte?"
@@ -58,6 +62,17 @@
           icon
         >
           <v-icon v-text="'mdi-whatsapp'"/>
+        </Btn>
+
+        <Btn
+          class="btn-print outline light--border"
+          color="bb-primary"
+          width="40" height="40"
+          title="Imprimir"
+          @click="$emit('print')"
+          icon
+        >
+          <v-icon v-text="'mdi-printer'"/>
         </Btn>
       </div>
 
@@ -119,6 +134,11 @@ export default {
   }
   .details-complete .builder-bike {
     display: block;
+  }
+}
+@media ( max-width: 480px ) {
+  .btn-print {
+    display: none !important;
   }
 }
 </style>

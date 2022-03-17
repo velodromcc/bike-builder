@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="show" content-class="dialog-extra" max-width="1024">
+  <v-dialog
+    v-model="show"
+    content-class="dialog-extra"
+    max-width="1024"
+    :fullscreen="isMobile"
+  >
     <v-toolbar color="transparent" elevation="0" width="100%" height="60" absolute>
 
       <Btn v-if="backButton" color="bb-primary" @click="$emit('back')" text>
@@ -14,7 +19,13 @@
       </Btn>
 
     </v-toolbar>
-    <v-card v-if="item" class="autoscroll" min-height="250" max-height="90vh">
+    <v-card
+      v-if="item"
+      class="autoscroll"
+      min-height="250"
+      :max-height="isMobile ? null : '90vh'"
+      :height="isMobile ? '100%' : null"
+    >
       <v-row class="ma-0">
         <v-col class="pa-10" cols="12" md="6" style="min-height:250px">
 
@@ -63,7 +74,7 @@
                 :style="`background-image:url(${item.image.front || item.image.thumb || item.image.src})`"
               />
 
-              <div class="grow">
+              <div>
                 <span class="caption">{{ item.title }}</span>
                 <div class="body-1 mt-n1">{{ item.name }}</div>
               </div>
@@ -106,6 +117,9 @@
       }
     },
     computed: {
+      isMobile() {
+        return this.$vuetify.breakpoint.width <= 480;
+      },
       specialBuild() {
         if ( this.item && this.item.step.title === 'Frameset' ) {
           return this.$store.state.specialBuilds.find( s => {

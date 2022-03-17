@@ -75,6 +75,7 @@
           @form="showForm"
           @share="share = true"
           @special-build="showDescription(composition[0].item)"
+          @print="initPrint"
           :items="detailsInfo"
           :special-build="specialBuild"
           :price="price"
@@ -161,7 +162,7 @@
       absolute
     >
       <v-sheet class="d-flex flex-column fill-height pl-1 pr-2">
-        <div class="py-6 grow text-center">
+        <div class="py-6 text-center">
 
           <Logo/>
 
@@ -178,7 +179,7 @@
           </Btn>
 
         </div>
-        <v-sheet class="shrink" color="#f8f8f8">
+        <v-sheet class="shrink">
           <v-divider/>
           <v-list>
             <v-list-item
@@ -637,9 +638,15 @@
           }
         });
       },
+      initPrint() {
+        this.print = true;
+        this.$nextTick(() => {
+          window.print();
+        });
+      },
       onPrint() {
         this.print = true;
-        this.resizeBike( this.detailsComplete ? {
+        this.$refs.bike.onResize( this.detailsComplete ? {
           containerWidth: 400,
           containerHeight: 240
         } : {} );
@@ -789,7 +796,7 @@
   .show-details-complete .builder-header {
     position: fixed;
     width: 100%;
-    z-index: 10;
+    z-index: 6;
   }
   .show-details-complete .builder-body {
     display: block;
@@ -854,7 +861,7 @@
     .builder-nav {
       width: 100%;
       top: auto;
-      height: 250px;
+      height: 298px;
       border-top: 1px solid var(--v-light-base);
       border-left: 0;
     }
@@ -928,6 +935,12 @@
     }
     .show-details-complete .builder-bike::before {
       padding-top: 56%;
+    }
+  }
+
+  @media ( max-width: 480px ) {
+    .builder-nav {
+      height: 250px;
     }
   }
 
