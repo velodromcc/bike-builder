@@ -58,13 +58,6 @@
               +{{ item.info.more }}
             </span>
 
-            <BtnSpecialBuild
-              v-if="item.specialBuild"
-              @click.stop="$emit( 'special-build', item )"
-              :large="false"
-              top
-            />
-
           </div>
 
           <BtnSelect :active="active"/>
@@ -77,12 +70,12 @@
 
 <script>
 
-  import { Color, BtnSelect, BtnSpecialBuild } from '@/components';
+  import { Color, BtnSelect } from '@/components';
   import { itemImage, normalize } from '@/utils';
   import { mapState } from 'vuex';
 
   export default {
-    components: { Color, BtnSelect, BtnSpecialBuild },
+    components: { Color, BtnSelect },
     props: {
       value: null,
       type: String,

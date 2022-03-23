@@ -55,14 +55,15 @@
               ref="info"
               :item="current"
               :color="selectedColor"
-              :special-build="specialBuild"
+              :special-builds="specialBuildList"
               @input="selectedColor = $event"
               @description="showDescription(current)"
+              @special-build="special = true"
             />
 
             <BtnSpecialBuild
               v-if="specialBuild && !detailsComplete"
-              @click="showDescription(composition[0].item)"
+              @click="special = true"
               bottom
             />
 
@@ -74,7 +75,7 @@
           @return="detailsComplete = false"
           @form="showForm"
           @share="share = true"
-          @special-build="showDescription(composition[0].item)"
+          @special-build="special = true"
           @print="initPrint"
           :items="detailsInfo"
           :special-build="specialBuild"
@@ -87,6 +88,7 @@
           v-else
           :price="price"
           :special-build="specialBuild"
+          :bike-fit="showBikeFit"
           @reset="reset"
           @details="showDetails"
           @share="share = true"
@@ -127,7 +129,6 @@
           v-if="!showBikeFit"
           :type="step.title"
           :items="items"
-          @special-build="showDescription({ ...$event, step })"
         />
 
         <BikeFit
@@ -209,9 +210,7 @@
       :item="description.item"
       :image="description.image"
       :back-button="description.backButton"
-      :special-build-selected="specialBuild"
       @back="showDetails"
-      @special-build="getComposition($event.query)"
     />
 
     <DetailsForm
@@ -232,6 +231,13 @@
     <Share
       v-model="share"
       :id="compositionID"
+    />
+
+    <SpecialBuilds
+      v-model="special"
+      :items="specialBuildList"
+      :selected="specialBuild"
+      @select="getComposition($event.query)"
     />
 
   </main>
@@ -256,6 +262,7 @@
   import Bike from './Bike';
 
   // DIALOGS
+  import SpecialBuilds from './SpecialBuilds';
   import Description from './Description';
   import DetailsForm from './DetailsForm';
   import Details from './Details';
@@ -289,6 +296,7 @@
       Header,
       Footer,
       BtnSpecialBuild,
+      SpecialBuilds,
       Breadcrumbs,
       Description,
       DetailsForm,
@@ -323,6 +331,7 @@
         form: false,
         share: false,
         details: false,
+        special: false,
         detailsComplete: false,
         contentMargin: 0,
         footerHeight: 0,
@@ -339,7 +348,7 @@
         const { selection, index, step } = this;
         if ( value != null ) {
 
-          var replace = selection[index] && selection[index].item.type === this.current.type ? 1 : 0;
+          var replace = selection[index] && selection[index].item && selection[index].item.type === this.current.type ? 1 : 0;
           var color = selection[index] ? selection[index].color : 0;
           color = Math.min( this.current.colors.length - 1, color );
 
@@ -463,9 +472,14 @@
         return this.detailsInfo
           .reduce(( sum, a ) => sum + a.price, 0 );
       },
+      specialBuildList() {
+        const frameset = ( this.composition[0] || {} ).item;
+        if ( ! frameset ) return [];
+        return this.specialBuilds.filter( s => s.frameset === frameset.id );
+      },
       specialBuild() {
         const query = this.getQuery();
-        return this.specialBuilds.find( s => s.query === query );
+        return this.specialBuildList.find( s => s.query === query );
       },
       contentStyle() {
 
@@ -613,7 +627,7 @@
 
           this.selection = selection;
           this.index = this.selection.length;
-          this.description.show = false;
+          this.special = false;
         }
       },
       getQuery( color ) {
@@ -839,7 +853,7 @@
   @media ( max-width: 1024px ) {
     .builder-body {
       right: 0;
-      bottom: 250px;
+      bottom: 300px;
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -896,6 +910,11 @@
       padding-top: 70px;
       overflow: auto;
     }
+    .show-bike-fit .builder-header {
+      position: fixed;
+      width: 100%;
+      z-index: 6;
+    }
     .show-bike-fit .builder-body {
       position: relative;
       overflow: visible;
@@ -936,9 +955,18 @@
     .show-details-complete .builder-bike::before {
       padding-top: 56%;
     }
+    .builder.show-bike-fit {
+      padding-top: 60px;
+    }
+    .builder-content .btn-special-build {
+      top: 0;
+    }
   }
 
   @media ( max-width: 480px ) {
+    .builder-body {
+      bottom: 250px;
+    }
     .builder-nav {
       height: 250px;
     }
