@@ -75,14 +75,13 @@
           <v-icon v-text="'mdi-printer'"/>
         </Btn>
       </div>
-
-      <v-divider class="my-5"/>
-
-      <h2 class="bb-primary--text my-6">
-        YOUR BUILD IN DEATIL
-      </h2>
-
     </div>
+
+    <v-divider class="details-divider my-5"/>
+
+    <h2 class="details-title bb-primary--text my-6" style="break-before:always">
+      YOUR BUILD IN DEATIL
+    </h2>
 
     <DetailItems
       class="text-left"

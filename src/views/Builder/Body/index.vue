@@ -839,7 +839,7 @@
   @media ( max-width: 1024px ) {
     .builder-body {
       right: 0;
-      bottom: 250px;
+      bottom: 298px;
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -939,6 +939,9 @@
   }
 
   @media ( max-width: 480px ) {
+    .builder-body {
+      bottom: 250px;
+    }
     .builder-nav {
       height: 250px;
     }
@@ -961,8 +964,12 @@
   }
 
   @media print {
-    .builder.layer {
-      top: -70px;
+    .details-divider {
+      margin-bottom: 1000px;
+    }
+    .builder.layer, .builder-body, .v-application {
+      position: relative !important;
+      top: 0 !important;
     }
     .show-details-complete .builder-content {
       max-width: 360px !important;
@@ -1002,7 +1009,7 @@
     .details-complete .detail-item-info .headline,
     .details-complete .detail-price,
     .details-complete h2 {
-      font-size: 16px !important;
+      font-size: 12px !important;
       text-transform: none !important;
     }
     .detail-image-container {

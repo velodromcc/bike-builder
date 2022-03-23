@@ -73,6 +73,45 @@ const CONSTANTS = {
 
 export { CONSTANTS };
 
+export function loadImage( url ) {
+  return new Promise( resolve => {
+
+    const image = new Image();
+    image.src = url;
+
+    if ( image.complete && image.naturalHeight !== 0 ) {
+      resolve( image );
+    } else {
+      image.addEventListener( 'load', () => resolve( image ));
+    }
+  })
+}
+
+export function containImage( image, width, height, container, dim = {} ) {
+  if ( image ) {
+
+    container = container || image.parentNode;
+    const WIDTH = dim.containerWidth || container.clientWidth;
+    const HEIGHT = dim.containerHeight || container.clientHeight;
+    const REL = WIDTH / HEIGHT;
+    const rel = width / height;
+
+    if ( REL > rel ) {
+
+      var h = Math.min( HEIGHT, height );
+      image.style.height = h + 'px';
+      image.style.width = ( h * rel ) + 'px';
+
+    } else {
+
+      var w = Math.min( WIDTH, width );
+      image.style.width = w + 'px';
+      image.style.height = ( w / rel ) + 'px';
+
+    }
+  }
+}
+
 export function toArray( value ) {
   if ( value == null ) return [];
   if ( typeof value !== 'string' && typeof value.length === 'number' )

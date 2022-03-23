@@ -79,12 +79,21 @@
   }
 
   @media ( max-width: 600px ) {
+    .builder-info {
+      display: flex;
+      flex-direction: column;
+    }
     .item-info {
       float: none;
       width: 100%;
+      order: 1;
       &.outline-left {
         border: 0 !important;
+        order: 0;
       }
+    }
+    .item-actions {
+      order: 2;
     }
   }
 </style>
