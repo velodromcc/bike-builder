@@ -38,12 +38,6 @@
   background-color: var(--bb-primary-light) !important;
 }
 .bike-item-select.white:hover .v-card {
-  background-color: white !important;
-}
-.bike-item-select.white:hover .v-icon {
-  color: var(--bb-primary-light) !important;
-}
-.bike-item-select.white:hover .bb-primary--text {
-  color: white !important;
+  background-color: var(--bb-primary) !important;
 }
 </style>
