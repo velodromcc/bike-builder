@@ -1,7 +1,7 @@
 <template>
   <footer class="builder-footer pa-4">
 
-    <Btn class="footer-details body-1 mr-3" color="bb-secondary" @click="$emit('details')" height="40" tile outlined>
+    <Btn v-if="!bikeFit" class="footer-details body-1 mr-3" color="bb-secondary" @click="$emit('details')" height="40" tile outlined>
       <v-icon left v-text="'mdi-magnify'"/>
       Your build in detail
     </Btn>
@@ -39,6 +39,11 @@
       :offer="specialBuild && specialBuild.price"
     />
 
+    <Btn v-if="bikeFit" class="footer-overview body-1" color="bb-primary" @click="$emit('details')" height="40" tile dark>
+      <v-icon left v-text="'mdi-magnify'"/>
+      View build overview
+    </Btn>
+
     <Btn class="footer-enquire body-1" color="bb-secondary" @click="$emit('form')" height="40" tile dark>
       <v-icon left v-text="'mdi-send'"/>
       Enquire about this build
@@ -55,6 +60,7 @@
     components: { Btn, Price },
     props: {
       specialBuild: Object,
+      bikeFit: Boolean,
       price: {
         type: Number,
         default: 0
@@ -83,6 +89,9 @@
     top: 10px;
     right: 10px;
   }
+  .footer-overview {
+    margin-right: 8px;
+  }
   @media ( max-width: 1160px ) {
     .builder-footer {
       display: block;
@@ -110,7 +119,7 @@
     .footer-srp > p.display-4 {
       font-size: 1.5rem !important;
     }
-    .footer-enquire {
+    .footer-enquire, .footer-overview {
       margin-top: 8px;
       width: 100%;
     }
@@ -124,7 +133,7 @@
       float: none;
       margin-right: 16px;
     }
-    .footer-enquire {
+    .footer-enquire, .footer-overview {
       margin-top: 0;
       width: auto;
     }
@@ -138,7 +147,7 @@
       text-align: left;
       margin: 8px 0;
     }
-    .footer-enquire {
+    .footer-enquire, .footer-overview {
       margin-top: 8px;
       width: 100%;
     }

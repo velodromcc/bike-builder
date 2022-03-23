@@ -1,6 +1,13 @@
 <template>
-  <v-dialog v-model="show" max-width="1280">
-    <v-card class="details-dialog" :class="{ 'is-small': isSmall }">
+  <v-dialog
+    v-model="show"
+    max-width="1280"
+    :fullscreen="isMobile"
+  >
+    <v-card
+      class="details-dialog"
+      :class="{ 'is-small': isSmall }"
+    >
       <v-toolbar class="details-dialog-header outline-bottom light--border" elevation="0" height="70">
 
         <h3 class="headline bb-primary--text">Your build in detail</h3>
@@ -73,6 +80,9 @@
     computed: {
       isSmall() {
         return this.$vuetify.breakpoint.xs;
+      },
+      isMobile() {
+        return this.$vuetify.breakpoint.width <= 480;
       }
     },
     watch: {
@@ -113,10 +123,10 @@
   left: 0;
   right: 0;
 }
-.is-small .details-bottom-price > p {
+.details-dialog.is-small .details-bottom-price > p {
   display: inline-block;
 }
-.is-small .details-bottom-price > p.display-4 {
+.details-dialog.is-small .details-bottom-price > p.display-4 {
   font-size: 22px !important;
   margin-left: 7px;
 }
