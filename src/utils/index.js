@@ -1,7 +1,7 @@
 const CONSTANTS = {
   host: 'bikebuilder.inmovens.com',
-  //imageBase: 'https://bikebuilder.inmovens.com',
-  imageBase: 'http://velodrom.dreambikebuilder.com',
+  imageBase: 'https://bikebuilder.inmovens.com',
+  //imageBase: 'http://velodrom.dreambikebuilder.com',
   framesets: {
     title: 'Frameset',
     zIndex: 5,
