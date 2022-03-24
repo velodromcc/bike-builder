@@ -6,7 +6,7 @@
 
 <script>
 
-  import { CONSTANTS } from '@/utils';
+  import { CONSTANTS, loadImage, containImage } from '@/utils';
 
   const GRUOPSET_ANCHORS = {
     groupsetsLeft: 'imageBack',
@@ -24,20 +24,6 @@
     groupsetsCapilierRight: 'groupsetCapilierFrontAngle',
     groupsetsGear: 'groupsetCapilierMiddleAngle'
   };
-
-  function loadImage( url ) {
-    return new Promise( resolve => {
-
-      const image = new Image();
-      image.src = 'http://velodrom.dreambikebuilder.com' + url;
-
-      if ( image.complete && image.naturalHeight !== 0 ) {
-        resolve( image );
-      } else {
-        image.addEventListener( 'load', () => resolve( image ));
-      }
-    })
-  }
 
   function radians( degree ) {
     return degree * Math.PI / 180;
@@ -295,7 +281,7 @@
           frameset.loaded = false;
 
           composition.items.forEach( item => {
-            item.image && loadImage( item.image ).then( image => {
+            item.image && loadImage( 'http://velodrom.dreambikebuilder.com' + item.image ).then( image => {
 
               const anchor = composition.itemAnchors[ item.anchor ] || composition.anchors[ item.anchor ];
               const origin = item.origin;
@@ -519,30 +505,10 @@
 
         ctx.restore(); // Reset Canvas state
       },
-      onResize( e = {} ) {
+      onResize(e) {
+        const { width, height } = this;
         const { container, canvas } = this.$refs;
-        if ( container && canvas ) {
-
-          const { width, height } = this;
-          const WIDTH = e.containerWidth || container.clientWidth;
-          const HEIGHT = e.containerHeight || container.clientHeight;
-          const REL = WIDTH / HEIGHT;
-          const rel = width / height;
-
-          if ( REL > rel ) {
-
-            var h = Math.min( HEIGHT, height );
-            canvas.style.height = h + 'px';
-            canvas.style.width = ( h * rel ) + 'px';
-
-          } else {
-
-            var w = Math.min( WIDTH, width );
-            canvas.style.width = w + 'px';
-            canvas.style.height = ( w / rel ) + 'px';
-
-          }
-        }
+        containImage( canvas, width, height, container, e );
       }
     }
   }

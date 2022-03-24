@@ -1,13 +1,27 @@
 <template>
-  <v-dialog v-model="show" :persistent="loading" max-width="720" no-click-animation>
-    <v-card class="contact-form d-flex flex-column flex-nowrap rel" height="83vh">
+  <v-dialog
+    v-model="show"
+    :persistent="loading"
+    :fullscreen="isMobile"
+    max-width="720"
+    no-click-animation
+  >
+    <v-card
+      class="contact-form d-flex flex-column flex-nowrap rel"
+      :max-height="isMobile ? null : '90vh'"
+      :height="isMobile ? '100%' : '83vh'"
+    >
       <v-overlay :value="loading" color="white" absolute/>
-      <v-toolbar class="outline-bottom light--border shrink" elevation="0" height="90">
+      <v-toolbar
+        class="outline-bottom light--border shrink"
+        elevation="0"
+        height="90"
+      >
 
-        <span>
+        <div class="mr-2">
           <h3 class="headline bb-primary--text mb-0">ENQUIRE ABOUT THIS SET UP</h3>
           <small class="mb-0">Simply fill out the form below and we’ll get in touch to discuss your custom bike.</small>
-        </span>
+        </div>
 
         <v-spacer/>
 
@@ -167,7 +181,12 @@
         this.$emit( 'input', this.show );
       }
     },
-    computed: mapState([ 'company' ]),
+    computed: {
+      ...mapState([ 'company' ]),
+      isMobile() {
+        return this.$vuetify.breakpoint.width <= 480;
+      }
+    },
     methods: {
       reset() {
         this.sended = this.error = false;

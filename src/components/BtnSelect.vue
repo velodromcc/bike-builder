@@ -1,6 +1,7 @@
 <template>
   <v-card
     class="bike-item-select d-flex align-center"
+    :class="{ active }"
     :color="active ? 'bb-primary' : 'white'"
     elevation="0"
     dark
@@ -32,5 +33,11 @@
 <style>
 .bike-item-select {
   overflow: hidden;
+}
+.bike-item-select.white:hover {
+  background-color: var(--bb-primary-light) !important;
+}
+.bike-item-select.white:hover .v-card {
+  background-color: var(--bb-primary) !important;
 }
 </style>

@@ -121,7 +121,9 @@
 </script>
 
 <style lang="scss">
-
+  html {
+    overflow: hidden;
+  }
   #app {
 
     font-family: 'Open Sans', Helvetica, Arial, sans-serif;

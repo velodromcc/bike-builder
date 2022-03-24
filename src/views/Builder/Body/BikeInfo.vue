@@ -23,9 +23,26 @@
     </div>
 
     <div class="item-actions px-5 mt-2">
-      <Btn class="body-1" color="bb-primary" tile dark @click="$emit('description')">
+
+      <Btn
+        class="body-1"
+        color="bb-primary"
+        @click="$emit('description')"
+        tile dark
+      >
         Description
       </Btn>
+
+      <Btn
+        v-if="item.type === 'framesets' && specialBuilds.length"
+        class="ml-2 body-1"
+        color="warning"
+        @click="$emit('special-build')"
+        tile dark
+      >
+        Special Builds
+      </Btn>
+
     </div>
 
   </div>
@@ -39,7 +56,10 @@
     components: { Btn, Color },
     props: {
       color: null,
-      specialBuild: Object,
+      specialBuilds: {
+        type: Array,
+        default: () => []
+      },
       item: {
         type: Object,
         default: () => ({})
@@ -79,12 +99,21 @@
   }
 
   @media ( max-width: 600px ) {
+    .builder-info {
+      display: flex;
+      flex-direction: column;
+    }
     .item-info {
       float: none;
       width: 100%;
+      order: 1;
       &.outline-left {
         border: 0 !important;
+        order: 0;
       }
+    }
+    .item-actions {
+      order: 2;
     }
   }
 </style>

@@ -4,29 +4,12 @@
     :class="{'show-description': showDescription, print }">
 
     <v-col v-for="( item, i ) in items" :key="i" v-bind="columns">
-      <v-card class="fill-height">
+      <v-card class="fill-height pt-4">
 
-        <v-sheet
-          class="detail-image-container grow"
-          :class="{ 'pa-12': !( item.image.front || item.image.thumb )}"
-          height="200"
-        >
-
-          <div
-            v-if="!print"
-            class="detail-image"
-            :style="`background-image: url(${ item.image.front || item.image.thumb || item.image.src })`"
-          />
-
-          <img
-            v-else
-            :src="item.image.front || item.image.thumb || item.image.src"
-          />
-
-          <div class="detail-price headline bb-primary--text">
-            {{ item.price }} €
-          </div>
-        </v-sheet>
+        <DetailItem
+          :item="item"
+          :print="print"
+        />
 
         <div class="detail-item-info px-4 mb-2">
           <p class="caption mb-0">{{ item.type }}</p>
@@ -61,9 +44,12 @@
 </template>
 
 <script>
+
+  import DetailItem from './DetailItem';
   import { Btn, Color } from '@/components';
+
   export default {
-    components: { Btn, Color },
+    components: { DetailItem, Btn, Color },
     props: {
       dense: Boolean,
       print: Boolean,
