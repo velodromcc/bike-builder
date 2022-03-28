@@ -83,7 +83,7 @@
                 :text="!isSmallScreen"
                 :icon="isSmallScreen"
               >
-                {{ isSmallScreen ? '' : 'Detalles' }}
+                {{ isSmallScreen ? '' : 'Details' }}
                 <v-icon :right="!isSmallScreen">
                   {{ open === index ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
                 </v-icon>
