@@ -163,12 +163,20 @@
       computedItems() {
         return this.items.map( item => ({
           ...item,
-          thumbnail: item.thumbnail && ( CONSTANTS.imageBase + item.thumbnail ),
+          thumbnail: this.getThumbnail( item ),
           details: this.specialItems( item )
         }))
       }
     },
     methods: {
+      getThumbnail( item ) {
+        if ( item.thumbnail ) return CONSTANTS.imageBase +  item.thumbnail;
+        if (( item = this.$store.state.framesets.find( f => f.id === item.frameset ))) {
+          const image = itemImage( item );
+          return image.front || image.thumb || image.src;
+        }
+        return '';
+      },
       specialItems( specialBuild ) {
         return [ 'bar','groupset','wheel','tyre','seatpost','saddle' ].map( type => {
           let group = type + 's';
