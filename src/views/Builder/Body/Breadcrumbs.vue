@@ -1,7 +1,13 @@
 <template>
   <v-sheet v-bind="$attrs" :height="height">
     <div class="d-flex fill-height flex-nowrap">
-      <a class="crumb" v-for="(item,i) in items" :key="i" :class="color(i)" @click="toggle(i)">
+      <a
+        class="crumb"
+        v-for="(item,i) in items"
+        :key="i"
+        :class="color(i)"
+        @click="toggle(i)"
+      >
         <span class="text">{{ item }}</span>
         <template v-if="i < items.length - 1">
           <span class="arrow" :style="dimension"/>
@@ -23,6 +29,10 @@
       items: {
         type: Array,
         default: () => []
+      },
+      selected: {
+        type: Array,
+        default: () => []
       }
     },
     computed: {
@@ -32,9 +42,12 @@
     },
     methods: {
       color( index ) {
-        if ( index === this.value ) return 'bb-primary white--text';
-        else if ( index < this.value ) return 'bb-secondary white--text';
-        else return 'empty';
+        if ( index === this.value) {
+          return 'bb-primary white--text';
+        } else if ( index < this.value || this.selected.find( s => s.props.title === this.items[index] )) {
+          return 'bb-secondary white--text';
+        }
+        return 'empty';
       },
       toggle( index ) {
         this.$emit( 'input', index );

@@ -31,6 +31,7 @@
           class="builder-breadcrumbs outline-bottom light--border body-1"
           :value="index"
           :items="crumbs"
+          :selected="selection"
           :height="30"
           @input="onChangeIndex"
         />
@@ -348,9 +349,15 @@
         const { selection, index, step } = this;
         if ( value != null ) {
 
-          var replace = selection[index] && selection[index].item && selection[index].item.type === this.current.type ? 1 : 0;
-          var color = selection[index] ? selection[index].color : 0;
-          color = Math.min( this.current.colors.length - 1, color );
+          var replace = 0;
+          var color = 0;
+
+          if ( this.current && selection[index] ) {
+            if ( selection[index].item && selection[index].item.type === this.current.type ) {
+              replace = 1;
+            }
+            color = Math.min( this.current.colors.length - 1, selection[index].color );
+          }
 
           this.selectedColor = color;
           selection.splice( index, replace, {
@@ -385,6 +392,11 @@
       contentStyle: 'resizeBike',
       showBikeFit( value ) {
         this.$emit( 'bike-fit', value );
+      },
+      steps( steps, old ) {
+        if ( steps.length === old.length ) return;
+        this.selection = this.selection
+          .filter( a => steps.find( s => s.id === a.props.id ));
       }
     },
     computed: {

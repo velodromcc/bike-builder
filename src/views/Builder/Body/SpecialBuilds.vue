@@ -181,7 +181,7 @@
         return [ 'bar','groupset','wheel','tyre','seatpost','saddle' ].map( type => {
           let group = type + 's';
           const item = this.$store.state[group].find( a => {
-            return a.id === specialBuild[type] || specialBuild[group];
+            return a.id === ( specialBuild[group] || specialBuild[type] );
           });
           return item ? {
             ...item,
