@@ -44,7 +44,7 @@
       color( index ) {
         if ( index === this.value) {
           return 'bb-primary white--text';
-        } else if ( index < this.value || this.selected.find( s => s.props.title === this.items[index] )) {
+        } else if ( this.selected.find( s => s.props.title === this.items[index] )) {
           return 'bb-secondary white--text';
         }
         return 'empty';

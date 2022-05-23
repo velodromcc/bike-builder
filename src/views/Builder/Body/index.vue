@@ -539,8 +539,13 @@
         if ( index < 0 ) return true;
         if ( index >= this.steps.length ) return true;
         if ( index !== 0 ) {
-          const step = this.steps[ index - 1 ];
-          const comp = step ? this.selection.find( a => a.props.id === step.id ) : null;
+
+          let step = this.steps[ index + 1 ];
+          let comp = step ? this.selection.find( a => a.props.id === step.id ) : null;
+          if ( comp && comp.item ) return false;
+
+          step = this.steps[ index - 1 ];
+          comp = step ? this.selection.find( a => a.props.id === step.id ) : null;
           if ( ! comp || ! comp.item ) return true;
         }
         return false;
