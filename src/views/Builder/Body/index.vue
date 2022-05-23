@@ -280,6 +280,7 @@
     { key: 'shopHref', text: 'Shop' },
     { key: 'locationsHref', text: 'Locations' },
     { key: 'storiesHref', text: 'Stories' },
+    { key: 'toolsHref', text: 'Tours' },
     { key: 'bikebuilderHref', text: 'Bike Builder' },
     { key: 'contactHref', text: 'Contact' },
   ];
