@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 export function getData() {
-  var host = window.host;
+  var host = window.location.host;
   if ( ! host || host == 'localhost' ) host = CONSTANTS.host;
   return instance.get( '/site/configuration/'+ host );
 }
