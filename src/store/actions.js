@@ -7,7 +7,10 @@ const instance = axios.create({
 
 export function getData() {
   var host = window.location.host;
-  if (!host || host.indexOf('localhost') !== -1) host = CONSTANTS.host;
+  // If localhost OR Render, use the hardcoded host
+  if (!host || host.indexOf('localhost') !== -1 || host.indexOf('onrender.com') !== -1) {
+    host = CONSTANTS.host;
+  }
   return instance.get('/site/configuration/' + host);
 }
 
