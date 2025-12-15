@@ -5,11 +5,17 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "start": "node server/server.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "body-parser": "^2.2.1",
     "core-js": "^3.6.4",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "nodemailer": "^7.0.11",
     "vue": "^2.6.12",
     "vuetify": "^2.3.10",
     "vuex": "^3.5.1"
@@ -23,11 +29,19 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "node-sass": "^4.12.0",
     "sass": "^1.26.11",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-vuetify": "^2.0.7",
     "vue-template-compiler": "^2.6.12",
     "vuetify-loader": "^1.6.0"
+  },
+  "overrides": {
+    "chokidar": "^3.5.3",
+    "watchpack": {
+      "chokidar": "^3.5.3"
+    },
+    "webpack-dev-server": {
+      "chokidar": "^3.5.3"
+    }
   }
 }

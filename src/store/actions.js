@@ -7,10 +7,11 @@ const instance = axios.create({
 
 export function getData() {
   var host = window.location.host;
-  if ( ! host || host == 'localhost' ) host = CONSTANTS.host;
-  return instance.get( '/site/configuration/'+ host );
+  if (!host || host.indexOf('localhost') !== -1) host = CONSTANTS.host;
+  return instance.get('/site/configuration/' + host);
 }
 
-export function buyBike( ctx, data ) {
-  return instance.post( '/site/buy', data );
+export function buyBike(ctx, data) {
+  // Use local server for emails (relative path for production)
+  return axios.post('/api/send-email', data);
 }

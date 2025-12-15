@@ -1,0 +1,44 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Debug Server (Backend)",
+            "program": "${workspaceFolder}/server/server.js",
+            "envFile": "${workspaceFolder}/.env",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Debug Client (Vue CLI)",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "serve",
+                "--",
+                "--port",
+                "8081"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Chrome",
+            "url": "http://localhost:8081",
+            "webRoot": "${workspaceFolder}/src"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Full Stack Run",
+            "configurations": [
+                "Debug Server (Backend)",
+                "Debug Client (Vue CLI)",
+                "Debug Chrome"
+            ]
+        }
+    ]
+}

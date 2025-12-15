@@ -121,12 +121,19 @@
 </script>
 
 <style lang="scss">
+  @font-face {
+    font-family: 'Proxima Nova';
+    src: url('/Proxima Nova Regular.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   html {
     overflow: hidden;
   }
   #app {
 
-    font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+    font-family: 'Proxima Nova', 'Open Sans', Helvetica, Arial, sans-serif;
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
