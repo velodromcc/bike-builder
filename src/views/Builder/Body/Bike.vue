@@ -143,7 +143,7 @@
           const props = {
             anchor: a.item.type,
             type: a.item.type,
-            image: color.color.image,
+            image: color.color.customImage || color.color.image,
             scale: CONSTANTS[ a.item.type ].scale || 1,
             index: CONSTANTS[ a.item.type ].zIndex,
             origin: { x: a.item.originX, y: a.item.originY },
@@ -281,7 +281,7 @@
           frameset.loaded = false;
 
           composition.items.forEach( item => {
-            item.image && loadImage( 'http://velodrom.dreambikebuilder.com' + item.image ).then( image => {
+            item.image && loadImage( item.image.startsWith('data:') ? item.image : CONSTANTS.imageBase + item.image ).then( image => {
 
               const anchor = composition.itemAnchors[ item.anchor ] || composition.anchors[ item.anchor ];
               const origin = item.origin;
