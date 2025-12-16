@@ -613,7 +613,11 @@
 
           var codes = id.split(/[a-z]/i).map( a => {
             a = a.split( separeChar ).map( n => parseInt( n ));
-            if ( a.length >= 2 ) return a;
+            // Allow just ID (length 1), default color to 0. Ensure ID is valid.
+            if ( a.length >= 1 && !isNaN(a[0]) ) {
+              if (isNaN(a[1])) a[1] = 0;
+              return a;
+            }
           }).filter( a => a );
 
           const selection = [];
@@ -622,11 +626,15 @@
           if ( index !== -1 ) {
             const steps = this.getSteps( this.framesets[ index ] );
             steps.forEach(( step, i ) => {
+              console.log(`Step ${i}: ${step.id}`);
               if ( codes[i] ) {
+                console.log(`  Code: ${codes[i][0]}`);
 
                 index = step.id === 'framesets'
                   ? index
                   : this[ step.id ].findIndex( a => a.id === codes[i][0] );
+                
+                console.log(`  Found Index: ${index}`);
 
                 if ( index !== -1 ) {
                   selection.push({
@@ -638,6 +646,8 @@
                       step
                     })
                   });
+                } else {
+                  console.error(`  FAILED to find item ${codes[i][0]} in ${step.id}`);
                 }
               }
             });

@@ -282,6 +282,8 @@
 
           composition.items.forEach( item => {
             item.image && loadImage( item.image.startsWith('data:') ? item.image : CONSTANTS.imageBase + item.image ).then( image => {
+              
+              if (!image) return; // Skip if load failed
 
               const anchor = composition.itemAnchors[ item.anchor ] || composition.anchors[ item.anchor ];
               const origin = item.origin;

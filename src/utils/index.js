@@ -84,6 +84,7 @@ export function loadImage(url) {
       resolve(image);
     } else {
       image.addEventListener('load', () => resolve(image));
+      image.addEventListener('error', () => resolve(null));
     }
   })
 }

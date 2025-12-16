@@ -4,30 +4,553 @@
 
 [dotenv@17.2.3] injecting env (4) from .env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
 Server running at http://localhost:3001
-[REQUEST] GET /api/config/Frameset
-[REQUEST] GET /api/config/Frameset/5/children
-[REQUEST] PUT /api/config/FramesetColor/6
-[REQUEST] GET /api/config/Frameset
-[REQUEST] GET /api/config/Frameset/5/children
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
-[REQUEST] GET /api/config/Frameset
-[REQUEST] GET /api/config/Frameset
-[REQUEST] GET /api/config/Frameset/5/children
-[REQUEST] GET /api/config/Frameset/5/children
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
-[REQUEST] GET /api/config/Frameset
-[REQUEST] GET /api/config/Frameset
-[REQUEST] GET /api/config/Frameset/5/children
-[REQUEST] GET /api/config/Frameset/5/children
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
 [REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
+[REQUEST] GET /api/site/configuration/velodrom.dreambikebuilder.com
+Framesets: [
+  58, 38, 56, 35, 59, 29, 27, 57,
+  55, 33, 32, 30,  6,  3,  1, 19,
+  18, 53, 54, 17, 25, 24, 22, 11,
+   5
+]
+Groupsets: [
+  4, 27, 10, 11, 12, 13,
+  5, 25,  8,  7,  3,  6,
+  9
+]
+Wheels: [
+  28, 10,  9, 11, 12, 36, 26,
+   6, 13,  7,  8, 17, 18, 27,
+  14, 15, 16, 29, 30,  2
+]
+Tyres: [ 2, 3, 6, 7, 10, 11 ]
+Saddles: [
+  1, 2, 3,  6,
+  7, 8, 9, 10
+]
