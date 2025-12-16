@@ -145,7 +145,25 @@ app.post('/api/config/:table', async (req, res) => {
 
         // archived Default is 0 in DB
         const [result] = await pool.query(`INSERT INTO ${table} (${keys}) VALUES (${placeholders})`, values);
-        res.json({ success: true, id: result.insertId });
+        const newId = result.insertId;
+
+        // AUTO-LINK COMPANY for *Color tables
+        // If we created a FramesetColor, we must create FramesetColorCompany for it to be visible
+        if (table.endsWith('Color')) {
+            const linkTable = `${table}Company`;
+            const fkCol = `id${table}`; // e.g. idFramesetColor
+            // Hardcode Company 1 (Velodrom) as per fetch logic
+            const companyId = 1;
+            const price = data.price || 0;
+
+            await pool.query(
+                `INSERT INTO ${linkTable} (${fkCol}, idCompany, price) VALUES (?, ?, ?)`,
+                [newId, companyId, price]
+            );
+            console.log(`Auto-linked ${table} ${newId} to Company ${companyId}`);
+        }
+
+        res.json({ success: true, id: newId });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: err.message });

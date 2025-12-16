@@ -626,15 +626,11 @@
           if ( index !== -1 ) {
             const steps = this.getSteps( this.framesets[ index ] );
             steps.forEach(( step, i ) => {
-              console.log(`Step ${i}: ${step.id}`);
               if ( codes[i] ) {
-                console.log(`  Code: ${codes[i][0]}`);
 
                 index = step.id === 'framesets'
                   ? index
                   : this[ step.id ].findIndex( a => a.id === codes[i][0] );
-                
-                console.log(`  Found Index: ${index}`);
 
                 if ( index !== -1 ) {
                   selection.push({
@@ -646,8 +642,6 @@
                       step
                     })
                   });
-                } else {
-                  console.error(`  FAILED to find item ${codes[i][0]} in ${step.id}`);
                 }
               }
             });

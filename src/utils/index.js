@@ -52,12 +52,12 @@ const CONSTANTS = {
   },
   wheels: {
     title: 'Wheels',
-    zIndex: 3,
+    zIndex: 1,
     scale: .95
   },
   tyres: {
     title: 'Tyres',
-    zIndex: 4,
+    zIndex: 2,
     scale: .95
   },
   seatposts: {
@@ -194,4 +194,38 @@ export function lighten(color, amount) {
 
 export function darken(color, amount) {
   return transformColor(color, -amount);
+}
+
+export function toCamel(obj) {
+  const newObj = {};
+  const MAP = {
+    'bar_position_x': 'barX',
+    'bar_position_y': 'barY',
+    'wheel_right_x': 'rightWheelX',
+    'wheel_right_y': 'rightWheelY',
+    'wheel_left_x': 'leftWheelX',
+    'wheel_left_y': 'leftWheelY',
+    'groupset_capilier_rear_x': 'groupsetCapilierRearX',
+    'groupset_capilier_rear_y': 'groupsetCapilierRearY',
+    'groupset_capilier_front_x': 'groupsetCapilierFrontX',
+    'groupset_capilier_front_y': 'groupsetCapilierFrontY',
+    'groupset_capilier_middle_x': 'groupsetCapilierMiddleX',
+    'groupset_capilier_middle_y': 'groupsetCapilierMiddleY',
+  };
+
+  // Default Enabled flags (Optional, matching server logic)
+  // newObj.barEnabled = true; // Avoid defaults if we want strict DB values
+
+  for (const key in obj) {
+    let newKey = MAP[key];
+    if (!newKey) {
+      newKey = key.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+    }
+    newObj[newKey] = obj[key];
+  }
+
+  // Explicit overrides
+  if (obj.custom_image) newObj.customImage = obj.custom_image;
+
+  return newObj;
 }

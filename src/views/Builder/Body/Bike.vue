@@ -30,36 +30,52 @@
   }
 
   export default {
+
     props: {
-      width: {
-        type: Number,
-        default: 1400
-      },
-      height: {
-        type: Number,
-        default: 1000
-      },
-      items: {
-        type: Array,
-        default: () => []
-      }
+        width: { type: Number, default: 1700 }, // Increased from 1400
+        height: { type: Number, default: 1000 },
+        items: { type: Array, default: () => [] },
+        editable: { type: Boolean, default: false } // New prop
     },
     data() {
       return {
         context: null,
-        buffer: []
+        buffer: [],
+        // Interaction State
+        dragging: null,
+        dragStart: { x: 0, y: 0 },
+        initialAnchor: { x: 0, y: 0 }
       }
     },
     mounted() {
       this.onResize();
       this.getContext();
       this.mountBike();
+      
+      // Delated resize to handle dialog transitions
+      setTimeout(() => this.onResize(), 100);
+      setTimeout(() => this.onResize(), 300);
+      
+      // Add Listeners
+      const canvas = this.$refs.canvas;
+      canvas.addEventListener('mousedown', this.handleMouseDown);
+      window.addEventListener('mousemove', this.handleMouseMove);
+      window.addEventListener('mouseup', this.handleMouseUp);
+    },
+    beforeDestroy() {
+        const canvas = this.$refs.canvas;
+        if(canvas) canvas.removeEventListener('mousedown', this.handleMouseDown);
+        window.removeEventListener('mousemove', this.handleMouseMove);
+        window.removeEventListener('mouseup', this.handleMouseUp);
     },
     watch: {
       width: 'mountBike',
       height: 'mountBike',
       composition: 'mountBike',
-      buffer: 'draw'
+      buffer: {
+          handler: 'draw',
+          deep: true
+      }
     },
     computed: {
       aspectRatio() {
@@ -135,6 +151,9 @@
             y: framesetProps.groupsetCapilierMiddleY || 0
           }
         };
+        
+        console.log('Bike: FramesetProps', framesetProps);
+        console.log('Bike: Anchors', anchors);
 
         const items = this.items.map(( a, order, color ) => {
 
@@ -200,7 +219,9 @@
             case 'wheels':
             case 'tyres':
 
-              props.scale *= framesetProps[`${ a.item.type.slice( 0, -1 )}Scale`] || 1;
+              // User Request: Tyre needs to scale in the same proportion as the wheel
+              // So, use 'wheelScale' for both 'wheels' and 'tyres'
+              props.scale *= framesetProps.wheelScale || 1;
               return [ 'Left', 'Right' ].map( pos => ({
                 ...props,
                 type: a.item.type + pos,
@@ -244,7 +265,8 @@
         };
       }
     },
-    methods: {
+
+  methods: {
       itemProps( comp ) {
 
         const props = { ...comp.item };
@@ -283,12 +305,23 @@
           composition.items.forEach( item => {
             item.image && loadImage( item.image.startsWith('data:') ? item.image : CONSTANTS.imageBase + item.image ).then( image => {
               
-              if (!image) return; // Skip if load failed
+              if (!image) {
+                  console.error('Bike: LoadImage failed for item', item.type, item.image);
+                  return; 
+              }
+              console.log('Bike: LoadImage success', item.type);
 
               const anchor = composition.itemAnchors[ item.anchor ] || composition.anchors[ item.anchor ];
               const origin = item.origin;
-              const width  = image.naturalWidth;
-              const height = image.naturalHeight;
+              let width    = image.naturalWidth; // changed from const for resizing
+              let height   = image.naturalHeight;
+
+              // Scale down huge custom images
+              if ( item.image.startsWith('data:') && width > 740 ) {
+                const ratio = 740 / width;
+                width *= ratio;
+                height *= ratio;
+              }
 
               if ( origin.x == null ) origin.x = width / 2;
               if ( origin.y == null ) origin.y = height / 2;
@@ -510,7 +543,104 @@
       onResize(e) {
         const { width, height } = this;
         const { container, canvas } = this.$refs;
+        
+        if (container) {
+            console.log('Bike: onResize container:', container.clientWidth, 'x', container.clientHeight);
+        }
+        
         containImage( canvas, width, height, container, e );
+      },
+      // DRAG HANDLERS
+      getMousePos(e) {
+          const rect = this.$refs.canvas.getBoundingClientRect();
+          // Scale mouse coordinates to match Canvas internal resolution (1400x1000)
+          const scaleX = this.width / rect.width;
+          const scaleY = this.height / rect.height;
+          return {
+              x: (e.clientX - rect.left) * scaleX,
+              y: (e.clientY - rect.top) * scaleY
+          };
+      },
+      handleMouseDown(e) {
+          if (!this.editable) return;
+          const pos = this.getMousePos(e);
+          // console.log('Bike: MouseDown at', pos);
+          
+          // Find hit - Iterate buffer in reverse draw order (top first)
+          // Filter for wheels and groupsets
+          const hit = this.buffer.slice().reverse().find(item => {
+              // Allow Wheels
+              if (item.type === 'wheelsLeft' || item.type === 'wheelsRight') {
+                  // pass
+              } 
+              // Allow Groupsets (except maybe groupsetsLeft/Right/Brake if they are auto-positioned?)
+              // groupsetsLeft is tied to rear wheel. groupsetsBrake* are tied to wheels.
+              // Let's allow all 'groupsets*' and we'll see which ones actually have anchors.
+              else if (item.type && item.type.startsWith('groupsets')) {
+                  // pass
+              }
+              else if (item.type === 'saddles') {
+                  // pass
+              }
+              else {
+                  return false;
+              }
+              
+              // Calculate actual bounding box considering origin and scale
+              // drawImage calls translate(x, y) then translate(-originX*scale, -originY*scale)
+              const drawX = item.x - (item.origin.x * item.scale);
+              const drawY = item.y - (item.origin.y * item.scale);
+              const width = item.width;
+              const height = item.height;
+
+              const isHit = pos.x >= drawX && pos.x <= drawX + width &&
+                     pos.y >= drawY && pos.y <= drawY + height;
+              
+              // if (isHit) console.log('Bike: Hit item', item.type, item);
+              return isHit;
+          });
+
+          if (hit) {
+              // console.log('Bike: Drag Start on', hit.type);
+              this.dragging = hit;
+              this.dragStart = pos;
+              // Store initial anchor to calculate delta
+              // anchor is { x, y } relative to frameset
+              this.initialAnchor = { ...hit.anchor };
+          }
+      },
+      handleMouseMove(e) {
+        if (!this.dragging) return;
+        const pos = this.getMousePos(e);
+        const dx = pos.x - this.dragStart.x;
+        const dy = pos.y - this.dragStart.y;
+        
+        // Find frameset reference to calculate scale
+        const frameset = this.buffer.find(b => b.type === 'framesets');
+        if (!frameset) return;
+        
+        // 1. VISUAL UPDATE
+        this.dragging.x += dx;
+        this.dragging.y += dy;
+        this.dragStart = pos; // Reset for next delta
+
+        // 2. LOGICAL UPDATE (Calculate Anchor)
+        // Original logic: item.x = frameset.x + item.anchor.x * frameset.scale
+        // So: item.anchor.x = (item.x - frameset.x) / frameset.scale
+        
+        const newAnchorX = (this.dragging.x - frameset.x) / frameset.scale;
+        const newAnchorY = (this.dragging.y - frameset.y) / frameset.scale;
+        
+        this.$emit('update-anchor', {
+            anchor: this.dragging.anchor.type || this.dragging.type, 
+            x: newAnchorX,
+            y: newAnchorY
+        });
+      },
+      handleMouseUp() {
+          this.dragging = null;
+          this.lastMouseX = null;
+          this.lastMouseY = null;
       }
     }
   }
