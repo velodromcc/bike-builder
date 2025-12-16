@@ -166,7 +166,7 @@
             <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                 <Bike 
                     v-if="positionerDialog"
-                    :width="1400" 
+                    :width="1700" 
                     :height="1000" 
                     :items="positionerItems"
                     :editable="true"
@@ -570,8 +570,8 @@ export default {
     async centerComponents() {
         if (!confirm('This will move all components to the center of the canvas. Useful if you lost something. Continue?')) return;
         
-        // Canvas is 1400x1000. Center is 700, 500.
-        const cx = 700;
+        // Canvas is 1700x1000. Center is 850, 500.
+        const cx = 850;
         const cy = 500;
         
         GEOMETRY_COLUMNS.forEach(col => {
