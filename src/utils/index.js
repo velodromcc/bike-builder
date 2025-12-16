@@ -132,7 +132,7 @@ export function itemImage(item, index) {
     if (colorObj.customImage) {
       image.front = colorObj.customImage;
       image.src = colorObj.customImage;
-      image.thumb = colorObj.customImage; // Use custom as thumb too if we want
+      // image.thumb = colorObj.customImage; // User requested thumb remains as original frameset thumb
     } else {
       image.front = colorObj.imageFront;
       image.src = colorObj.image;

@@ -20,8 +20,10 @@ app.use((req, res, next) => {
 
 app.get('/api/ping', (req, res) => res.send('pong'));
 
-// Serve static files from the Vue app build output
-// app.use(express.static(path.join(__dirname, '../dist')));
+// Serve static files from the Vue app build output (ONLY IN PRODUCTION)
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../dist')));
+}
 
 // MySQL Connection Pool
 const pool = mysql.createPool({
@@ -353,10 +355,12 @@ app.post('/api/send-email', (req, res) => {
     });
 });
 
-// Catch-all handler for any request that doesn't match the API above
-// app.get(/(.*)/, (req, res) => {
-//    res.sendFile(path.join(__dirname, '../dist/index.html'));
-// });
+// Catch-all handler for any request that doesn't match the API above (ONLY IN PRODUCTION)
+if (process.env.NODE_ENV === 'production') {
+    app.get(/(.*)/, (req, res) => {
+        res.sendFile(path.join(__dirname, '../dist/index.html'));
+    });
+}
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
