@@ -549,6 +549,30 @@ export default {
         }
     },
 
+    async duplicateChild(item) {
+        if(!confirm('Duplicate this color and all its settings?')) return;
+        try {
+            // 1. Clone object
+            const clone = JSON.parse(JSON.stringify(item));
+            
+            // 2. Remove ID to trigger INSERT
+            delete clone.id;
+            
+            // 3. Update Name
+            clone.colorName = clone.colorName + ' (Copy)';
+            
+            // 4. Save (Server will handle Company Link automatically)
+            const childTable = this.tableName + 'Color';
+            await this.saveRow({ tableName: childTable, row: clone });
+            
+            await this.loadData();
+            alert('Duplicated successfully!');
+        } catch(e) {
+            console.error(e);
+            alert('Error duplicating: ' + e.message);
+        }
+    },
+
     async saveParentAndClose() {
         // User requested to "always store on the children any override".
         // So we save the editedChild (Color row), not the Parent (Frameset).
