@@ -35,7 +35,11 @@ const pool = mysql.createPool({
 });
 
 // Allowed tables for Admin Config
-const ALLOWED_TABLES = ['Frameset', 'Wheel', 'Groupset', 'Saddle'];
+// Allowed tables for Admin Config
+const ALLOWED_TABLES = [
+    'Frameset', 'Wheel', 'Groupset', 'Saddle', 'Bar', 'Tyre', 'Seatpost',
+    'FramesetColor', 'WheelColor', 'GroupsetColor', 'SaddleColor', 'BarColor', 'TyreColor', 'SeatpostColor'
+];
 
 // Helper to validate table name
 const validateTable = (tableName) => {
