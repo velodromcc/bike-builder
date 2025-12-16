@@ -20,7 +20,13 @@
              <v-textarea v-model="parentItem.description" label="Description" rows="2"></v-textarea>
            </v-col>
            <v-col cols="12">
-              <v-text-field v-model="parentItem.thumbnail" label="Thumbnail URL"></v-text-field>
+              <v-text-field v-model="parentItem.thumbnail" label="Thumbnail URL or Base64"></v-text-field>
+              <v-file-input
+                label="Upload Thumbnail"
+                accept="image/*"
+                prepend-icon="mdi-camera"
+                @change="onParentFileChange"
+              ></v-file-input>
               <img v-if="parentItem.thumbnail" :src="getImageUrl(parentItem.thumbnail)" style="max-height: 50px" class="mt-2" />
            </v-col>
            
@@ -75,6 +81,7 @@
 
         <template v-slot:item.actions="{ item }">
           <v-icon small class="mr-2" @click="openChildDialog(item)">mdi-pencil</v-icon>
+          <v-icon small class="mr-2" @click="duplicateChild(item)" title="Duplicate">mdi-content-copy</v-icon>
           <v-icon small @click="deleteChild(item)">mdi-delete</v-icon>
         </template>
       </v-data-table>
@@ -271,7 +278,7 @@ export default {
         if (!itemOrPath) return '';
         // Legacy: if string passed
         if (typeof itemOrPath === 'string') {
-             if (itemOrPath.startsWith('http')) return itemOrPath;
+             if (itemOrPath.startsWith('http') || itemOrPath.startsWith('data:')) return itemOrPath;
              return `${CONSTANTS.imageBase}${itemOrPath}`;
         }
         
@@ -281,7 +288,7 @@ export default {
         }
         const path = itemOrPath.image;
         if (!path) return '';
-        if (path.startsWith('http')) return path;
+        if (path.startsWith('http') || path.startsWith('data:')) return path;
         return `${CONSTANTS.imageBase}${path}`;
     },
 
@@ -298,6 +305,16 @@ export default {
         reader.readAsDataURL(file);
         reader.onload = () => {
             this.$set(this.editedChild, 'custom_image', reader.result);
+        };
+    },
+
+    onParentFileChange(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            // Store Base64 directly in thumbnail (now LONGTEXT)
+            this.$set(this.parentItem, 'thumbnail', reader.result);
         };
     },
 

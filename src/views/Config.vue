@@ -165,7 +165,7 @@ export default {
     
     getImageUrl(path) {
         if (!path) return '';
-        if (path.startsWith('http')) return path;
+        if (path.startsWith('http') || path.startsWith('data:')) return path;
         // Prepend the external base URL for previews
         return `${CONSTANTS.imageBase}${path}`;
     },

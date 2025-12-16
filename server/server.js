@@ -215,21 +215,21 @@ const fetchEntityWithColors = async (table, companyId) => {
         SELECT DISTINCT t.* 
         FROM ${table} t
         JOIN ${table}Color tc ON t.id = tc.id${table}
-        JOIN ${table}ColorCompany tcc ON tc.id = tcc.id${table}Color
-        WHERE tcc.idCompany = ? AND (t.archived = 0 OR t.archived IS NULL)
+        WHERE (t.archived = 0 OR t.archived IS NULL)
         ORDER BY t.priority DESC
     `;
-    const [items] = await pool.query(query, [companyId]);
+    const [items] = await pool.query(query);
 
     // 2. Fetch Colors for these items
     // Efficient way: Fetch all colors for this company and map them in JS
     const colorQuery = `
-        SELECT tc.*, tcc.price, tcc.idCompany
+        SELECT tc.*, COALESCE(NULLIF(tcc.price, 0), tc.price) as price, tcc.idCompany
         FROM ${table}Color tc
-        JOIN ${table}ColorCompany tcc ON tc.id = tcc.id${table}Color
-        WHERE tcc.idCompany = ? AND (tc.archived = 0 OR tc.archived IS NULL)
+        LEFT JOIN ${table}ColorCompany tcc ON tc.id = tcc.id${table}Color AND tcc.idCompany = ?
+        WHERE (tc.archived = 0 OR tc.archived IS NULL)
     `;
     const [colors] = await pool.query(colorQuery, [companyId]);
+    console.log(`[DEBUG] Fetched ${items.length} ${table}s and ${colors.length} Colors`);
 
     // 3. Nest colors into items
     return items.map(item => {
@@ -248,14 +248,49 @@ const fetchEntityWithColors = async (table, companyId) => {
 
         const camelItem = toCamel(item);
         const mappedColors = itemColors.map(c => ({
-            color: toCamel(c)
+            id: c.id,
+            colorName: c.colorName,
+            price: c.price,
+            companyPrice: c.price, // Debug
+            image: getImageUrl(c),
+            // ... map other fields ...
+            hex: c.hex,
+            // If there's a custom image, it might be in 'custom_image' or 'image' depending on DB
+            // Let's ensure we map the ONE field the frontend uses.
+            // Frontend likely looks for 'image' or 'customImage'?
         }));
 
-        return {
-            ...camelItem,
-            colors: mappedColors
-        };
+        // Merging mapped colors
+        camelItem.colors = itemColors.map(c => {
+            const camelColor = toCamel(c);
+            return {
+                ...camelColor,         // Top-level properties (id, price, etc.)
+                price: c.price,        // Explicit price
+                image: getImageUrl(c), // Explicit image
+                color: {               // Legacy wrapper for frontend compatibility
+                    ...camelColor,
+                    price: c.price,
+                    image: getImageUrl(c)
+                }
+            };
+        });
+
+        if (camelItem.colors.length > 0) {
+            console.log(`[DEBUG] Item ${camelItem.id} (${camelItem.name}) has ${camelItem.colors.length} colors.`);
+            camelItem.colors.forEach((c, idx) => console.log(`  - Color [${idx}] ID:${c.id} Name:${c.colorName} Price:${c.price}`));
+        }
+
+        return camelItem;
     });
+
+};
+
+const getImageUrl = (item) => {
+    // If item has custom_image (base64 or path), prefer it.
+    // DB field is snake_case 'custom_image'.
+    if (item.custom_image) return item.custom_image;
+    // Fallback to 'image' column
+    return item.image || '';
 };
 
 const toCamel = (obj) => {
