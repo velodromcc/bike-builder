@@ -1,12 +1,11 @@
 <template>
   <v-app id="app">
-    <Builder/>
+    <router-view/>
   </v-app>
 </template>
 
 <script>
 
-  import Builder from '@/views/Builder';
   import { mapState } from 'vuex';
   import { lighten, darken } from '@/utils';
 
@@ -22,9 +21,6 @@
   }
 
   export default {
-    components: {
-      Builder
-    },
     watch: {
       company: 'refreshStyle'
     },

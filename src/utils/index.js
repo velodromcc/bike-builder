@@ -74,22 +74,22 @@ const CONSTANTS = {
 
 export { CONSTANTS };
 
-export function loadImage( url ) {
-  return new Promise( resolve => {
+export function loadImage(url) {
+  return new Promise(resolve => {
 
     const image = new Image();
     image.src = url;
 
-    if ( image.complete && image.naturalHeight !== 0 ) {
-      resolve( image );
+    if (image.complete && image.naturalHeight !== 0) {
+      resolve(image);
     } else {
-      image.addEventListener( 'load', () => resolve( image ));
+      image.addEventListener('load', () => resolve(image));
     }
   })
 }
 
-export function containImage( image, width, height, container, dim = {} ) {
-  if ( image ) {
+export function containImage(image, width, height, container, dim = {}) {
+  if (image) {
 
     container = container || image.parentNode;
     const WIDTH = dim.containerWidth || container.clientWidth;
@@ -97,40 +97,49 @@ export function containImage( image, width, height, container, dim = {} ) {
     const REL = WIDTH / HEIGHT;
     const rel = width / height;
 
-    if ( REL > rel ) {
+    if (REL > rel) {
 
-      var h = Math.min( HEIGHT, height );
+      var h = Math.min(HEIGHT, height);
       image.style.height = h + 'px';
-      image.style.width = ( h * rel ) + 'px';
+      image.style.width = (h * rel) + 'px';
 
     } else {
 
-      var w = Math.min( WIDTH, width );
+      var w = Math.min(WIDTH, width);
       image.style.width = w + 'px';
-      image.style.height = ( w / rel ) + 'px';
+      image.style.height = (w / rel) + 'px';
 
     }
   }
 }
 
-export function toArray( value ) {
-  if ( value == null ) return [];
-  if ( typeof value !== 'string' && typeof value.length === 'number' )
-    return Array.prototype.slice.call( value );
-  return [ value ];
+export function toArray(value) {
+  if (value == null) return [];
+  if (typeof value !== 'string' && typeof value.length === 'number')
+    return Array.prototype.slice.call(value);
+  return [value];
 }
 
-export function itemImage( item, index ) {
+export function itemImage(item, index) {
   index = index || 0;
   const image = { src: '', front: '', thumb: '' };
-  if ( item && item.colors[index] ) {
+  if (item && item.colors[index]) {
 
+    const colorObj = item.colors[index].color;
     image.thumb = item.thumbnail;
-    image.front = item.colors[index].color.imageFront;
-    image.src = item.colors[index].color.image;
 
-    for ( var img in image ) {
-      if ( image[img] ) {
+    // Check for custom base64 image
+    if (colorObj.customImage) {
+      image.front = colorObj.customImage;
+      image.src = colorObj.customImage;
+      image.thumb = colorObj.customImage; // Use custom as thumb too if we want
+    } else {
+      image.front = colorObj.imageFront;
+      image.src = colorObj.image;
+    }
+
+    for (var img in image) {
+      if (image[img] && !image[img].startsWith('data:')) {
         image[img] = CONSTANTS.imageBase + image[img];
       }
     }
@@ -138,24 +147,24 @@ export function itemImage( item, index ) {
   return image;
 }
 
-export function capitalize( str ) {
+export function capitalize(str) {
   str = String(str);
-  return str.charAt(0).toUpperCase() + str.slice( 1 );
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 const from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç";
 const to = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc";
 const map = {};
 
-for ( var i = 0, j = from.length; i < j; i++ )
+for (var i = 0, j = from.length; i < j; i++)
   map[from.charAt(i)] = to.charAt(i);
 
 export const normalize = str => {
   var ret = [];
-  for ( var i = 0, j = str.length; i < j; i++ ) {
+  for (var i = 0, j = str.length; i < j; i++) {
     var c = str.charAt(i);
     // eslint-disable-next-line
-    if ( map.hasOwnProperty(c)) ret.push( map[c] );
+    if (map.hasOwnProperty(c)) ret.push(map[c]);
     else ret.push(c);
   }
   return ret.join('').toLowerCase();
@@ -163,26 +172,26 @@ export const normalize = str => {
 
 // COLOR FUNCTIONS
 
-function add( color, amount ) {
-  color = parseInt( color, 16 ) + amount;
-  color = Math.max( Math.min( color, 255 ), 0 ).toString(16);
-  return color.length > 1 ? color : ( '0' + color );
+function add(color, amount) {
+  color = parseInt(color, 16) + amount;
+  color = Math.max(Math.min(color, 255), 0).toString(16);
+  return color.length > 1 ? color : ('0' + color);
 }
 
-function transformColor( color, amount ) {
-  color = color.replace( '#', '' );
-  amount = parseInt(( 255 * amount ) / 100 );
+function transformColor(color, amount) {
+  color = color.replace('#', '');
+  amount = parseInt((255 * amount) / 100);
   return '#' + [
-    add( color.substring( 0, 2 ), amount ),
-    add( color.substring( 2, 4 ), amount ),
-    add( color.substring( 4, 6 ), amount )
+    add(color.substring(0, 2), amount),
+    add(color.substring(2, 4), amount),
+    add(color.substring(4, 6), amount)
   ].join('')
 }
 
-export function lighten( color, amount ) {
-  return transformColor( color, amount );
+export function lighten(color, amount) {
+  return transformColor(color, amount);
 }
 
-export function darken( color, amount ) {
-  return transformColor( color, -amount );
+export function darken(color, amount) {
+  return transformColor(color, -amount);
 }
