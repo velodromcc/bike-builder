@@ -114,6 +114,8 @@ function runMigrations(db) {
     `).run();
 
     // 2. Run pending migrations
+    migrations.sort((a, b) => a.id - b.id);
+
     for (const migration of migrations) {
         const row = db.prepare('SELECT id FROM _migrations WHERE id = ?').get(migration.id);
         if (!row) {
