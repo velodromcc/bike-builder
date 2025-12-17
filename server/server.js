@@ -404,6 +404,23 @@ app.post('/api/send-email', (req, res) => {
     });
 });
 
+// ADMIN: Reset Database (Emergency Fix)
+app.get('/api/admin/reset-db', (req, res) => {
+    try {
+        const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all();
+        db.transaction(() => {
+            tables.forEach(t => db.prepare(`DROP TABLE IF EXISTS "${t.name}"`).run());
+        })();
+        console.log('[ADMIN] Database Reset Complete (All tables dropped)');
+        res.json({ success: true, message: 'Database reset. Please restart the server to re-run migrations.' });
+        // Optional: Trigger exit to force restart if process manager handles it
+        // process.exit(0); 
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // Catch-all handler for any request that doesn't match the API above (ONLY IN PRODUCTION)
 if (process.env.NODE_ENV === 'production') {
     app.get(/(.*)/, (req, res) => {
