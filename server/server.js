@@ -26,7 +26,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // SQLite Database
-const db = new Database(path.join(__dirname, 'database.sqlite'));
+const dbPath = process.env.DATABASE_PATH || path.join(__dirname, 'database.sqlite');
+const db = new Database(dbPath);
 
 // Run Migrations
 const runMigrations = require('./migrations');
