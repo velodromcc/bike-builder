@@ -33,7 +33,10 @@ const pool = mysql.createPool({
     database: 'bikebuilder',
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+    connectTimeout: 20000 // 20s timeout
 });
 
 const transporter = nodemailer.createTransport({
