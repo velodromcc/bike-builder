@@ -20,3 +20,6 @@ yarn-error.log*
 *.sln
 *.sw?
 .env
+server/database.sqlite
+server/database.sqlite
+.gitignore

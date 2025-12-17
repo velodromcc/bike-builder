@@ -68,13 +68,11 @@ app.get('/api/config/:table', (req, res) => {
         // Filter by Company 1 for Master Tables
         // Assumes pattern: Table -> TableColor -> TableColorCompany
         if (['Frameset', 'Wheel', 'Groupset', 'Saddle'].includes(table)) {
-            // SQLite JOIN syntax is standard
+            // ADMIN CONFIG: Show ALL items, ignore company link
             const query = `
-                SELECT DISTINCT t.* 
+                SELECT t.* 
                 FROM "${table}" t
-                JOIN "${table}Color" tc ON t.id = tc.id${table}
-                JOIN "${table}ColorCompany" tcc ON tc.id = tcc.id${table}Color
-                WHERE tcc.idCompany = 1 AND (t.archived = 0 OR t.archived IS NULL)
+                WHERE (t.archived = 0 OR t.archived IS NULL)
                 ORDER BY t.priority DESC
             `;
             rows = db.prepare(query).all();
@@ -362,16 +360,28 @@ app.get('/api/site/configuration/:host', (req, res) => {
 
 
 app.post('/api/send-email', (req, res) => {
-    const { name, email, phone, message, ...rest } = req.body;
+    const { name, email, phone, message, location, ...rest } = req.body;
+
+    let cc = null;
+    let subjectLocation = location || '';
+
+    // Determine CC based on location
+    if (location === 'Barcelona') {
+        cc = 'marketing@velodrom.cc';
+    } else if (location === 'Girona') {
+        cc = 'sidney.lewis@velodrom.cc';
+    }
 
     const mailOptions = {
         from: process.env.GMAIL_USER,
         to: process.env.GMAIL_USER,
-        subject: `New Enquiry from BikeBuilder: ${name}`, // Ensure subject is set
+        cc: cc,
+        subject: `NEW BIKE LEAD ${subjectLocation}`,
         text: `
       Name: ${name}
       Email: ${email}
       Phone: ${phone}
+      Location: ${location}
       Message: ${message}
       
       -------------------------

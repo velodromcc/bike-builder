@@ -95,6 +95,21 @@
           />
 
           <label class="d-block caption mb-2 bb-primary--text">
+            Location <span style="color:red">*</span>
+          </label>
+
+          <v-select
+            :items="locations"
+            v-model="data.location"
+            :rules="rules.location"
+            single-line
+            outlined
+            dense
+            color="bb-primary"
+            placeholder="Select a location"
+          />
+
+          <label class="d-block caption mb-2 bb-primary--text">
             Your message <span style="color:red">*</span>
           </label>
 
@@ -162,12 +177,15 @@
           name: '',
           email: '',
           phone: '',
+          location: '',
           message: ''
         },
+        locations: ['Barcelona', 'Girona', 'Ship to my home'],
         rules: {
           name: [ required, shortest(2) ],
           email: [ required, email ],
           phone: [ required ],
+          location: [ required ],
           message: [ required ]
         }
       }
