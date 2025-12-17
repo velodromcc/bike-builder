@@ -393,8 +393,8 @@ export default {
     async fetchDefaultSaddle() {
         try {
            const res = await this.fetchTable('Saddle');
-           // Try finding ID 30 (Standard choice), else first
-           let rawSaddle = res.data.find(w => w.id == 30) || res.data[0];
+           // Try finding ID 30 (Standard choice), then ID 1, else first
+           let rawSaddle = res.data.find(w => w.id == 30) || res.data.find(w => w.id == 1) || res.data[0];
            
            if (rawSaddle) {
                const colors = await this.fetchChildren({ tableName: 'Saddle', id: rawSaddle.id });

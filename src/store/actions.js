@@ -37,6 +37,10 @@ export function deleteRow(ctx, { tableName, id }) {
   return axios.delete(`/api/config/${tableName}/${id}`);
 }
 
+export function restoreRow(ctx, { tableName, id }) {
+  return axios.post(`/api/config/${tableName}/${id}/restore`);
+}
+
 export function fetchChildren(ctx, { tableName, id }) {
   // e.g. /api/config/Frameset/1/children
   return axios.get(`/api/config/${tableName}/${id}/children`);

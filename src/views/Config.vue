@@ -52,13 +52,36 @@
         </template>
       </v-data-table>
 
+      <!-- Archived Items Section -->
+      <div v-if="archivedItems.length > 0" class="ma-4">
+        <v-divider class="mb-4"></v-divider>
+        <h3 class="grey--text">Archived Items</h3>
+        <v-data-table
+            :headers="headers"
+            :items="archivedItems"
+            class="elevation-1 mt-2"
+            style="opacity: 0.6; background-color: #f5f5f5;"
+            :items-per-page="-1"
+            hide-default-footer
+        >
+            <template v-slot:item.thumbnail="{ item }">
+                <img v-if="item.thumbnail" :src="getImageUrl(item.thumbnail)" style="max-height: 40px; margin-top:5px; filter: grayscale(100%);" />
+            </template>
+             <template v-slot:item.actions="{ item }">
+                 <v-btn small color="success" text @click="restoreItem(item)">
+                     <v-icon left>mdi-restore</v-icon> Restore
+                 </v-btn>
+            </template>
+        </v-data-table>
+      </div>
+
     </v-card>
 
     <div v-else class="text-center mt-12 title grey--text">
       Please select a table to begin editing.
     </div>
 
-    <!-- Edit Dialog (Only for simple adds/edits if needed, but we prioritize new editor) -->
+    <!-- Edit Dialog -->
     <v-dialog v-model="dialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -69,7 +92,6 @@
           <v-container>
             <v-row>
               <v-col v-for="(value, key) in editedItem" :key="key" cols="12" sm="6">
-                <!-- ID is typically not editable -->
                 <v-text-field
                   v-if="key !== 'id' && key !=='actions'"
                   v-model="editedItem[key]"
@@ -106,16 +128,16 @@ export default {
     loading: false,
     savingOrder: false,
     items: [],
+    archivedItems: [],
     dialog: false,
     editedIndex: -1,
     editedItem: {},
     defaultItem: {
        name: '', description: '', priority: 0
-    } // Minimal default
+    }
   }),
   computed: {
     headers() {
-        // Uniform headers for all tables
         return [
             { text: 'Id', value: 'id' },
             { text: 'Name', value: 'name' },
@@ -126,12 +148,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchTable', 'saveRow', 'deleteRow']),
+    ...mapActions(['fetchTable', 'saveRow', 'deleteRow', 'restoreRow']),
     
     getImageUrl(path) {
         if (!path) return '';
         if (path.startsWith('http') || path.startsWith('data:')) return path;
-        // Prepend the external base URL for previews
         return `${CONSTANTS.imageBase}${path}`;
     },
     
@@ -140,7 +161,9 @@ export default {
       this.loading = true;
       try {
         const response = await this.fetchTable(this.selectedTable);
-        this.items = response.data;
+        const all = response.data;
+        this.items = all.filter(i => !i.archived);
+        this.archivedItems = all.filter(i => i.archived);
       } catch (e) {
         console.error(e);
         alert('Error loading data');
@@ -150,17 +173,13 @@ export default {
     },
     
     onDragEnd() {
-        // Force update if needed, but v-model should handle it.
-        // The list order is now changed.
+        // Handled by v-model
     },
 
     async saveOrder() {
         this.savingOrder = true;
         try {
-            // Update priorities: Top item gets highest priority (e.g. 100 or list length)
             let currentPriority = 100;
-            
-            // Items are in the new visual order (Top to Bottom)
             const updates = this.items.map((item, index) => {
                 const newPriority = currentPriority - index;
                 return {
@@ -169,7 +188,6 @@ export default {
                 };
             });
             
-            // Execute updates using the current selected table
             for (const item of updates) {
                 await this.saveRow({ 
                     tableName: this.selectedTable, 
@@ -188,9 +206,7 @@ export default {
     },
 
     editRow(item) {
-        // Tables that support Master-Detail view
         const masterDetailTables = ['Frameset', 'Wheel', 'Groupset', 'Saddle'];
-        
         if (masterDetailTables.includes(this.selectedTable)) {
             this.$router.push(`/config/${this.selectedTable}/${item.id}`);
         } else {
@@ -204,10 +220,9 @@ export default {
         this.editedItem = Object.assign({}, item);
       } else {
         this.editedIndex = -1;
-        // Try to infer structure from first item if possible, else default
         const structure = this.items.length ? Object.keys(this.items[0]).reduce((acc, key) => { acc[key] = ''; return acc;}, {}) : this.defaultItem;
         this.editedItem = Object.assign({}, structure);
-        delete this.editedItem.id; // No ID for new
+        delete this.editedItem.id;
       }
       this.dialog = true;
     },
@@ -223,7 +238,7 @@ export default {
     async save() {
       try {
         await this.saveRow({ tableName: this.selectedTable, row: this.editedItem });
-        await this.loadData(); // Reload to get fresh IDs etc
+        await this.loadData();
         this.close();
       } catch (e) {
         console.error(e);
@@ -241,6 +256,18 @@ export default {
           alert('Error deleting item');
         }
       }
+    },
+
+    async restoreItem(item) {
+        if (confirm('Are you sure you want to restore this item?')) {
+            try {
+                await this.restoreRow({ tableName: this.selectedTable, id: item.id });
+                await this.loadData();
+            } catch (e) {
+                console.error(e);
+                alert('Error restoring item');
+            }
+        }
     }
   }
 }

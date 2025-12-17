@@ -76,13 +76,12 @@ app.get('/api/config/:table', (req, res) => {
             const query = `
                 SELECT t.* 
                 FROM "${table}" t
-                WHERE (t.archived = 0 OR t.archived IS NULL)
-                ORDER BY t.priority DESC
+                ORDER BY t.priority DESC, t.archived ASC
             `;
             rows = db.prepare(query).all();
         } else {
             // For standard tables
-            const query = `SELECT * FROM "${table}" WHERE archived = 0 OR archived IS NULL`;
+            const query = `SELECT * FROM "${table}"`;
             rows = db.prepare(query).all();
         }
 
@@ -116,7 +115,7 @@ app.put('/api/config/:table/:id', (req, res) => {
         const setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
         const values = [...Object.values(data), id];
 
-        db.prepare(`UPDATE "${table}" SET ${setClause} WHERE id = ?`).run(values);
+        db.prepare(`UPDATE "${table}" SET ${setClause} WHERE id = ? `).run(values);
         res.json({ success: true });
     } catch (err) {
         console.error(err);
@@ -137,7 +136,7 @@ app.post('/api/config/:table', (req, res) => {
         const placeholders = Object.keys(data).map(() => '?').join(', ');
         const values = Object.values(data);
 
-        const info = db.prepare(`INSERT INTO "${table}" (${keys}) VALUES (${placeholders})`).run(values);
+        const info = db.prepare(`INSERT INTO "${table}"(${keys}) VALUES(${placeholders})`).run(values);
         const newId = info.lastInsertRowid;
 
         // AUTO-LINK COMPANY for *Color tables
@@ -148,13 +147,27 @@ app.post('/api/config/:table', (req, res) => {
             const price = data.price || 0;
 
             db.prepare(
-                `INSERT INTO "${linkTable}" (${fkCol}, idCompany, price) VALUES (?, ?, ?)`
+                `INSERT INTO "${linkTable}"(${fkCol}, idCompany, price) VALUES(?, ?, ?)`
             ).run(newId, companyId, price);
 
-            console.log(`Auto-linked ${table} ${newId} to Company ${companyId}`);
+            console.log(`Auto - linked ${table} ${newId} to Company ${companyId} `);
         }
 
         res.json({ success: true, id: newId });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// RESTORE Row
+app.post('/api/config/:table/:id/restore', (req, res) => {
+    const table = validateTable(req.params.table);
+    if (!table) return res.status(400).json({ error: 'Invalid table' });
+
+    try {
+        db.prepare(`UPDATE "${table}" SET archived = 0 WHERE id = ?`).run(req.params.id);
+        res.json({ success: true });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: err.message });
@@ -167,7 +180,7 @@ app.delete('/api/config/:table/:id', (req, res) => {
     if (!table) return res.status(400).json({ error: 'Invalid table' });
 
     try {
-        db.prepare(`UPDATE "${table}" SET archived = 1 WHERE id = ?`).run(req.params.id);
+        db.prepare(`UPDATE "${table}" SET archived = 1 WHERE id = ? `).run(req.params.id);
         res.json({ success: true });
     } catch (err) {
         console.error(err);
@@ -199,12 +212,12 @@ const fetchEntityWithColors = (table, companyId) => {
     // PHP seems to show items that have at least one color for the company.
     // Query: Select items distinct joined with color/company
     const query = `
-        SELECT DISTINCT t.* 
-        FROM "${table}" t
+        SELECT DISTINCT t.*
+                FROM "${table}" t
         JOIN "${table}Color" tc ON t.id = tc.id${table}
-        WHERE (t.archived = 0 OR t.archived IS NULL)
+            WHERE(t.archived = 0 OR t.archived IS NULL)
         ORDER BY t.priority DESC
-    `;
+                `;
     const items = db.prepare(query).all();
 
     // 2. Fetch Colors for these items
@@ -213,8 +226,8 @@ const fetchEntityWithColors = (table, companyId) => {
         SELECT tc.*, COALESCE(NULLIF(tcc.price, 0), tc.price) as price, tcc.idCompany
         FROM "${table}Color" tc
         LEFT JOIN "${table}ColorCompany" tcc ON tc.id = tcc.id${table}Color AND tcc.idCompany = ?
-        WHERE (tc.archived = 0 OR tc.archived IS NULL)
-    `;
+                WHERE(tc.archived = 0 OR tc.archived IS NULL)
+                    `;
     const colors = db.prepare(colorQuery).all(companyId);
     console.log(`[DEBUG] Fetched ${items.length} ${table}s and ${colors.length} Colors`);
 
@@ -264,7 +277,7 @@ const fetchEntityWithColors = (table, companyId) => {
 
         if (camelItem.colors.length > 0) {
             console.log(`[DEBUG] Item ${camelItem.id} (${camelItem.name}) has ${camelItem.colors.length} colors.`);
-            camelItem.colors.forEach((c, idx) => console.log(`  - Color [${idx}] ID:${c.id} Name:${c.colorName} Price:${c.price}`));
+            camelItem.colors.forEach((c, idx) => console.log(`  - Color[${idx}]ID:${c.id} Name:${c.colorName} Price:${c.price} `));
         }
 
         return camelItem;
@@ -380,18 +393,18 @@ app.post('/api/send-email', (req, res) => {
         from: process.env.GMAIL_USER,
         to: process.env.GMAIL_USER,
         cc: cc,
-        subject: `NEW BIKE LEAD ${subjectLocation}`,
+        subject: `NEW BIKE LEAD ${subjectLocation} `,
         text: `
-      Name: ${name}
-      Email: ${email}
-      Phone: ${phone}
-      Location: ${location}
-      Message: ${message}
-      
-      -------------------------
-      Configuration Details:
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Location: ${location}
+Message: ${message}
+
+-------------------------
+    Configuration Details:
       ${JSON.stringify(rest, null, 2)}
-    `
+`
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
