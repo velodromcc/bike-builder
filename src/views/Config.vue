@@ -23,9 +23,9 @@
         <v-btn color="primary" @click="openDialog()">Add New Item</v-btn>
       </v-card-title>
 
-      <!-- Table for Frameset (Draggable) -->
+      <!-- Draggable Table for All Entities -->
       <v-data-table
-        v-if="selectedTable === 'Frameset'"
+        v-if="selectedTable"
         :headers="headers"
         :items="items"
         :loading="loading"
@@ -52,28 +52,6 @@
         </template>
       </v-data-table>
 
-      <!-- Table for Others (Standard) -->
-      <v-data-table
-        v-else
-        :headers="headers"
-        :items="items"
-        :loading="loading"
-        class="elevation-1"
-        :items-per-page="-1"
-        hide-default-footer
-      >
-        <template v-slot:item.thumbnail="{ item }">
-          <img v-if="item.thumbnail" :src="getImageUrl(item.thumbnail)" style="max-height: 40px; margin-top:5px" />
-        </template>
-         <template v-slot:item.url="{ item }">
-          <a v-if="item.url" :href="item.url" target="_blank">Link</a>
-        </template>
-
-        <template v-slot:item.actions="{ item }">
-          <v-icon small class="mr-2" @click="editRow(item)">mdi-pencil</v-icon>
-          <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-        </template>
-      </v-data-table>
     </v-card>
 
     <div v-else class="text-center mt-12 title grey--text">
@@ -90,9 +68,6 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <!-- Dynamically generate inputs based on item keys -->
-              <!-- For new items, we might need schema, but simpler: preserve keys from a template or just show all known keys from the first item if list not empty. 
-                   Ideally, we should fetch schema. For now, let's list common common keys or rely on existing item structure. -->
               <v-col v-for="(value, key) in editedItem" :key="key" cols="12" sm="6">
                 <!-- ID is typically not editable -->
                 <v-text-field
@@ -101,9 +76,6 @@
                   :label="key"
                 ></v-text-field>
               </v-col>
-              <!-- If item is empty (Add New on empty table), we might struggle. 
-                   Better approach: hardcode known schema or allow adding generic keys. 
-                   Let's stick to editing existing for now, or assume we clone structure. -->
             </v-row>
           </v-container>
         </v-card-text>
@@ -143,21 +115,14 @@ export default {
   }),
   computed: {
     headers() {
-      if (this.selectedTable === 'Frameset') {
-          return [
-              { text: 'Id', value: 'id' },
-              { text: 'Name', value: 'name' },
-              { text: 'Thumbnail', value: 'thumbnail' },
-              { text: 'Priority', value: 'priority' },
-              { text: 'Actions', value: 'actions', sortable: false }
-          ];
-      }
-      
-      if (!this.items.length) return [];
-      const keys = Object.keys(this.items[0]);
-      const headers = keys.map(k => ({ text: k.charAt(0).toUpperCase() + k.slice(1), value: k }));
-      headers.push({ text: 'Actions', value: 'actions', sortable: false });
-      return headers;
+        // Uniform headers for all tables
+        return [
+            { text: 'Id', value: 'id' },
+            { text: 'Name', value: 'name' },
+            { text: 'Thumbnail', value: 'thumbnail' },
+            { text: 'Priority', value: 'priority' },
+            { text: 'Actions', value: 'actions', sortable: false }
+        ];
     }
   },
   methods: {
@@ -193,33 +158,21 @@ export default {
         this.savingOrder = true;
         try {
             // Update priorities: Top item gets highest priority (e.g. 100 or list length)
-            // User requested "from 100 to less"
-            // Let's use 100 as base max, or just the count if they want generic.
-            // "maybe from 100 to less priority"
             let currentPriority = 100;
             
             // Items are in the new visual order (Top to Bottom)
-            // So top item -> Priority 100
-            // Next -> 99
-            
             const updates = this.items.map((item, index) => {
                 const newPriority = currentPriority - index;
-                // Only save if changed? Or just save all to be safe.
                 return {
                     ...item,
                     priority: newPriority
                 };
             });
             
-            // Execute parallel updates
-            // Optimization: Create a bulk update endpoint or loop.
-            // Loop is safest given current generic API.
+            // Execute updates using the current selected table
             for (const item of updates) {
-                // We only need to send the priority update really
-                // But saveRow expects full object usually or handled by backend.
-                // Our backend handles partial updates well.
                 await this.saveRow({ 
-                    tableName: 'Frameset', 
+                    tableName: this.selectedTable, 
                     row: { id: item.id, priority: item.priority } 
                 });
             }
