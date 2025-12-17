@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
-const mysql = require('mysql2/promise');
+const Database = require('better-sqlite3');
 require('dotenv').config();
 
 const app = express();
@@ -25,19 +25,8 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../dist')));
 }
 
-// MySQL Connection Pool
-const pool = mysql.createPool({
-    host: 'vps-2e3b96d8.vps.ovh.net',
-    user: 'bikebuilder',
-    password: 'm5h5Zp9jGpJH',
-    database: 'bikebuilder',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0,
-    connectTimeout: 20000 // 20s timeout
-});
+// SQLite Database
+const db = new Database(path.join(__dirname, 'database.sqlite'));
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -70,44 +59,37 @@ const validateTable = (tableName) => {
 // --- API ROUTES ---
 
 // GET Table Data
-app.get('/api/config/:table', async (req, res) => {
+app.get('/api/config/:table', (req, res) => {
     const table = validateTable(req.params.table);
     if (!table) return res.status(400).json({ error: 'Invalid table' });
 
     try {
-        let query = `SELECT * FROM ${table}`;
-
+        let rows;
         // Filter by Company 1 for Master Tables
         // Assumes pattern: Table -> TableColor -> TableColorCompany
         if (['Frameset', 'Wheel', 'Groupset', 'Saddle'].includes(table)) {
-            // We need DISTINCT because one Frameset has multiple colors, which would cause duplicates
-            query = `
+            // SQLite JOIN syntax is standard
+            const query = `
                 SELECT DISTINCT t.* 
-                FROM ${table} t
-                JOIN ${table}Color tc ON t.id = tc.id${table}
-                JOIN ${table}ColorCompany tcc ON tc.id = tcc.id${table}Color
+                FROM "${table}" t
+                JOIN "${table}Color" tc ON t.id = tc.id${table}
+                JOIN "${table}ColorCompany" tcc ON tc.id = tcc.id${table}Color
                 WHERE tcc.idCompany = 1 AND (t.archived = 0 OR t.archived IS NULL)
                 ORDER BY t.priority DESC
             `;
+            rows = db.prepare(query).all();
         } else {
-            // For standard tables, check if 'archived' col exists or just simple select
-            // For safety, let's just do SELECT * and assume frontend filters or we add strict check later?
-            // Actually, we should filter if column exists, but simpler:
-            // If these are the only tables user edits, we are fine.
-            // If we want generic approach for others:
-            query = `SELECT * FROM ${table} WHERE archived = 0 OR archived IS NULL`;
+            // For standard tables
+            const query = `SELECT * FROM "${table}" WHERE archived = 0 OR archived IS NULL`;
+            rows = db.prepare(query).all();
         }
 
-        const [rows] = await pool.query(query);
         res.json(rows);
     } catch (err) {
-        // If column 'archived' doesn't exist on some other table, fall back to select all?
-        // Or just log error. For now, assuming migration ran for targets.
-        // If query fails, let's retry without archived filter?
         console.error(err);
-        // Fallback for non-migrated tables
+        // Fallback or retry logic if needed
         try {
-            const [rows] = await pool.query(`SELECT * FROM ${table}`);
+            const rows = db.prepare(`SELECT * FROM "${table}"`).all();
             res.json(rows);
         } catch (e2) {
             res.status(500).json({ error: err.message });
@@ -116,16 +98,15 @@ app.get('/api/config/:table', async (req, res) => {
 });
 
 // UPDATE Row
-app.put('/api/config/:table/:id', async (req, res) => {
+app.put('/api/config/:table/:id', (req, res) => {
     const table = validateTable(req.params.table);
     if (!table) return res.status(400).json({ error: 'Invalid table' });
 
     const id = req.params.id;
     const data = req.body;
 
-    // Filter out id from update data if present
     delete data.id;
-    delete data.archived; // Prevent manual un-archiving via simple edit if desired, or allow it. Let's allow if they send it.
+    delete data.archived;
 
     if (Object.keys(data).length === 0) return res.status(400).json({ error: 'No data to update' });
 
@@ -133,7 +114,7 @@ app.put('/api/config/:table/:id', async (req, res) => {
         const setClause = Object.keys(data).map(key => `${key} = ?`).join(', ');
         const values = [...Object.values(data), id];
 
-        await pool.query(`UPDATE ${table} SET ${setClause} WHERE id = ?`, values);
+        db.prepare(`UPDATE "${table}" SET ${setClause} WHERE id = ?`).run(values);
         res.json({ success: true });
     } catch (err) {
         console.error(err);
@@ -142,7 +123,7 @@ app.put('/api/config/:table/:id', async (req, res) => {
 });
 
 // CREATE Row (Optional, for "Add" functionality)
-app.post('/api/config/:table', async (req, res) => {
+app.post('/api/config/:table', (req, res) => {
     const table = validateTable(req.params.table);
     if (!table) return res.status(400).json({ error: 'Invalid table' });
 
@@ -154,23 +135,20 @@ app.post('/api/config/:table', async (req, res) => {
         const placeholders = Object.keys(data).map(() => '?').join(', ');
         const values = Object.values(data);
 
-        // archived Default is 0 in DB
-        const [result] = await pool.query(`INSERT INTO ${table} (${keys}) VALUES (${placeholders})`, values);
-        const newId = result.insertId;
+        const info = db.prepare(`INSERT INTO "${table}" (${keys}) VALUES (${placeholders})`).run(values);
+        const newId = info.lastInsertRowid;
 
         // AUTO-LINK COMPANY for *Color tables
-        // If we created a FramesetColor, we must create FramesetColorCompany for it to be visible
         if (table.endsWith('Color')) {
             const linkTable = `${table}Company`;
-            const fkCol = `id${table}`; // e.g. idFramesetColor
-            // Hardcode Company 1 (Velodrom) as per fetch logic
+            const fkCol = `id${table}`;
             const companyId = 1;
             const price = data.price || 0;
 
-            await pool.query(
-                `INSERT INTO ${linkTable} (${fkCol}, idCompany, price) VALUES (?, ?, ?)`,
-                [newId, companyId, price]
-            );
+            db.prepare(
+                `INSERT INTO "${linkTable}" (${fkCol}, idCompany, price) VALUES (?, ?, ?)`
+            ).run(newId, companyId, price);
+
             console.log(`Auto-linked ${table} ${newId} to Company ${companyId}`);
         }
 
@@ -182,13 +160,12 @@ app.post('/api/config/:table', async (req, res) => {
 });
 
 // DELETE Row (Soft Delete)
-app.delete('/api/config/:table/:id', async (req, res) => {
+app.delete('/api/config/:table/:id', (req, res) => {
     const table = validateTable(req.params.table);
     if (!table) return res.status(400).json({ error: 'Invalid table' });
 
     try {
-        // Soft delete: Update archived = 1
-        await pool.query(`UPDATE ${table} SET archived = 1 WHERE id = ?`, [req.params.id]);
+        db.prepare(`UPDATE "${table}" SET archived = 1 WHERE id = ?`).run(req.params.id);
         res.json({ success: true });
     } catch (err) {
         console.error(err);
@@ -197,49 +174,46 @@ app.delete('/api/config/:table/:id', async (req, res) => {
 });
 
 // GET Children (Parent -> ParentColor)
-app.get('/api/config/:table/:id/children', async (req, res) => {
+app.get('/api/config/:table/:id/children', (req, res) => {
     const table = validateTable(req.params.table);
     if (!table) return res.status(400).json({ error: 'Invalid table' });
 
-    // Convention: Table -> TableColor
     const childTable = `${table}Color`;
-    const foreignKey = `id${table}`; // e.g., idFrameset
+    const foreignKey = `id${table}`;
 
     try {
-        // Filter out archived children too
-        const [rows] = await pool.query(`SELECT * FROM ${childTable} WHERE ${foreignKey} = ? AND (archived = 0 OR archived IS NULL)`, [req.params.id]);
+        const rows = db.prepare(`SELECT * FROM "${childTable}" WHERE ${foreignKey} = ? AND (archived = 0 OR archived IS NULL)`).all(req.params.id);
         res.json(rows);
     } catch (err) {
         console.error(err);
-        // Fallback: maybe the table doesn't follow convention or doesn't exist
         res.status(500).json({ error: err.message });
     }
 });
 
 // --- CONFIGURATION ENDPOINT (Replicates PHP Logic with custom_image support) ---
 
-const fetchEntityWithColors = async (table, companyId) => {
+const fetchEntityWithColors = (table, companyId) => {
     // 1. Fetch Items (filtered by existence of company link? Or all items?)
     // PHP seems to show items that have at least one color for the company.
     // Query: Select items distinct joined with color/company
     const query = `
         SELECT DISTINCT t.* 
-        FROM ${table} t
-        JOIN ${table}Color tc ON t.id = tc.id${table}
+        FROM "${table}" t
+        JOIN "${table}Color" tc ON t.id = tc.id${table}
         WHERE (t.archived = 0 OR t.archived IS NULL)
         ORDER BY t.priority DESC
     `;
-    const [items] = await pool.query(query);
+    const items = db.prepare(query).all();
 
     // 2. Fetch Colors for these items
     // Efficient way: Fetch all colors for this company and map them in JS
     const colorQuery = `
         SELECT tc.*, COALESCE(NULLIF(tcc.price, 0), tc.price) as price, tcc.idCompany
-        FROM ${table}Color tc
-        LEFT JOIN ${table}ColorCompany tcc ON tc.id = tcc.id${table}Color AND tcc.idCompany = ?
+        FROM "${table}Color" tc
+        LEFT JOIN "${table}ColorCompany" tcc ON tc.id = tcc.id${table}Color AND tcc.idCompany = ?
         WHERE (tc.archived = 0 OR tc.archived IS NULL)
     `;
-    const [colors] = await pool.query(colorQuery, [companyId]);
+    const colors = db.prepare(colorQuery).all(companyId);
     console.log(`[DEBUG] Fetched ${items.length} ${table}s and ${colors.length} Colors`);
 
     // 3. Nest colors into items
@@ -346,28 +320,25 @@ const toCamel = (obj) => {
     return newObj;
 }
 
-app.get('/api/site/configuration/:host', async (req, res) => {
+app.get('/api/site/configuration/:host', (req, res) => {
     try {
-        // Hardcode Company 1 for Velodrom
         const companyId = 1;
 
         // Fetch Company Info
-        const [companies] = await pool.query('SELECT * FROM Company WHERE id = ?', [companyId]);
+        const companies = db.prepare('SELECT * FROM Company WHERE id = ?').all(companyId);
         const company = companies[0] || {};
 
-        // Fetch All Entities
-        const [framesets, wheels, groupsets, saddles, bars, tyres, seatposts] = await Promise.all([
-            fetchEntityWithColors('Frameset', companyId),
-            fetchEntityWithColors('Wheel', companyId),
-            fetchEntityWithColors('Groupset', companyId),
-            fetchEntityWithColors('Saddle', companyId),
-            fetchEntityWithColors('Bar', companyId),
-            fetchEntityWithColors('Tyre', companyId),
-            fetchEntityWithColors('Seatpost', companyId)
-        ]);
+        // Fetch All Entities synchronously
+        const framesets = fetchEntityWithColors('Frameset', companyId);
+        const wheels = fetchEntityWithColors('Wheel', companyId);
+        const groupsets = fetchEntityWithColors('Groupset', companyId);
+        const saddles = fetchEntityWithColors('Saddle', companyId);
+        const bars = fetchEntityWithColors('Bar', companyId);
+        const tyres = fetchEntityWithColors('Tyre', companyId);
+        const seatposts = fetchEntityWithColors('Seatpost', companyId);
 
-        // Special Builds?
-        const [specialBuilds] = await pool.query('SELECT * FROM SpecialBuild WHERE idCompany = ?', [companyId]);
+        // Special Builds
+        const specialBuilds = db.prepare('SELECT * FROM SpecialBuild WHERE idCompany = ?').all(companyId);
 
         res.json({
             error: 0,
