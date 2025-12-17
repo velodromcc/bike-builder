@@ -36,6 +36,14 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS
+    }
+});
+
 // Allowed tables for Admin Config
 // Allowed tables for Admin Config
 const ALLOWED_TABLES = [

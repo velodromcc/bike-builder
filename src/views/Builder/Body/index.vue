@@ -103,19 +103,19 @@
         class="builder-nav"
       >
 
-        <div class="builder-nav--top bb-primary">
+        <div class="builder-nav--top" style="background-color: #000; display: flex; align-items: center; justify-content: space-between; height: 48px; width: 100%; padding: 0 8px;">
 
-          <Btn class="ml-2" color="white" :disabled="prevDisabled" @click="prev" icon>
-            <v-icon v-text="'$prev'"/>
-          </Btn>
+          <v-btn icon dark :disabled="prevDisabled" @click="prev">
+            <v-icon>mdi-chevron-left</v-icon>
+          </v-btn>
 
-          <span class="title white--text single-line">
-            {{ step.title }} {{ $vuetify.breakpoint.mdAndUp ? '' : '( ' + [ index + 1, steps.length ].join(' of ') + ' )' }}
+          <span style="color: white; font-weight: bold; flex: 1; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 1.1rem; text-transform: uppercase;">
+            {{ step.title }}
           </span>
 
-          <Btn class="mr-2" color="white" :disabled="nextDisabled" @click="next" icon>
-            <v-icon v-text="'$next'"/>
-          </Btn>
+          <v-btn icon dark :disabled="nextDisabled" @click="next">
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
 
         </div>
 
@@ -314,6 +314,9 @@
     },
     mounted() {
       this.fetch();
+      console.log('DEBUG: ITEMS_LIST', ITEMS_LIST);
+      console.log('DEBUG: this.steps', this.steps);
+      console.log('DEBUG: this.step', this.step);
       window.addEventListener( 'beforeprint', this.onPrint );
       window.addEventListener( 'afterprint', this.onAfterPrint );
     },
@@ -729,14 +732,11 @@
   .builder-nav {
     width: 400px;
     right: 0;
-    top: 76px;
     bottom: 0;
     background-color: white;
     border-left: 1px solid var(--v-light-base);
   }
-  .details-complete {
-    top: 76px;
-  }
+
   .builder-content .btn-special-build {
     position: absolute;
     top: 20px;
