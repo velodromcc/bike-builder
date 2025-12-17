@@ -98,6 +98,51 @@ const migrations = [
                 if (!e.message.includes('duplicate column')) console.error(e.message);
             }
         }
+    },
+    {
+        id: 4,
+        name: 'fix_company_logo_and_text',
+        up: (db) => {
+            console.log('Fixing Company 1 logo and text...');
+            const seed = require('./seed_data');
+            // Find the INSERT statement for Company 1 in seed_data
+            const companySeed = seed.find(sql => sql.includes('INSERT OR IGNORE INTO "Company"') && sql.includes('VALUES (1,'));
+
+            if (companySeed) {
+                // Parse values roughly or just replace the record? 
+                // Replacing is safer to ensure all fields are correct.
+                // 1. Delete existing Company 1 (it might be the stub or broken one)
+                // 2. Run the INSERT statement again.
+                // NOTE: We cannot simply DELETE because of potential foreign keys, BUT Company 1 is the main one.
+                // Safer approach: Extract values and UPDATE.
+
+                // Let's try parsing the values from the seed string is fragile.
+                // Better approach: Hardcode the update here with the known correct values from seed_data.js file content.
+                // Looking at seed_data.js:
+                // `INSERT OR IGNORE INTO "Company" ("id", "host", "name", "logo", "website", "color1", "color2", "color3", "email", "finalHtml", "introHtml", "locationsHref", "storiesHref", "bikebuilderHref", "shopHref", "contactHref", "loginHref", "toolsHref") VALUES (1, 'velodrom.dreambikebuilder.com', 'Velodrom Barcelona', '/resources/logo2.png', 'https://www.velodrom.cc', '000000', '555555', 'ffffff', 'info@inmovens.com,Info@velodrombarcelona.com', '<section> <h3>PRECIO ORIENTATIVO</h3> ... ', '<h1>Bike Builder</h1> ... ', 'https://global.velodrom.cc/', 'https://global.velodrom.cc/stories/', 'https://velodrom.dreambikebuilder.com/', 'https://www.velodrom.cc/', 'https://www.velodrom.cc/pages/contact', 'https://www.velodrom.cc/account/login', 'https://global.velodrom.cc/velodrom-travel/')`
+
+                const logo = '/resources/logo2.png';
+                const finalHtml = `<section> <h3>PRECIO ORIENTATIVO</h3>        <p>         Recuerda que el precio final no incluye descuentos. promociones, ni precios especiales de bicicleta completa que la marca puede ofrecer.       </p>       <p>	 Una vez que hayas creado el montaje de tus sueños, te ofrecemos conversar por teléfono, o mejor aún, vernos en nuestra tienda de Barcelona         para que revisemos si el modelo y componentes que has elegido son los indicados para el tipo de ciclismo que practicas.         </p>       <p>	 Recuerda que antes de encargar los distintos componentes, realizaremos un simulación en nuesro Bike Fitting Studio para poder seleccionar el tamaño correcto de potencia,manillar, tija de silín y por supuesto la talla correcta del cuadro que has elegido.                </p>   </section>  <section>       <h3>MÁS OPCIONES DE COMPONENTES</h3>        <p>        Recuerda que nuestro bike builder ofrece una selección de componentes, pero el cielo es el infinito. Disponemos de muchos otros componentes de distintas gamas económicas y calidades para que puedas crear una bicicleta espectacular.       </p>       <p>        Contáctanos y te ofreceremos un presupuesto totalmente personalizado.       </p>      </section>      <section>        <h3>ENTREGA DE LA BICICLETA</h3>       <p>La entrega de tu bicicleta en nuestra tienda ¡es algo más que simplemente entregartela! Nos eoncargaremos de que la bicicleta se te entregue totalmente a medida y perfectamente ajustada.Todos nuestros montajes a medida incluyen el servicio de simulación previo a la compra de la bicicleta y el bike fitting posterior a la compra               </p> `;
+                const introHtml = `<h1>Bike Builder</h1>
+            <p>Use this interactive configurator to design your dream bike; swap components, change colours, the choice is yours.</p>`;
+
+                try {
+                    db.prepare(`
+                        UPDATE "Company" 
+                        SET logo = ?, 
+                            finalHtml = ?, 
+                            introHtml = ?,
+                            host = 'velodrom.dreambikebuilder.com',
+                            name = 'Velodrom Barcelona',
+                            website = 'https://www.velodrom.cc'
+                        WHERE id = 1
+                    `).run(logo, finalHtml, introHtml);
+                    console.log('Successfully updated Company 1 logo and text.');
+                } catch (e) {
+                    console.error('Failed to fix Company 1:', e);
+                }
+            }
+        }
     }
 ];
 
