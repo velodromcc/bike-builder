@@ -19,7 +19,7 @@
       <v-card-title>
         {{ selectedTable }} Data
         <v-spacer></v-spacer>
-        <v-btn v-if="selectedTable === 'Frameset'" color="primary" class="mr-2" @click="saveOrder" :loading="savingOrder">Save Order</v-btn>
+        <v-btn color="primary" class="mr-2" @click="saveOrder" :loading="savingOrder">Save Order</v-btn>
         <v-btn color="primary" @click="openDialog()">Add New Item</v-btn>
       </v-card-title>
 

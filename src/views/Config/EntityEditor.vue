@@ -120,6 +120,23 @@
                  <img :src="getImagePreview(editedChild)" style="max-height: 100px; display:block" class="mt-2" />
               </v-col>
             </v-row>
+
+            <!-- GROUPSET PARTS UPLOAD -->
+            <v-row v-if="tableName === 'Groupset' && editedChild">
+                 <v-col cols="12"><div class="subtitle-2">Groupset Components (Base64)</div></v-col>
+                 
+                 <v-col cols="12" sm="6" v-for="part in ['imageBack', 'imageFront', 'imageBar', 'imageBrake', 'imageBrakeCapilierFront', 'imageBrakeCapilierRear', 'imageGearShift']" :key="part">
+                    <v-file-input
+                        :label="part"
+                        accept="image/*"
+                        dense
+                        prepend-icon="mdi-camera"
+                        @change="(file) => onPartFileChange(file, part)"
+                    ></v-file-input>
+                    <img v-if="editedChild[part]" :src="getImageUrl(editedChild[part])" style="max-height: 50px; display:block" class="mt-1" />
+                    <!-- Clear button if needed, or just overwrite -->
+                 </v-col>
+            </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -295,6 +312,16 @@ export default {
     // Specific for preview in dialog
     getImagePreview(item) {
         return this.getImageUrl(item);
+    },
+
+    onPartFileChange(file, key) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            // Assign Base64 directly to the key (e.g. imageBack)
+            this.$set(this.editedChild, key, reader.result);
+        };
     },
 
     onFileChange(file) {

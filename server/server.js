@@ -28,6 +28,10 @@ if (process.env.NODE_ENV === 'production') {
 // SQLite Database
 const db = new Database(path.join(__dirname, 'database.sqlite'));
 
+// Run Migrations
+const runMigrations = require('./migrations');
+runMigrations(db);
+
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {

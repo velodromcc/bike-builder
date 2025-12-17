@@ -23,3 +23,5 @@ yarn-error.log*
 server/database.sqlite
 server/database.sqlite
 .gitignore
+server/database.sqlite
+server/database.sqlite
