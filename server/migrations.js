@@ -143,6 +143,38 @@ const migrations = [
                 }
             }
         }
+    },
+    {
+        id: 5,
+        name: 'add_company_summary_text',
+        up: (db) => {
+            console.log('Adding summaryHtml to Company...');
+            try {
+                // 1. Add Column
+                db.prepare(`ALTER TABLE "Company" ADD COLUMN summaryHtml TEXT`).run();
+                console.log('Added summaryHtml column.');
+
+                // 2. Populate with default text (Corrected "Bespoke" -> "Velodrom")
+                const summaryHtml = `
+                    <p>
+                        Thank you for creating your dream build with Velodrom. Whatever combination you've
+                        chosen we'll ensure that it all works together and, of course, fits you perfectly.
+                    </p>
+                    <p>
+                        Get in touch to discuss your requirements in more detail, and for impartial expert
+                        advice on bike and component choice.
+                    </p>
+                `;
+
+                db.prepare(`UPDATE "Company" SET summaryHtml = ? WHERE id = 1`).run(summaryHtml);
+                console.log('Updated Company 1 with summary text.');
+
+            } catch (e) {
+                if (!e.message.includes('duplicate column')) {
+                    console.error('Failed to add summaryHtml:', e);
+                }
+            }
+        }
     }
 ];
 

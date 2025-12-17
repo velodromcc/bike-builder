@@ -15,15 +15,18 @@
         YOUR BUILD
       </h1>
 
-      <p>
-        Thank you for creating your dream build with Bespoke. Whatever combination you've
-        chosen we'll ensure that it all works together and, of course, fits you perfectly.
-      </p>
+      <div v-if="company && company.summaryHtml" v-html="company.summaryHtml"></div>
+      <div v-else>
+        <p>
+            Thank you for creating your dream build with Velodrom. Whatever combination you've
+            chosen we'll ensure that it all works together and, of course, fits you perfectly.
+        </p>
 
-      <p>
-        Get in touch to discuss your requirements in more detail, and for impartial expert
-        advice on bike and component choice.
-      </p>
+        <p>
+            Get in touch to discuss your requirements in more detail, and for impartial expert
+            advice on bike and component choice.
+        </p>
+      </div>
 
       <Price
         class="d-inline-block mb-6"
@@ -80,7 +83,7 @@
     <v-divider class="details-divider my-5"/>
 
     <h2 class="details-title bb-primary--text my-6" style="break-before:always">
-      YOUR BUILD IN DEATIL
+      YOUR BUILD IN DETAIL
     </h2>
 
     <DetailItems
@@ -94,6 +97,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { Btn, BtnSpecialBuild, Price } from '@/components';
 import DetailItems from './DetailItems';
 
@@ -104,6 +108,9 @@ export default {
     items: Array,
     price: Number,
     specialBuild: Object
+  },
+  computed: {
+    ...mapState(['company'])
   }
 }
 </script>

@@ -8,7 +8,7 @@
 
     <img
       ref="image"
-      :src="item.image.front || item.image.thumb || item.image.src"
+      :src="item.image.front || item.image.src || item.image.thumb"
       :width="width"
       :height="height"
     />
@@ -45,7 +45,7 @@
     methods: {
       getImageSize() {
         if ( ! this.item ) return;
-        const src = this.item.image.front || this.item.image.thumb || this.item.image.src;
+        const src = this.item.image.front || this.item.image.src || this.item.image.thumb;
         loadImage( src ).then( image => {
           this.width = image.naturalWidth;
           this.height = image.naturalHeight;
