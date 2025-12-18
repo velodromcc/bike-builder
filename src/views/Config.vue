@@ -147,6 +147,13 @@ export default {
         ];
     }
   },
+  async mounted() {
+      const savedTable = localStorage.getItem('bikebuilder_config_table');
+      if (savedTable && this.tables.includes(savedTable)) {
+          this.selectedTable = savedTable;
+          this.loadData();
+      }
+  },
   methods: {
     ...mapActions(['fetchTable', 'saveRow', 'deleteRow', 'restoreRow']),
     
@@ -158,6 +165,10 @@ export default {
     
     async loadData() {
       if (!this.selectedTable) return;
+      
+      // Persist selection
+      localStorage.setItem('bikebuilder_config_table', this.selectedTable);
+
       this.loading = true;
       try {
         const response = await this.fetchTable(this.selectedTable);

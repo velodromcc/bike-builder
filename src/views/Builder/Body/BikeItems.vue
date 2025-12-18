@@ -5,13 +5,15 @@
       <v-select
         v-if="['Frameset', 'Groupset', 'Tyre'].includes(type)"
         v-model="categoryFilter"
-        :items="['All', 'Road', 'Gravel']"
+        :items="filterOptions"
+        item-text="text"
+        item-value="value"
         dense
         outlined
         hide-details
         label="Filter"
         class="mr-2"
-        style="max-width: 130px;"
+        style="max-width: 140px;"
       ></v-select>
 
       <input
@@ -108,6 +110,20 @@
     },
     computed: {
       ...mapState([ 'specialBuilds' ]),
+      filterOptions() {
+        if (this.type === 'Groupset') {
+            return [
+                { text: 'All', value: 'All' },
+                { text: '1X Speed', value: 'Gravel' },
+                { text: '2X Speed', value: 'Road' }
+            ];
+        }
+        return [
+            { text: 'All', value: 'All' },
+            { text: 'Road', value: 'Road' },
+            { text: 'Gravel', value: 'Gravel' }
+        ];
+      },
       list() {
         let search = normalize( this.search );
         return this.items.map( item => {
