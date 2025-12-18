@@ -3,7 +3,7 @@
     <header class="outline-bottom light--border">
 
       <v-select
-        v-if="['Frameset', 'Groupset', 'Tyre'].includes(type)"
+        v-if="['Frameset', 'Groupset', 'Tyres'].includes(type)"
         v-model="categoryFilter"
         :items="filterOptions"
         item-text="text"
@@ -132,7 +132,7 @@
           
           // Category Filter Logic
           let categoryMatch = true;
-          if (['Frameset', 'Groupset', 'Tyre'].includes(this.type) && this.categoryFilter !== 'All') {
+          if (['Frameset', 'Groupset', 'Tyres'].includes(this.type) && this.categoryFilter !== 'All') {
               // Item category might be null if not yet migrated in local state, but DB defaults to Road.
               // We should assume Road if missing, or exact match.
               const itemCat = item.category || 'Road'; 
