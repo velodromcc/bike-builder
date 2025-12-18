@@ -197,28 +197,27 @@ const migrations = [
                 }
             });
         }
-    }
     },
-{
-    id: 7,
+    {
+        id: 7,
         name: 'add_category_to_tyre',
-            up: (db) => {
-                console.log('Adding category to Tyre...');
-                const table = 'Tyre';
-                try {
-                    db.prepare(`ALTER TABLE "${table}" ADD COLUMN category TEXT`).run();
-                    console.log(`Added category column to ${table}`);
+        up: (db) => {
+            console.log('Adding category to Tyre...');
+            const table = 'Tyre';
+            try {
+                db.prepare(`ALTER TABLE "${table}" ADD COLUMN category TEXT`).run();
+                console.log(`Added category column to ${table}`);
 
-                    // Default to 'Road'
-                    db.prepare(`UPDATE "${table}" SET category = 'Road' WHERE category IS NULL`).run();
-                    console.log(`Updated ${table} category defaults to Road`);
-                } catch (e) {
-                    if (!e.message.includes('duplicate column')) {
-                        console.error(`Failed to add category to ${table}:`, e);
-                    }
+                // Default to 'Road'
+                db.prepare(`UPDATE "${table}" SET category = 'Road' WHERE category IS NULL`).run();
+                console.log(`Updated ${table} category defaults to Road`);
+            } catch (e) {
+                if (!e.message.includes('duplicate column')) {
+                    console.error(`Failed to add category to ${table}:`, e);
                 }
             }
-}
+        }
+    }
 ];
 
 function runMigrations(db) {
