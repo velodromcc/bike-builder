@@ -19,6 +19,15 @@
            <v-col cols="12">
              <v-textarea v-model="parentItem.description" label="Description" rows="2"></v-textarea>
            </v-col>
+           
+           <!-- CATEGORY (Frameset/Groupset/Tyre) -->
+           <v-col cols="12" sm="6" v-if="['Frameset', 'Groupset', 'Tyre'].includes(tableName)">
+              <v-select
+                v-model="parentItem.category"
+                :items="['Road', 'Gravel']"
+                label="Category"
+              ></v-select>
+           </v-col>
            <v-col cols="12">
               <v-text-field v-model="parentItem.thumbnail" label="Thumbnail URL or Base64"></v-text-field>
               <v-file-input

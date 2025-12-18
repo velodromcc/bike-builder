@@ -2,6 +2,18 @@
   <div class="builder-nav--items">
     <header class="outline-bottom light--border">
 
+      <v-select
+        v-if="['Frameset', 'Groupset', 'Tyre'].includes(type)"
+        v-model="categoryFilter"
+        :items="['All', 'Road', 'Gravel']"
+        dense
+        outlined
+        hide-details
+        label="Filter"
+        class="mr-2"
+        style="max-width: 130px;"
+      ></v-select>
+
       <input
         type="text"
         v-model="search"
@@ -85,11 +97,13 @@
       }
     },
     data: () => ({
-      search: ''
+      search: '',
+      categoryFilter: 'All'
     }),
     watch: {
       items() {
         this.search = '';
+        this.categoryFilter = 'All';
       }
     },
     computed: {
@@ -99,11 +113,22 @@
         return this.items.map( item => {
           const colors = item.colors.map( a => a.color );
           const image = itemImage( item );
+          
+          // Category Filter Logic
+          let categoryMatch = true;
+          if (['Frameset', 'Groupset', 'Tyre'].includes(this.type) && this.categoryFilter !== 'All') {
+              // Item category might be null if not yet migrated in local state, but DB defaults to Road.
+              // We should assume Road if missing, or exact match.
+              const itemCat = item.category || 'Road'; 
+              // Normalize for comparison
+              categoryMatch = itemCat.toLowerCase() === this.categoryFilter.toLowerCase();
+          }
+
           return {
             ...item,
             thumb: !!image.thumb,
             src: image.front || image.thumb || image.src,
-            hide: ! normalize( item.name || '' ).includes( search ),
+            hide: !categoryMatch || ! normalize( item.name || '' ).includes( search ),
             specialBuild: this.type === 'Frameset' && this.specialBuilds.find( s => {
               return s.frameset === item.id;
             }),
@@ -120,16 +145,18 @@
 
 <style lang="scss">
   .builder-nav--items {
-    padding-top: 48px;
+    padding-top: 60px;
   }
   .builder-nav--items > header {
     position: absolute;
     top: 0; left: 0;
     width: 100%;
-    height: 48px;
+    height: 60px;
     display: flex;
     align-items: center;
     padding: 8px;
+    z-index: 2;
+    background: white; /* Ensure it covers scrolling content */
   }
   .builder-nav--items > header > input {
     flex: 1 1 auto;

@@ -124,7 +124,7 @@ export default {
   },
   data: () => ({
     selectedTable: null,
-    tables: ['Frameset', 'Wheel', 'Groupset', 'Saddle'],
+    tables: ['Frameset', 'Wheel', 'Groupset', 'Saddle', 'Tyre'],
     loading: false,
     savingOrder: false,
     items: [],
@@ -206,7 +206,7 @@ export default {
     },
 
     editRow(item) {
-        const masterDetailTables = ['Frameset', 'Wheel', 'Groupset', 'Saddle'];
+        const masterDetailTables = ['Frameset', 'Wheel', 'Groupset', 'Saddle', 'Tyre'];
         if (masterDetailTables.includes(this.selectedTable)) {
             this.$router.push(`/config/${this.selectedTable}/${item.id}`);
         } else {
